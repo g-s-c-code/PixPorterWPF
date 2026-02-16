@@ -6,7 +6,7 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Tiff;
-using PixPorter.Common.Core;
+using static PixPorter.Common.Core.Constants;
 
 namespace PixPorter.Common.Helpers;
 
@@ -14,13 +14,13 @@ public static class ConversionHelper
 {
     private static readonly Dictionary<string, IImageEncoder> Encoders = new()
     {
-        { Constants.WebpFileFormat, new WebpEncoder() },
-        { Constants.PngFileFormat, new PngEncoder() },
-        { Constants.JpegFileFormat, new JpegEncoder() },
-        { Constants.JpgFileFormat, new JpegEncoder() },
-        { Constants.GifFileFormat, new GifEncoder() },
-        { Constants.TiffFileFormat, new TiffEncoder() },
-        { Constants.BmpFileFormat, new BmpEncoder() }
+        { WebpFileFormat, new WebpEncoder() },
+        { PngFileFormat, new PngEncoder() },
+        { JpegFileFormat, new JpegEncoder() },
+        { JpgFileFormat, new JpegEncoder() },
+        { GifFileFormat, new GifEncoder() },
+        { TiffFileFormat, new TiffEncoder() },
+        { BmpFileFormat, new BmpEncoder() }
     };
 
     public static void ConvertFile(string filePath, string? targetFormat = null)
@@ -41,7 +41,7 @@ public static class ConversionHelper
         if (targetFormat != null)
             return targetFormat;
 
-        return Constants.DefaultConversions.TryGetValue(inputExtension, out var defaultFormat)
+        return DefaultConversions.TryGetValue(inputExtension, out var defaultFormat)
             ? defaultFormat
             : throw new Exception($"Unsupported file type: {inputExtension}");
     }
@@ -54,9 +54,9 @@ public static class ConversionHelper
     private static bool IsSupported(string filePath, string? targetFormat)
     {
         var extension = Path.GetExtension(filePath).ToLower();
-        return Constants.SupportedFileFormats.Contains(extension) &&
-               (targetFormat == null || Constants.DefaultConversions.ContainsKey(extension));
+        return SupportedFileFormats.Contains(extension) &&
+               (targetFormat == null || DefaultConversions.ContainsKey(extension));
     }
 
-    public static string GetDefaultFormat() => Constants.WebpFileFormat;
+    public static string GetDefaultFormat() => WebpFileFormat;
 }

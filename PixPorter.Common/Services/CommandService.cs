@@ -1,7 +1,7 @@
-﻿using PixPorter.Common.Core;
-using PixPorter.Common.Helpers;
+﻿using PixPorter.Common.Helpers;
 using PixPorter.Common.Interfaces;
 using PixPorter.Common.Models;
+using static PixPorter.Common.Core.Constants;
 
 namespace PixPorter.Common.Services;
 
@@ -13,25 +13,25 @@ public class CommandService(IUserInterace ui)
     {
         switch (command.Name.ToLower())
         {
-            case Constants.Quit:
+            case Quit:
                 Environment.Exit(0);
                 break;
 
-            case Constants.Help:
+            case Help:
                 _ui.RenderUI(DirectoryHelper.GetDirectories(), DirectoryHelper.GetImageFiles(), true);
                 _ui.WriteAndWait("Press any key to return...");
                 break;
 
-            case Constants.ChangeDirectory:
-                ChangeDirectory(command.Arguments.FirstOrDefault() ?? "");
+            case ChangeDirectory:
+                TryChangeDirectory(command.Arguments.FirstOrDefault() ?? "");
                 break;
 
-            case Constants.ConvertFile:
-                ConvertFile(command.Arguments.FirstOrDefault() ?? "", command.TargetFormat);
+            case ConvertFile:
+                TryConvertFile(command.Arguments.FirstOrDefault() ?? "", command.TargetFormat);
                 Console.ReadKey();
                 break;
 
-            case Constants.ConvertAll:
+            case ConvertAll:
                 ConvertDirectory(
                     command.Arguments.FirstOrDefault() ?? Directory.GetCurrentDirectory(),
                     command.TargetFormat);
@@ -43,7 +43,7 @@ public class CommandService(IUserInterace ui)
         }
     }
 
-    private void ChangeDirectory(string path)
+    private void TryChangeDirectory(string path)
     {
         if (string.IsNullOrWhiteSpace(path))
         {
@@ -65,7 +65,7 @@ public class CommandService(IUserInterace ui)
         }
     }
 
-    private void ConvertFile(string path, string? targetFormat)
+    private void TryConvertFile(string path, string? targetFormat)
     {
         if (!File.Exists(path))
         {

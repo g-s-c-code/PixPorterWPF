@@ -1,5 +1,5 @@
-﻿using PixPorter.Common.Core;
-using PixPorter.Common.Models;
+﻿using PixPorter.Common.Models;
+using static PixPorter.Common.Core.Constants;
 
 namespace PixPorter.Common.Helpers;
 
@@ -13,10 +13,10 @@ public static class CommandHelper
             return specialCommand!;
         }
 
-        if (input.StartsWith(Constants.ChangeDirectory))
+        if (input.StartsWith(ChangeDirectory))
         {
-            string path = input[Constants.ChangeDirectory.Length..].Trim();
-            return new Command(Constants.ChangeDirectory, [path], null, null);
+            string path = input[ChangeDirectory.Length..].Trim();
+            return new Command(ChangeDirectory, [path], null, null);
         }
 
         return ParseConversionCommand(input);
@@ -26,8 +26,8 @@ public static class CommandHelper
     {
         command = input switch
         {
-            Constants.Q or Constants.Quit or Constants.Exit => new Command(Constants.Quit, [], null, null),
-            Constants.Help => new Command(Constants.Help, [], null, null),
+            Q or Quit or Exit => new Command(Quit, [], null, null),
+            Help => new Command(Help, [], null, null),
             _ => null
         };
 
@@ -36,7 +36,7 @@ public static class CommandHelper
 
     private static Command ParseConversionCommand(string input)
     {
-        string? filePath = ExtractFilePath(input, [.. Constants.SupportedFileFormats]);
+        string? filePath = ExtractFilePath(input, [.. SupportedFileFormats]);
         string remainingInput;
 
         if (filePath != null)
@@ -45,17 +45,17 @@ public static class CommandHelper
             var parts = remainingInput.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             string? formatFlag = ExtractFormatFlag(parts);
 
-            bool convertAll = parts.Contains(Constants.ConvertAll);
-            string commandType = convertAll ? Constants.ConvertAll : Constants.ConvertFile;
+            bool convertAll = parts.Contains(ConvertAll);
+            string commandType = convertAll ? ConvertAll : ConvertFile;
             return new Command(commandType, [filePath], MapFormatFlag(formatFlag), null);
         }
 
         var allParts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-        if (allParts.Contains(Constants.ConvertAll))
+        if (allParts.Contains(ConvertAll))
         {
             string? formatFlag = ExtractFormatFlag(allParts);
-            return new Command(Constants.ConvertAll, [Directory.GetCurrentDirectory()], MapFormatFlag(formatFlag), null);
+            return new Command(ConvertAll, [Directory.GetCurrentDirectory()], MapFormatFlag(formatFlag), null);
         }
 
         string? formatFlag2 = ExtractFormatFlag(allParts);
@@ -68,7 +68,7 @@ public static class CommandHelper
 
         if (!potentialPaths.Any() && formatFlag != null)
         {
-            return new Command(Constants.ConvertAll,
+            return new Command(ConvertAll,
                 [Directory.GetCurrentDirectory()],
                 MapFormatFlag(formatFlag),
                 null);
@@ -80,19 +80,19 @@ public static class CommandHelper
 
             if (Directory.Exists(path))
             {
-                return new Command(Constants.ConvertAll, [path], MapFormatFlag(formatFlag), null);
+                return new Command(ConvertAll, [path], MapFormatFlag(formatFlag), null);
             }
             if (Directory.Exists(relativePath))
             {
-                return new Command(Constants.ConvertAll, [relativePath], MapFormatFlag(formatFlag), null);
+                return new Command(ConvertAll, [relativePath], MapFormatFlag(formatFlag), null);
             }
             if (File.Exists(path))
             {
-                return new Command(Constants.ConvertFile, [path], MapFormatFlag(formatFlag), null);
+                return new Command(ConvertFile, [path], MapFormatFlag(formatFlag), null);
             }
             if (File.Exists(relativePath))
             {
-                return new Command(Constants.ConvertFile, [relativePath], MapFormatFlag(formatFlag), null);
+                return new Command(ConvertFile, [relativePath], MapFormatFlag(formatFlag), null);
             }
         }
 
@@ -103,13 +103,13 @@ public static class CommandHelper
         parts.FirstOrDefault(IsFormatFlag);
 
     private static bool IsFormatFlag(string flag) =>
-        flag is Constants.PngFlag
-            or Constants.JpgFlag
-            or Constants.JpegFlag
-            or Constants.WebpFlag
-            or Constants.GifFlag
-            or Constants.TiffFlag
-            or Constants.BmpFlag;
+        flag is PngFlag
+            or JpgFlag
+            or JpegFlag
+            or WebpFlag
+            or GifFlag
+            or TiffFlag
+            or BmpFlag;
 
     private static string? ExtractFilePath(string input, string[] validExtensions) => validExtensions
         .Select(ext => new
@@ -123,13 +123,13 @@ public static class CommandHelper
 
     private static string? MapFormatFlag(string? flag) => flag switch
     {
-        Constants.PngFlag => Constants.PngFileFormat,
-        Constants.JpgFlag => Constants.JpgFileFormat,
-        Constants.JpegFlag => Constants.JpegFileFormat,
-        Constants.WebpFlag => Constants.WebpFileFormat,
-        Constants.GifFlag => Constants.GifFileFormat,
-        Constants.TiffFlag => Constants.TiffFileFormat,
-        Constants.BmpFlag => Constants.BmpFileFormat,
+        PngFlag => PngFileFormat,
+        JpgFlag => JpgFileFormat,
+        JpegFlag => JpegFileFormat,
+        WebpFlag => WebpFileFormat,
+        GifFlag => GifFileFormat,
+        TiffFlag => TiffFileFormat,
+        BmpFlag => BmpFileFormat,
         _ => null
     };
 }
