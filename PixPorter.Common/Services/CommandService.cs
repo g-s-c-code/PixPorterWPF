@@ -25,7 +25,6 @@ public class CommandService(IUserInterface ui)
                 break;
 
             case Constants.ConvertFile:
-                // Handle multiple files if present
                 List<string> filesToConvert = new() { command.Path };
                 if (command.AdditionalPaths != null)
                 {
@@ -34,21 +33,18 @@ public class CommandService(IUserInterface ui)
 
                 if (filesToConvert.Count == 1)
                 {
-                    // Single file - show result and wait
                     ConvertSingle(command.Path, command.TargetExtension);
                     ui.WriteAndWait("\nPress any key to continue...");
                 }
                 else
                 {
-                    string effectiveTarget = command.TargetExtension;
-
                     ui.Write($"\nConverting {filesToConvert.Count} file(s)...\n");
-                    ui.RenderProgress(filesToConvert, effectiveTarget, (file, format) =>
+                    ui.RenderProgress(filesToConvert, command.TargetExtension, (file, format) =>
                     {
-                        // For each file, determine the appropriate target
                         string fileTarget = format ?? Constants.GetDefaultTarget(Path.GetExtension(file));
                         ConversionHelper.ConvertFile(file, fileTarget);
                     });
+
                     ui.WriteAndWait("\nPress any key to continue...");
                 }
                 break;
@@ -101,19 +97,17 @@ public class CommandService(IUserInterface ui)
 
         List<string> files = ConversionHelper.GetConvertibleFiles(path).ToList();
 
-        if (!files.Any())
+        if (files.Count == 0)
         {
             ui.DisplayErrorMessage("No supported images found.");
             return;
         }
 
-        // If explicit target provided, use it; otherwise use null to handle per-file defaults
         string displayTarget = targetExtension != null
             ? targetExtension.ToUpper()
             : "default formats";
 
         ui.Write($"\nConverting {files.Count} file(s) to {displayTarget}...\n");
-
         ui.RenderProgress(files, targetExtension, (file, format) =>
         {
             string fileTarget = format ?? Constants.GetDefaultTarget(Path.GetExtension(file));

@@ -21,7 +21,7 @@ public class UI : IUserInterface
         AnsiConsole.Write(content);
     }
 
-    public void RenderProgress(IEnumerable<string> files, string targetExtension, Action<string, string> convert)
+    public void RenderProgress(IEnumerable<string> files, string? targetExtension, Action<string, string?> convert)
     {
         List<string> list = [.. files];
         int successCount = 0;
@@ -59,23 +59,13 @@ public class UI : IUserInterface
     public void WriteAndWait(string message)
     {
         Write(message);
-        while (System.Console.KeyAvailable)
-        {
-            System.Console.ReadKey(true);
-        }
-
-        System.Console.ReadKey(true);
+        _ = System.Console.ReadKey();
     }
 
     public void DisplayErrorMessage(string message)
     {
-        AnsiConsole.MarkupLine($"[rosybrown]{message}[/]");
-        while (System.Console.KeyAvailable)
-        {
-            System.Console.ReadKey(true);
-        }
-
-        System.Console.ReadKey(true);
+        AnsiConsole.Write(new Markup(message, Color.RosyBrown));
+        _ = System.Console.ReadKey();
     }
 
     public void DisplayTitle(string title) =>

@@ -6,7 +6,7 @@ namespace PixPorter.Common;
 
 public class PixPorter(IUserInterface ui)
 {
-    private readonly CommandService _commandService = new(ui);
+    private readonly CommandService _service = new(ui);
 
     public void Run()
     {
@@ -17,10 +17,15 @@ public class PixPorter(IUserInterface ui)
                 DirectoryHelper.GetDirectories(),
                 DirectoryHelper.GetImageFiles());
 
+            while (Console.KeyAvailable)
+            {
+                Console.ReadKey(true);
+            }
+
             string input = ui.Read("Enter command:");
             if (!string.IsNullOrWhiteSpace(input))
             {
-                _commandService.Process(input);
+                _service.Process(input);
             }
         }
     }
