@@ -31,24 +31,19 @@ public static class CommandHelper
 
         return parts.Contains(Constants.ConvertAll)
             ? new(Constants.ConvertAll, path ?? Directory.GetCurrentDirectory(), targetExtension)
-            : path != null ? new(Constants.ConvertFile, path, targetExtension) : throw new CommandException("Invalid command.");
+            : path != null
+                ? new(Constants.ConvertFile, path, targetExtension)
+                : throw new CommandException("Invalid command.");
     }
 
-    private static bool IsQuit(string input)
-    {
-        return input is Constants.Q or Constants.Quit or Constants.Exit;
-    }
+    private static bool IsQuit(string input) =>
+        input is Constants.Q or Constants.Quit or Constants.Exit;
 
-    private static bool IsHelp(string input)
-    {
-        return input == Constants.Help;
-    }
+    private static bool IsHelp(string input) =>
+        input == Constants.Help;
 
-    private static string? ExtractTargetExtension(string[] parts)
-    {
-        return parts.Select(p => Constants.FormatFlags.TryGetValue(p, out string? ext) ? ext : null)
-             .FirstOrDefault(e => e != null);
-    }
+    private static string? ExtractTargetExtension(string[] parts) =>
+        parts.Select(p => Constants.FormatFlags.TryGetValue(p, out string? ext) ? ext : null).FirstOrDefault(e => e != null);
 
     private static string? ExtractPath(string[] parts)
     {

@@ -26,10 +26,8 @@ public static class Constants
         ".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".tiff"
     };
 
-    public static string GetDefaultTarget(string sourceExtension)
-    {
-        return sourceExtension.Equals(".webp", StringComparison.OrdinalIgnoreCase)
+    public static string GetDefaultTarget(string sourceExtension) => 
+        sourceExtension.Equals(".webp", StringComparison.OrdinalIgnoreCase)
             ? ".png"
             : ".webp";
-    }
 }

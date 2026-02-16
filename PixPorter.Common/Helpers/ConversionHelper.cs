@@ -15,9 +15,6 @@ public static class ConversionHelper
         image.Save(outputPath);
     }
 
-    public static IEnumerable<string> GetConvertibleFiles(string directory)
-    {
-        return Directory.GetFiles(directory)
-            .Where(f => Constants.SupportedExtensions.Contains(Path.GetExtension(f)));
-    }
+    public static IEnumerable<string> GetConvertibleFiles(string directory) =>
+        Directory.GetFiles(directory).Where(f => Constants.SupportedExtensions.Contains(Path.GetExtension(f)));
 }

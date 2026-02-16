@@ -1,4 +1,3 @@
-﻿using PixPorter.Common;
-using PixPorter.Console;
+﻿using PixPorter.Console;
 
-new ImageConverter(new UI()).Run();
+new PixPorter.Common.PixPorter(new UI()).Run();

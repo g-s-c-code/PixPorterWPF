@@ -84,7 +84,7 @@ public class UI : IUserInterface
         Padding = new Padding(0, 1, 0, 0)
     };
 
-    private Table InformationContentUI()
+    private static Table InformationContentUI()
     {
         Table table = new()
         {
@@ -118,7 +118,7 @@ public class UI : IUserInterface
         };
     }
 
-    private Table CurrentDirectoryContentUI(IEnumerable<string> directories, IEnumerable<string> files)
+    private static Table CurrentDirectoryContentUI(IEnumerable<string> directories, IEnumerable<string> files)
     {
         Table table = new()
         {
@@ -134,7 +134,7 @@ public class UI : IUserInterface
         return table;
     }
 
-    private Table HelpContentUI()
+    private static Table HelpContentUI()
     {
         Table table = new()
         {
@@ -152,7 +152,7 @@ public class UI : IUserInterface
         return table;
     }
 
-    private IRenderable BuildTree(string title, IEnumerable<string> items)
+    private static Tree BuildTree(string title, IEnumerable<string> items)
     {
         Tree tree = new(new Markup(title.ToUpper(), Color.White))
         {
@@ -167,7 +167,7 @@ public class UI : IUserInterface
         return tree;
     }
 
-    private IEnumerable<IRenderable> GetInformationSections()
+    private static IEnumerable<IRenderable> GetInformationSections()
     {
         yield return BuildSection("[lightskyblue1 underline bold]Usage Quick Guide[/]",
         [
@@ -185,20 +185,18 @@ public class UI : IUserInterface
             ("[steelblue]q[/]        ", "- Exit application")
         ]);
 
-        yield return BuildSection(
-            "[lightskyblue1 underline bold]Conversion Format Flags[/]          [lightskyblue1 underline bold]Default Conversion Formats[/]",
-            [
-                ("[steelblue]--png[/]     - Convert to PNG", "      [indianred].png[/] -> [indianred].webp[/]"),
-                ("[steelblue]--jpg[/]     - Convert to JPG", "      [indianred].jpg[/] -> [indianred].webp[/]"),
-                ("[steelblue]--webp[/]    - Convert to WebP", "     [indianred].webp[/] -> [indianred].png[/]"),
-                ("[steelblue]--gif[/]     - Convert to GIF", "      [indianred].gif[/] -> [indianred].png[/]"),
-                ("[steelblue]--tiff[/]    - Convert to TIFF", "     [indianred].tiff[/] -> [indianred].png[/]"),
-                ("[steelblue]--bmp[/]     - Convert to BMP", "      [indianred].bmp[/] -> [indianred].png[/]")
-            ]
-        );
+        yield return BuildSection("[lightskyblue1 underline bold]Conversion Format Flags[/]          [lightskyblue1 underline bold]Default Conversion Formats[/]",
+        [
+            ("[steelblue]--png[/]     - Convert to PNG", "      [indianred].png[/] -> [indianred].webp[/]"),
+            ("[steelblue]--jpg[/]     - Convert to JPG", "      [indianred].jpg[/] -> [indianred].webp[/]"),
+            ("[steelblue]--webp[/]    - Convert to WebP", "     [indianred].webp[/] -> [indianred].png[/]"),
+            ("[steelblue]--gif[/]     - Convert to GIF", "      [indianred].gif[/] -> [indianred].png[/]"),
+            ("[steelblue]--tiff[/]    - Convert to TIFF", "     [indianred].tiff[/] -> [indianred].png[/]"),
+            ("[steelblue]--bmp[/]     - Convert to BMP", "      [indianred].bmp[/] -> [indianred].png[/]")
+        ]);
     }
 
-    private IEnumerable<IRenderable> GetHelpSections()
+    private static IEnumerable<IRenderable> GetHelpSections()
     {
         yield return BuildSection("Drag & Drop",
         [
@@ -241,7 +239,7 @@ public class UI : IUserInterface
         ]);
     }
 
-    private static IRenderable BuildSection(string title, IEnumerable<(string Key, string Value)> items, string? footer = null)
+    private static Markup BuildSection(string title, IEnumerable<(string Key, string Value)> items, string? footer = null)
     {
         StringBuilder sb = new();
         _ = sb.AppendLine($"[lightskyblue1 underline bold]{title.ToUpper()}[/]");

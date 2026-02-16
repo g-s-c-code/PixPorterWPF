@@ -4,14 +4,13 @@ using PixPorter.Common.Services;
 
 namespace PixPorter.Common;
 
-public class ImageConverter(IUserInterface ui)
+public class PixPorter(IUserInterface ui)
 {
-    private readonly CommandService _service = new(ui);
+    private readonly CommandService _commandService = new(ui);
 
     public void Run()
     {
         ui.DisplayTitle("PixPorter");
-
         while (true)
         {
             ui.RenderUI(
@@ -19,10 +18,9 @@ public class ImageConverter(IUserInterface ui)
                 DirectoryHelper.GetImageFiles());
 
             string input = ui.Read("Enter command:");
-
             if (!string.IsNullOrWhiteSpace(input))
             {
-                _service.Process(input);
+                _commandService.Process(input);
             }
         }
     }
