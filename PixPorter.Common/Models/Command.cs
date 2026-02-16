@@ -3,4 +3,5 @@
 public record Command(
     string Name,
     string Path,
-    string? TargetExtension);
+    string? TargetExtension,
+    List<string>? AdditionalPaths = null);

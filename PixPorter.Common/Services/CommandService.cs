@@ -25,7 +25,32 @@ public class CommandService(IUserInterface ui)
                 break;
 
             case Constants.ConvertFile:
-                ConvertSingle(command.Path, command.TargetExtension);
+                // Handle multiple files if present
+                List<string> filesToConvert = new() { command.Path };
+                if (command.AdditionalPaths != null)
+                {
+                    filesToConvert.AddRange(command.AdditionalPaths);
+                }
+
+                if (filesToConvert.Count == 1)
+                {
+                    // Single file - show result and wait
+                    ConvertSingle(command.Path, command.TargetExtension);
+                    ui.WriteAndWait("\nPress any key to continue...");
+                }
+                else
+                {
+                    string effectiveTarget = command.TargetExtension;
+
+                    ui.Write($"\nConverting {filesToConvert.Count} file(s)...\n");
+                    ui.RenderProgress(filesToConvert, effectiveTarget, (file, format) =>
+                    {
+                        // For each file, determine the appropriate target
+                        string fileTarget = format ?? Constants.GetDefaultTarget(Path.GetExtension(file));
+                        ConversionHelper.ConvertFile(file, fileTarget);
+                    });
+                    ui.WriteAndWait("\nPress any key to continue...");
+                }
                 break;
 
             case Constants.ConvertAll:
@@ -37,6 +62,7 @@ public class CommandService(IUserInterface ui)
                 break;
         }
     }
+
 
     private void ChangeDirectory(string path)
     {
@@ -57,8 +83,12 @@ public class CommandService(IUserInterface ui)
             return;
         }
 
-        ConversionHelper.ConvertFile(path, targetExtension);
-        ui.Write($"Converted: {path}");
+        string sourceExtension = Path.GetExtension(path);
+        string effectiveTarget = targetExtension ?? Constants.GetDefaultTarget(sourceExtension);
+        string outputPath = Path.ChangeExtension(path, effectiveTarget);
+
+        ConversionHelper.ConvertFile(path, effectiveTarget);
+        ui.Write($"Converted: {path} → {outputPath}");
     }
 
     private void ConvertDirectory(string path, string? targetExtension)
@@ -77,15 +107,20 @@ public class CommandService(IUserInterface ui)
             return;
         }
 
-        string effectiveTarget = targetExtension ?? Constants.GetDefaultTarget(Path.GetExtension(files[0]));
+        // If explicit target provided, use it; otherwise use null to handle per-file defaults
+        string displayTarget = targetExtension != null
+            ? targetExtension.ToUpper()
+            : "default formats";
 
-        ui.RenderProgress(files, effectiveTarget, (file, format) =>
+        ui.Write($"\nConverting {files.Count} file(s) to {displayTarget}...\n");
+
+        ui.RenderProgress(files, targetExtension, (file, format) =>
         {
-            ConversionHelper.ConvertFile(file, format);
-            ui.Write($"Converted: {file}");
+            string fileTarget = format ?? Constants.GetDefaultTarget(Path.GetExtension(file));
+            ConversionHelper.ConvertFile(file, fileTarget);
         });
 
-        ui.WriteAndWait("Conversion complete.");
+        ui.WriteAndWait("\nPress any key to continue...");
     }
 
     public void Process(string input)

@@ -24,6 +24,9 @@ public class UI : IUserInterface
     public void RenderProgress(IEnumerable<string> files, string targetExtension, Action<string, string> convert)
     {
         List<string> list = [.. files];
+        int successCount = 0;
+        int failCount = 0;
+
         AnsiConsole.Progress().Start(ctx =>
         {
             ProgressTask task = ctx.AddTask("[lightskyblue1]Converting Images[/]", maxValue: list.Count);
@@ -33,31 +36,46 @@ public class UI : IUserInterface
                 {
                     convert(file, targetExtension);
                     task.Increment(1);
+                    successCount++;
                 }
                 catch (Exception ex)
                 {
                     DisplayErrorMessage($"Conversion failed for {file}: {ex.Message}");
+                    failCount++;
                 }
             }
         });
+
+        AnsiConsole.MarkupLine($"[lightskyblue1]Conversion complete:[/] [white]{successCount} successful[/]" +
+                              (failCount > 0 ? $", [rosybrown]{failCount} failed[/]" : ""));
     }
 
     public string Read(string prompt) =>
         AnsiConsole.Ask<string>(prompt);
 
     public void Write(string message) =>
-        AnsiConsole.Write(new Markup(message, Color.White));
+        AnsiConsole.MarkupLine($"[white]{message}[/]");
 
     public void WriteAndWait(string message)
     {
         Write(message);
-        _ = System.Console.ReadKey();
+        while (System.Console.KeyAvailable)
+        {
+            System.Console.ReadKey(true);
+        }
+
+        System.Console.ReadKey(true);
     }
 
     public void DisplayErrorMessage(string message)
     {
-        AnsiConsole.Write(new Markup(message, Color.RosyBrown));
-        _ = System.Console.ReadKey();
+        AnsiConsole.MarkupLine($"[rosybrown]{message}[/]");
+        while (System.Console.KeyAvailable)
+        {
+            System.Console.ReadKey(true);
+        }
+
+        System.Console.ReadKey(true);
     }
 
     public void DisplayTitle(string title) =>
