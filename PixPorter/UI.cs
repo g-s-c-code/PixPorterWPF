@@ -180,9 +180,9 @@ public class UI : IUserInterface
         yield return BuildSection("[lightskyblue1 underline bold]Usage Quick Guide[/]",
         [
             ("[indianred bold]DRAG & DROP[/]",
-                "\n- Drag and drop an image or folder into the window and press '[steelblue][[ENTER]][/]' to convert it. Add a format flag to override defaults.\n"),
+            "\n- Drag and drop an image or folder into the window and press '[steelblue][[ENTER]][/]' to convert it. Add a format flag to override defaults.\n"),
             ("[indianred bold]NAVIGATION[/]",
-                "\n- Use '[steelblue]cd [[path]][/]' to navigate folders. Convert all images with '[steelblue]--ca[/]'.")
+            "\n- Use '[steelblue]cd [[path]][/]' to navigate folders. Convert all images with '[steelblue]--ca[/]'.")
         ]);
 
         yield return BuildSection("[lightskyblue1 underline bold]Commands[/]",
@@ -193,15 +193,15 @@ public class UI : IUserInterface
             ("[steelblue]q[/]        ", "- Exit application")
         ]);
 
-        yield return BuildSection("[lightskyblue1 underline bold]Conversion Format Flags[/]          [lightskyblue1 underline bold]Default Conversion Formats[/]",
+        yield return BuildSection("[lightskyblue1 underline bold]CONVERSION FORMAT FLAGS[/]          [lightskyblue1 underline bold]DEFAULT CONVERSION FORMATS[/]",
         [
-            ("[steelblue]--png[/]     - Convert to PNG", "      [indianred].png[/] -> [indianred].webp[/]"),
-            ("[steelblue]--jpg[/]     - Convert to JPG", "      [indianred].jpg[/] -> [indianred].webp[/]"),
-            ("[steelblue]--webp[/]    - Convert to WebP", "     [indianred].webp[/] -> [indianred].png[/]"),
-            ("[steelblue]--gif[/]     - Convert to GIF", "      [indianred].gif[/] -> [indianred].png[/]"),
-            ("[steelblue]--tiff[/]    - Convert to TIFF", "     [indianred].tiff[/] -> [indianred].png[/]"),
-            ("[steelblue]--bmp[/]     - Convert to BMP", "      [indianred].bmp[/] -> [indianred].png[/]")
-        ]);
+            ("[steelblue]--png[/]     - Convert to PNG", "      [indianred].png[/]  → [indianred].webp[/]"),
+            ("[steelblue]--jpg[/]     - Convert to JPG", "      [indianred].jpg[/]  → [indianred].webp[/]"),
+            ("[steelblue]--webp[/]    - Convert to WebP", "     [indianred].webp[/] → [indianred].png[/]"),
+            ("[steelblue]--gif[/]     - Convert to GIF", "      [indianred].gif[/]  → [indianred].png[/]"),
+            ("[steelblue]--tiff[/]    - Convert to TIFF", "     [indianred].tiff[/] → [indianred].png[/]"),
+            ("[steelblue]--bmp[/]     - Convert to BMP", "      [indianred].bmp[/]  → [indianred].png[/]")
+        ], skipTitleFormatting: true);
     }
 
     private static IEnumerable<IRenderable> GetHelpSections()
@@ -209,14 +209,14 @@ public class UI : IUserInterface
         yield return BuildSection("Drag & Drop",
         [
             ("Drag a file or folder into the PixPorter window. Add an optional format flag if desired.", ""),
-            ("[indianred]EXAMPLE:[/] '[steelblue]my_photo.png[/]' + '[steelblue][[ENTER]][/]' -> Converts to the default format (e.g., '[steelblue]my_photo.webp[/]').", ""),
-            ("[indianred]EXAMPLE:[/] '[steelblue]my_photo.png --jpg[/]' + '[steelblue][[ENTER]][/]' -> Converts to JPG (e.g., '[steelblue]my_photo.jpg[/]').", "")
+            ("[indianred]EXAMPLE:[/] '[steelblue]my_photo.png[/]' + '[steelblue][[ENTER]][/]' → Converts to the default format (e.g., '[steelblue]my_photo.webp[/]').", ""),
+            ("[indianred]EXAMPLE:[/] '[steelblue]my_photo.png --jpg[/]' + '[steelblue][[ENTER]][/]' → Converts to JPG (e.g., '[steelblue]my_photo.jpg[/]').", "")
         ]);
 
         yield return BuildSection("Direct File/Folder Conversion",
         [
             ("Enter a full file path or folder path + '[steelblue][[ENTER]][/]' for automatic conversion.", ""),
-            ("[indianred]EXAMPLE:[/] '[steelblue]C:\\Users\\Pictures --webp[/]' + '[steelblue][[ENTER]][/]' -> Converts all images in the folder to WebP.", "")
+            ("[indianred]EXAMPLE:[/] '[steelblue]C:\\Users\\Pictures --webp[/]' + '[steelblue][[ENTER]][/]' → Converts all images in the folder to WebP.", "")
         ]);
 
         yield return BuildSection("Current Directory Conversion",
@@ -224,8 +224,8 @@ public class UI : IUserInterface
             ("Use the command line to navigate to a directory and perform conversions.", ""),
             ("[steelblue]cd [[path]][/]   - Navigate to the desired directory.", ""),
             ("[steelblue]--ca[/]         - Converts all images in the current directory.", ""),
-            ("[indianred]EXAMPLE:[/] '[steelblue]cd C:\\Users\\Photos[/]' + '[steelblue][[ENTER]][/]' -> Navigate to the directory.", ""),
-            ("[indianred]EXAMPLE:[/] '[steelblue]--ca --jpg[/]' + '[steelblue][[ENTER]][/]' -> Converts all images in the current directory to JPG.", "")
+            ("[indianred]EXAMPLE:[/] '[steelblue]cd C:\\Users\\Photos[/]' + '[steelblue][[ENTER]][/]' → Navigate to the directory.", ""),
+            ("[indianred]EXAMPLE:[/] '[steelblue]--ca --jpg[/]' + '[steelblue][[ENTER]][/]' → Converts all images in the current directory to JPG.", "")
         ]);
 
         yield return BuildSection("How to Use",
@@ -247,10 +247,17 @@ public class UI : IUserInterface
         ]);
     }
 
-    private static Markup BuildSection(string title, IEnumerable<(string Key, string Value)> items, string? footer = null)
+    private static Markup BuildSection(string title, IEnumerable<(string Key, string Value)> items, string? footer = null, bool skipTitleFormatting = false)
     {
         StringBuilder sb = new();
-        _ = sb.AppendLine($"[lightskyblue1 underline bold]{title.ToUpper()}[/]");
+        if (skipTitleFormatting)
+        {
+            _ = sb.AppendLine(title);
+        }
+        else
+        {
+            _ = sb.AppendLine($"[lightskyblue1 underline bold]{title.ToUpper()}[/]");
+        }
 
         foreach ((string? key, string? value) in items)
         {
