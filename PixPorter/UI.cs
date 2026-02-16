@@ -1,4 +1,7 @@
 ﻿using System.Text;
+using PixPorter.Common.Core;
+using PixPorter.Common.Interfaces;
+using PixPorter.Common.Models;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 

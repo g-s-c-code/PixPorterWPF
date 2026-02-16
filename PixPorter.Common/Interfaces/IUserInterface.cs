@@ -1,18 +1,20 @@
-﻿public interface IUserInterace
+﻿namespace PixPorter.Common.Interfaces;
+
+public interface IUserInterace
 {
-	void RenderUI(IEnumerable<string> directories, IEnumerable<string> files, bool displayHelp = false);
+    void RenderUI(IEnumerable<string> directories, IEnumerable<string> files, bool displayHelp = false);
 
-	void RenderProgress(List<string> files, string targetFormat, Action<string, string> convertFileMethod);
+    void RenderProgress(List<string> files, string targetFormat, Action<string, string> convertFileMethod);
 
-	string Read(string prompt);
+    string Read(string prompt);
 
-	void Write(string message);
+    void Write(string message);
 
-	void WriteAndWait(string message);
+    void WriteAndWait(string message);
 
-	void DisplayErrorMessage(string message);
+    void DisplayErrorMessage(string message);
 
-	void DisplayTitle(string title);
+    void DisplayTitle(string title);
 
-	List<T> GetHelpDetails<T>();
+    List<T> GetHelpDetails<T>();
 }
