@@ -1,144 +1,103 @@
-﻿using PixPorter.Common.Helpers;
+﻿using PixPorter.Common.Core;
+using PixPorter.Common.Helpers;
 using PixPorter.Common.Interfaces;
 using PixPorter.Common.Models;
-using static PixPorter.Common.Core.Constants;
 
 namespace PixPorter.Common.Services;
 
-public class CommandService(IUserInterace ui)
+public class CommandService(IUserInterface ui)
 {
-    private readonly IUserInterace _ui = ui;
-
-    public void ExecuteCommand(Command command)
+    public void Execute(Command command)
     {
-        switch (command.Name.ToLower())
+        switch (command.Name)
         {
-            case Quit:
+            case Constants.Quit:
                 Environment.Exit(0);
                 break;
 
-            case Help:
-                _ui.RenderUI(DirectoryHelper.GetDirectories(), DirectoryHelper.GetImageFiles(), true);
-                _ui.WriteAndWait("Press any key to return...");
+            case Constants.Help:
+                ui.RenderUI(DirectoryHelper.GetDirectories(), DirectoryHelper.GetImageFiles(), true);
+                ui.WriteAndWait("Press any key to return...");
                 break;
 
-            case ChangeDirectory:
-                TryChangeDirectory(command.Arguments.FirstOrDefault() ?? "");
+            case Constants.ChangeDirectory:
+                ChangeDirectory(command.Path);
                 break;
 
-            case ConvertFile:
-                TryConvertFile(command.Arguments.FirstOrDefault() ?? "", command.TargetFormat);
-                Console.ReadKey();
+            case Constants.ConvertFile:
+                ConvertSingle(command.Path, command.TargetExtension);
                 break;
 
-            case ConvertAll:
-                ConvertDirectory(
-                    command.Arguments.FirstOrDefault() ?? Directory.GetCurrentDirectory(),
-                    command.TargetFormat);
+            case Constants.ConvertAll:
+                ConvertDirectory(command.Path, command.TargetExtension);
                 break;
 
             default:
-                _ui.DisplayErrorMessage("Unknown command.");
+                ui.DisplayErrorMessage("Unknown command.");
                 break;
         }
     }
 
-    private void TryChangeDirectory(string path)
-    {
-        if (string.IsNullOrWhiteSpace(path))
-        {
-            _ui.DisplayErrorMessage("Path cannot be empty. Usage: cd [[path]]");
-            return;
-        }
-
-        string newPath = Path.IsPathRooted(path)
-            ? path
-            : Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), path));
-
-        if (Directory.Exists(newPath))
-        {
-            Directory.SetCurrentDirectory(newPath);
-        }
-        else
-        {
-            _ui.DisplayErrorMessage($"Directory not found: {newPath}");
-        }
-    }
-
-    private void TryConvertFile(string path, string? targetFormat)
-    {
-        if (!File.Exists(path))
-        {
-            _ui.DisplayErrorMessage($"File not found: {path}");
-            return;
-        }
-
-        try
-        {
-            ConversionHelper.ConvertFile(path, targetFormat);
-            _ui.Write($"Converted: {path} -> {Path.ChangeExtension(path, targetFormat ?? ConversionHelper.GetDefaultFormat())}");
-        }
-        catch (Exception ex)
-        {
-            _ui.WriteAndWait($"Conversion failed: {ex.Message}");
-        }
-    }
-
-    private void ConvertDirectory(string path, string? targetFormat)
+    private void ChangeDirectory(string path)
     {
         if (!Directory.Exists(path))
         {
-            _ui.DisplayErrorMessage($"Directory not found: {path}");
+            ui.DisplayErrorMessage($"Directory not found: {path}");
             return;
         }
 
-        try
-        {
-            var files = ConversionHelper.GetSupportedFiles(path, targetFormat);
-
-            if (files.Count == 0)
-            {
-                _ui.DisplayErrorMessage("No supported image files found in the directory.");
-                return;
-            }
-
-            var effectiveTargetFormat = targetFormat ?? ConversionHelper.GetDefaultFormat();
-
-            _ui.RenderProgress(files, effectiveTargetFormat, (file, format) =>
-            {
-                try
-                {
-                    ConversionHelper.ConvertFile(file, format);
-                    _ui.Write($"Converted: {file} -> {Path.ChangeExtension(file, format)}");
-                }
-                catch (Exception ex)
-                {
-                    _ui.WriteAndWait($"Conversion failed for {file}: {ex.Message}");
-                }
-            });
-
-            _ui.WriteAndWait("All supported files have been successfully processed.");
-        }
-        catch (Exception ex)
-        {
-            _ui.DisplayErrorMessage($"Failed to convert directory: {ex.Message}");
-        }
+        Directory.SetCurrentDirectory(path);
     }
 
-    public void ProcessCommand(string input)
+    private void ConvertSingle(string path, string? targetExtension)
+    {
+        if (!File.Exists(path))
+        {
+            ui.DisplayErrorMessage($"File not found: {path}");
+            return;
+        }
+
+        ConversionHelper.ConvertFile(path, targetExtension);
+        ui.Write($"Converted: {path}");
+    }
+
+    private void ConvertDirectory(string path, string? targetExtension)
+    {
+        if (!Directory.Exists(path))
+        {
+            ui.DisplayErrorMessage($"Directory not found: {path}");
+            return;
+        }
+
+        List<string> files = ConversionHelper.GetConvertibleFiles(path).ToList();
+
+        if (!files.Any())
+        {
+            ui.DisplayErrorMessage("No supported images found.");
+            return;
+        }
+
+        string effectiveTarget = targetExtension ?? Constants.GetDefaultTarget(Path.GetExtension(files[0]));
+
+        ui.RenderProgress(files, effectiveTarget, (file, format) =>
+        {
+            ConversionHelper.ConvertFile(file, format);
+            ui.Write($"Converted: {file}");
+        });
+
+        ui.WriteAndWait("Conversion complete.");
+    }
+
+    public void Process(string input)
     {
         try
         {
-            var command = CommandHelper.ParseInput(input.ToLower());
-            ExecuteCommand(command);
-        }
-        catch (CommandException ex)
-        {
-            _ui.DisplayErrorMessage($"Command Error: {ex.Message}");
+            Command command = CommandHelper.Parse(input.ToLower());
+            Execute(command);
         }
         catch (Exception ex)
         {
-            _ui.DisplayErrorMessage($"Unexpected Error: {ex.Message}");
+            ui.DisplayErrorMessage(ex.Message);
         }
     }
 }

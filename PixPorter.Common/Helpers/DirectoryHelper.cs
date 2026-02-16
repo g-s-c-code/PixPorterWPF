@@ -1,37 +1,21 @@
-﻿using static PixPorter.Common.Core.Constants;
+﻿using PixPorter.Common.Core;
 
 namespace PixPorter.Common.Helpers;
 
 public static class DirectoryHelper
 {
-    public static IEnumerable<string> GetEntries(Func<string, bool> filter, string errorType)
+    public static IEnumerable<string> GetDirectories()
     {
-        var dir = Directory.GetCurrentDirectory();
-        try
-        {
-            var entries = errorType == ChangeDirectory
-                ? Directory.EnumerateDirectories(dir)
-                : Directory.EnumerateFiles(dir);
-
-            return entries
-                .Where(entry => (File.GetAttributes(entry) & FileAttributes.Hidden) == 0 && filter(entry))
-                .Select(Path.GetFileName)
-                .Where(name => name != null)
-                .ToList()!;
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return [$"Error: Access to the path '{dir}' is denied."];
-        }
-        catch (Exception ex)
-        {
-            return [$"Error: {ex.Message}"];
-        }
+        return Directory.EnumerateDirectories(Directory.GetCurrentDirectory())
+            .Select(Path.GetFileName)
+            .Where(n => n != null)!;
     }
 
-    public static IEnumerable<string> GetDirectories() =>
-        GetEntries(_ => true, ChangeDirectory);
-
-    public static IEnumerable<string> GetImageFiles() =>
-        GetEntries(file => SupportedFileFormats.Contains(Path.GetExtension(file), StringComparer.OrdinalIgnoreCase), "File");
+    public static IEnumerable<string> GetImageFiles()
+    {
+        return Directory.EnumerateFiles(Directory.GetCurrentDirectory())
+            .Where(f => Constants.SupportedExtensions.Contains(Path.GetExtension(f)))
+            .Select(Path.GetFileName)
+            .Where(n => n != null)!;
+    }
 }

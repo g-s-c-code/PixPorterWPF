@@ -1,3 +1,3 @@
 ﻿namespace PixPorter.Common.Models;
 
-public class CommandException(string message) : Exception(message) { }
+public class CommandException(string message) : Exception(message);

@@ -2,6 +2,5 @@
 
 public record Command(
     string Name,
-    List<string> Arguments,
-    string? TargetFormat,
-    int? Quality);
+    string Path,
+    string? TargetExtension);

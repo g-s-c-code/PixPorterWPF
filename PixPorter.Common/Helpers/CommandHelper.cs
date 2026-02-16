@@ -1,135 +1,72 @@
-﻿using PixPorter.Common.Models;
-using static PixPorter.Common.Core.Constants;
+﻿using PixPorter.Common.Core;
+using PixPorter.Common.Models;
 
 namespace PixPorter.Common.Helpers;
 
 public static class CommandHelper
 {
-    public static Command ParseInput(string input)
+    public static Command Parse(string input)
     {
-        input = input.Replace("\"", string.Empty).Trim();
-        if (IsSpecialCommand(input, out Command? specialCommand))
+        input = input.Replace("\"", "").Trim();
+
+        if (IsQuit(input))
         {
-            return specialCommand!;
+            return new(Constants.Quit, string.Empty, null);
         }
 
-        if (input.StartsWith(ChangeDirectory))
+        if (IsHelp(input))
         {
-            string path = input[ChangeDirectory.Length..].Trim();
-            return new Command(ChangeDirectory, [path], null, null);
+            return new(Constants.Help, string.Empty, null);
         }
 
-        return ParseConversionCommand(input);
+        if (input.StartsWith(Constants.ChangeDirectory))
+        {
+            string newPath = input[Constants.ChangeDirectory.Length..].Trim();
+            return new(Constants.ChangeDirectory, newPath, null);
+        }
+
+        string[] parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        string? targetExtension = ExtractTargetExtension(parts);
+        string? path = ExtractPath(parts);
+
+        return parts.Contains(Constants.ConvertAll)
+            ? new(Constants.ConvertAll, path ?? Directory.GetCurrentDirectory(), targetExtension)
+            : path != null ? new(Constants.ConvertFile, path, targetExtension) : throw new CommandException("Invalid command.");
     }
 
-    private static bool IsSpecialCommand(string input, out Command? command)
+    private static bool IsQuit(string input)
     {
-        command = input switch
-        {
-            Q or Quit or Exit => new Command(Quit, [], null, null),
-            Help => new Command(Help, [], null, null),
-            _ => null
-        };
-
-        return command != null;
+        return input is Constants.Q or Constants.Quit or Constants.Exit;
     }
 
-    private static Command ParseConversionCommand(string input)
+    private static bool IsHelp(string input)
     {
-        string? filePath = ExtractFilePath(input, [.. SupportedFileFormats]);
-        string remainingInput;
-
-        if (filePath != null)
-        {
-            remainingInput = input[(input.IndexOf(filePath) + filePath.Length)..].Trim();
-            var parts = remainingInput.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            string? formatFlag = ExtractFormatFlag(parts);
-
-            bool convertAll = parts.Contains(ConvertAll);
-            string commandType = convertAll ? ConvertAll : ConvertFile;
-            return new Command(commandType, [filePath], MapFormatFlag(formatFlag), null);
-        }
-
-        var allParts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-        if (allParts.Contains(ConvertAll))
-        {
-            string? formatFlag = ExtractFormatFlag(allParts);
-            return new Command(ConvertAll, [Directory.GetCurrentDirectory()], MapFormatFlag(formatFlag), null);
-        }
-
-        string? formatFlag2 = ExtractFormatFlag(allParts);
-        return ParseDirectoryConversion(allParts, formatFlag2);
+        return input == Constants.Help;
     }
 
-    private static Command ParseDirectoryConversion(string[] parts, string? formatFlag)
+    private static string? ExtractTargetExtension(string[] parts)
     {
-        var potentialPaths = parts.Where(p => !p.StartsWith("-")).ToList();
+        return parts.Select(p => Constants.FormatFlags.TryGetValue(p, out string? ext) ? ext : null)
+             .FirstOrDefault(e => e != null);
+    }
 
-        if (!potentialPaths.Any() && formatFlag != null)
+    private static string? ExtractPath(string[] parts)
+    {
+        foreach (string part in parts)
         {
-            return new Command(ConvertAll,
-                [Directory.GetCurrentDirectory()],
-                MapFormatFlag(formatFlag),
-                null);
-        }
+            string full = Path.GetFullPath(part);
 
-        foreach (var path in potentialPaths)
-        {
-            string relativePath = Path.Combine(Directory.GetCurrentDirectory(), path);
+            if (File.Exists(part) || Directory.Exists(part))
+            {
+                return part;
+            }
 
-            if (Directory.Exists(path))
+            if (File.Exists(full) || Directory.Exists(full))
             {
-                return new Command(ConvertAll, [path], MapFormatFlag(formatFlag), null);
-            }
-            if (Directory.Exists(relativePath))
-            {
-                return new Command(ConvertAll, [relativePath], MapFormatFlag(formatFlag), null);
-            }
-            if (File.Exists(path))
-            {
-                return new Command(ConvertFile, [path], MapFormatFlag(formatFlag), null);
-            }
-            if (File.Exists(relativePath))
-            {
-                return new Command(ConvertFile, [relativePath], MapFormatFlag(formatFlag), null);
+                return full;
             }
         }
 
-        throw new CommandException("Invalid command or path.");
+        return null;
     }
-
-    private static string? ExtractFormatFlag(string[] parts) =>
-        parts.FirstOrDefault(IsFormatFlag);
-
-    private static bool IsFormatFlag(string flag) =>
-        flag is PngFlag
-            or JpgFlag
-            or JpegFlag
-            or WebpFlag
-            or GifFlag
-            or TiffFlag
-            or BmpFlag;
-
-    private static string? ExtractFilePath(string input, string[] validExtensions) => validExtensions
-        .Select(ext => new
-        {
-            Extension = ext,
-            Index = input.IndexOf(ext, StringComparison.OrdinalIgnoreCase)
-        })
-        .Where(x => x.Index > 0)
-        .Select(x => input[..(x.Index + x.Extension.Length)].Trim())
-        .FirstOrDefault();
-
-    private static string? MapFormatFlag(string? flag) => flag switch
-    {
-        PngFlag => PngFileFormat,
-        JpgFlag => JpgFileFormat,
-        JpegFlag => JpegFileFormat,
-        WebpFlag => WebpFileFormat,
-        GifFlag => GifFileFormat,
-        TiffFlag => TiffFileFormat,
-        BmpFlag => BmpFileFormat,
-        _ => null
-    };
 }

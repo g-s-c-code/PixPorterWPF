@@ -1,4 +1,4 @@
 ﻿using PixPorter.Common;
+using PixPorter.Console;
 
-UI ui = new();
-new ImageConverter(ui).Run();
+new ImageConverter(new UI()).Run();

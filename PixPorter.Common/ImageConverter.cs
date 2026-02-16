@@ -4,30 +4,26 @@ using PixPorter.Common.Services;
 
 namespace PixPorter.Common;
 
-public class ImageConverter
+public class ImageConverter(IUserInterface ui)
 {
-    private readonly IUserInterace _ui;
-    private readonly CommandService _commandService;
-
-    public ImageConverter(IUserInterace ui)
-    {
-        _ui = ui;
-        _commandService = new CommandService(_ui);
-    }
+    private readonly CommandService _service = new(ui);
 
     public void Run()
     {
-        _ui.DisplayTitle("PixPorter - Image Format Converter");
+        ui.DisplayTitle("PixPorter");
 
         while (true)
         {
-            _ui.RenderUI(DirectoryHelper.GetDirectories(), DirectoryHelper.GetImageFiles());
-            var input = _ui.Read("Enter command:");
+            ui.RenderUI(
+                DirectoryHelper.GetDirectories(),
+                DirectoryHelper.GetImageFiles());
 
-            if (string.IsNullOrWhiteSpace(input))
-                continue;
+            string input = ui.Read("Enter command:");
 
-            _commandService.ProcessCommand(input);
+            if (!string.IsNullOrWhiteSpace(input))
+            {
+                _service.Process(input);
+            }
         }
     }
 }

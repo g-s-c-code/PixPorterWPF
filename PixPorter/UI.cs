@@ -1,334 +1,261 @@
-﻿using System.Text;
-using PixPorter.Common.Core;
-using PixPorter.Common.Interfaces;
-using PixPorter.Common.Models;
+﻿using PixPorter.Common.Interfaces;
 using Spectre.Console;
 using Spectre.Console.Rendering;
+using System.Text;
 
-public class UI : IUserInterace
+namespace PixPorter.Console;
+
+public class UI : IUserInterface
 {
-	private const int LayoutWidth = 150;
+    private const int LayoutWidth = 150;
 
-	#region Public Methods
+    public void RenderUI(IEnumerable<string> directories, IEnumerable<string> files, bool displayHelp = false)
+    {
+        Table leftPanel = InformationContentUI();
+        Panel rightPanel = DirectoryContentUI(CurrentDirectoryPathUI(), CurrentDirectoryContentUI(directories, files));
+        Table content = displayHelp
+            ? HelpContentUI()
+            : PixPorterUI(leftPanel, rightPanel);
 
-	public void RenderUI(IEnumerable<string> directories, IEnumerable<string> files, bool displayHelp = false)
-	{
-		var leftPanel = InformationContentUI();
-		var rightPanel = DirectoryContentUI(CurrentDirectoryPathUI(), CurrentDirectoryContentUI(directories, files));
-		var pixPorterUI = displayHelp ? HelpContentUI() : PixPorterUI(leftPanel, rightPanel);
+        AnsiConsole.Clear();
+        AnsiConsole.Write(content);
+    }
 
-		AnsiConsole.Clear();
-		AnsiConsole.Write(pixPorterUI);
-	}
+    public void RenderProgress(IEnumerable<string> files, string targetExtension, Action<string, string> convert)
+    {
+        List<string> list = [.. files];
+        AnsiConsole.Progress().Start(ctx =>
+        {
+            ProgressTask task = ctx.AddTask("[lightskyblue1]Converting Images[/]", maxValue: list.Count);
+            foreach (string file in list)
+            {
+                try
+                {
+                    convert(file, targetExtension);
+                    task.Increment(1);
+                }
+                catch (Exception ex)
+                {
+                    DisplayErrorMessage($"Conversion failed for {file}: {ex.Message}");
+                }
+            }
+        });
+    }
 
-	public void RenderProgress(List<string> files, string targetFormat, Action<string, string> convertFileMethod)
-	{
-		AnsiConsole.Progress()
-			.Start(ctx =>
-			{
-				var conversionTask = ctx.AddTask("Converting Images", maxValue: files.Count);
+    public string Read(string prompt) =>
+        AnsiConsole.Ask<string>(prompt);
 
-				foreach (var file in files)
-				{
-					try
-					{
-						conversionTask.Increment(1);
-						convertFileMethod(file, targetFormat);
-					}
-					catch (Exception ex)
-					{
-						DisplayErrorMessage($"Conversion failed for {file}: {ex.Message}");
-					}
-				}
-			});
-	}
+    public void Write(string message) =>
+        AnsiConsole.Write(new Markup(message, Color.White));
 
-	public string Read(string prompt) => AnsiConsole.Ask<string>(prompt);
+    public void WriteAndWait(string message)
+    {
+        Write(message);
+        _ = System.Console.ReadKey();
+    }
 
-	public void Write(string message)
-	{
-		AnsiConsole.Write(new Markup(message, Color.White));
-	}
+    public void DisplayErrorMessage(string message)
+    {
+        AnsiConsole.Write(new Markup(message, Color.RosyBrown));
+        _ = System.Console.ReadKey();
+    }
 
-	public void WriteAndWait(string message)
-	{
-		AnsiConsole.Write(new Markup(message, Color.White));
-		Console.ReadKey();
-	}
+    public void DisplayTitle(string title) =>
+        System.Console.Title = title;
 
-	public void DisplayErrorMessage(string message)
-	{
-		AnsiConsole.Write(new Markup(message, Color.RosyBrown));
-		Console.ReadKey();
-	}
+    private static Table PixPorterUI(Table left, Panel right)
+    {
+        Table table = new()
+        {
+            Border = TableBorder.Horizontal,
+            Title = new TableTitle("[lightskyblue1 bold]PixPorter - Image Format Converter[/]")
+        };
 
-	public void DisplayTitle(string title)
-	{
-		Console.Title = title;
-	}
+        _ = table.AddColumn(new TableColumn(left).Padding(0, 0));
+        _ = table.AddColumn(new TableColumn(right).Padding(0, 0));
 
-	public List<IRenderable> GetHelpDetails()
-	{
-		return new List<IRenderable>
-		{
-			BuildHelpSection("Drag & Drop"),
-			BuildHelpSection("Direct File/Folder Conversion"),
-			BuildHelpSection("Current Directory Conversion"),
-			BuildHelpSection("How to Use"),
-			BuildHelpSection("Flags")
-		};
-	}
+        return table;
+    }
 
-	#endregion
+    private static Panel DirectoryContentUI(Panel path, Table content) => new(new Rows([path, content]))
+    {
+        BorderStyle = Color.LightSkyBlue1,
+        Header = new PanelHeader("[[ CURRENT DIRECTORY ]]"),
+        Padding = new Padding(0, 1, 0, 0)
+    };
 
-	#region Private UI Component Methods
+    private Table InformationContentUI()
+    {
+        Table table = new()
+        {
+            Border = TableBorder.None,
+            Width = LayoutWidth
+        };
 
-	private Table PixPorterUI(Table leftPanel, Panel rightPanel)
-	{
-		var layoutTable = new Table
-		{
-			Border = TableBorder.Horizontal,
-			Title = new TableTitle("PixPorter - Image Format Converter")
-		};
+        _ = table.AddColumn(new TableColumn(string.Empty)).HideHeaders();
+        _ = table.Columns[0].Padding(0, 0);
 
-		layoutTable.AddColumn(new TableColumn(leftPanel).Padding(0, 0));
-		layoutTable.AddColumn(new TableColumn(rightPanel).Padding(0, 0));
+        foreach (IRenderable section in GetInformationSections())
+        {
+            _ = table.AddRow(section);
+        }
 
-		return layoutTable;
-	}
+        return table;
+    }
 
-	private Panel DirectoryContentUI(Panel currentDirectoryPathUI, Table currentDirectoryContentUI)
-	{
-		return new Panel(new Rows([currentDirectoryPathUI, currentDirectoryContentUI]))
-		{
-			BorderStyle = Color.LightSkyBlue1,
-			Header = new PanelHeader("[[ Current Directory ]]".ToUpper()),
-			Padding = new Padding(0, 1, 0, 0),
-		};
-	}
+    private static Panel CurrentDirectoryPathUI()
+    {
+        TextPath path = new TextPath(Directory.GetCurrentDirectory().ToUpper())
+            .RootColor(Color.White)
+            .SeparatorColor(Color.RosyBrown)
+            .StemColor(Color.White)
+            .LeafColor(Color.White);
 
-	private Table InformationContentUI()
-	{
-		var table = new Table
-		{
-			Border = TableBorder.None,
-			Width = LayoutWidth
-		};
+        return new Panel(path)
+        {
+            Border = BoxBorder.None,
+            Width = LayoutWidth
+        };
+    }
 
-		table.AddColumn(new TableColumn(string.Empty)).HideHeaders();
-		table.Columns[0].Padding(0, 0, 0, 0);
+    private Table CurrentDirectoryContentUI(IEnumerable<string> directories, IEnumerable<string> files)
+    {
+        Table table = new()
+        {
+            Border = TableBorder.Simple,
+            Width = LayoutWidth
+        };
 
-		AddInformationSections(table);
+        _ = table.AddColumn(new TableColumn(BuildTree("Folders:".ToUpper(), directories)));
+        _ = table.AddColumn(new TableColumn(BuildTree("Image Files:".ToUpper(), files)));
+        _ = table.Columns[0].Padding(0, 0);
+        _ = table.Columns[1].Padding(0, 0);
 
-		return table;
-	}
+        return table;
+    }
 
-	private Panel CurrentDirectoryPathUI()
-	{
-		var currentDirectory = new TextPath(Directory.GetCurrentDirectory().ToUpper())
-			.RootColor(Color.White)
-			.SeparatorColor(Color.RosyBrown)
-			.StemColor(Color.White)
-			.LeafColor(Color.White);
+    private Table HelpContentUI()
+    {
+        Table table = new()
+        {
+            Border = TableBorder.Horizontal,
+            Width = LayoutWidth,
+            Title = new TableTitle("[lightskyblue1 bold]PixPorter – Help & Usage Guide[/]")
+        };
 
-		return new Panel(currentDirectory)
-		{
-			Border = BoxBorder.None,
-			Width = LayoutWidth
-		};
-	}
+        _ = table.AddColumn(new TableColumn(string.Empty)).HideHeaders();
+        foreach (IRenderable section in GetHelpSections())
+        {
+            _ = table.AddRow(section);
+        }
 
-	private Table CurrentDirectoryContentUI(IEnumerable<string> directories, IEnumerable<string> files)
-	{
-		var table = new Table
-		{
-			Border = TableBorder.Simple,
-			Width = LayoutWidth
-		};
+        return table;
+    }
 
-		table.AddColumn(new TableColumn(BuildTree("Folders:".ToUpper(), directories)));
-		table.AddColumn(new TableColumn(BuildTree("Image Files:".ToUpper(), files)));
-		table.Columns[0].Padding(0, 0);
-		table.Columns[1].Padding(0, 0);
+    private IRenderable BuildTree(string title, IEnumerable<string> items)
+    {
+        Tree tree = new(new Markup(title.ToUpper(), Color.White))
+        {
+            Style = new Style(foreground: Color.RosyBrown)
+        };
 
-		return table;
-	}
+        foreach (string? item in items.DefaultIfEmpty("[dim italic]None[/]"))
+        {
+            _ = tree.AddNode($"[bold white]{item}[/]");
+        }
 
-	private Table HelpContentUI()
-	{
-		var table = new Table
-		{
-			Border = TableBorder.Horizontal,
-			Width = LayoutWidth,
-			Title = new TableTitle("PixPorter - Image Format Converter"),
-		};
+        return tree;
+    }
 
-		table.AddColumn(new TableColumn(string.Empty)).HideHeaders();
+    private IEnumerable<IRenderable> GetInformationSections()
+    {
+        yield return BuildSection("[lightskyblue1 underline bold]Usage Quick Guide[/]",
+        [
+            ("[indianred bold]DRAG & DROP[/]",
+                "\n- Drag and drop an image or folder into the window and press '[steelblue][[ENTER]][/]' to convert it. Add a format flag to override defaults.\n"),
+            ("[indianred bold]NAVIGATION[/]",
+                "\n- Use '[steelblue]cd [[path]][/]' to navigate folders. Convert all images with '[steelblue]--ca[/]'.")
+        ]);
 
-		foreach (var section in GetHelpDetails())
-		{
-			table.AddRow(section);
-		}
+        yield return BuildSection("[lightskyblue1 underline bold]Commands[/]",
+        [
+            ("[steelblue]--ca[/]     ", "- Convert all images in the [lightskyblue1 bold]current directory[/]"),
+            ("[steelblue]cd [[path]][/]", "- Change directory"),
+            ("[steelblue]help[/]     ", "- Open the detailed instructions menu"),
+            ("[steelblue]q[/]        ", "- Exit application")
+        ]);
 
-		return table;
-	}
+        yield return BuildSection(
+            "[lightskyblue1 underline bold]Conversion Format Flags[/]          [lightskyblue1 underline bold]Default Conversion Formats[/]",
+            [
+                ("[steelblue]--png[/]     - Convert to PNG", "      [indianred].png[/] -> [indianred].webp[/]"),
+                ("[steelblue]--jpg[/]     - Convert to JPG", "      [indianred].jpg[/] -> [indianred].webp[/]"),
+                ("[steelblue]--webp[/]    - Convert to WebP", "     [indianred].webp[/] -> [indianred].png[/]"),
+                ("[steelblue]--gif[/]     - Convert to GIF", "      [indianred].gif[/] -> [indianred].png[/]"),
+                ("[steelblue]--tiff[/]    - Convert to TIFF", "     [indianred].tiff[/] -> [indianred].png[/]"),
+                ("[steelblue]--bmp[/]     - Convert to BMP", "      [indianred].bmp[/] -> [indianred].png[/]")
+            ]
+        );
+    }
 
-	#endregion
+    private IEnumerable<IRenderable> GetHelpSections()
+    {
+        yield return BuildSection("Drag & Drop",
+        [
+            ("Drag a file or folder into the PixPorter window. Add an optional format flag if desired.", ""),
+            ("[indianred]EXAMPLE:[/] '[steelblue]my_photo.png[/]' + '[steelblue][[ENTER]][/]' -> Converts to the default format (e.g., '[steelblue]my_photo.webp[/]').", ""),
+            ("[indianred]EXAMPLE:[/] '[steelblue]my_photo.png --jpg[/]' + '[steelblue][[ENTER]][/]' -> Converts to JPG (e.g., '[steelblue]my_photo.jpg[/]').", "")
+        ]);
 
-	#region Helper Methods
+        yield return BuildSection("Direct File/Folder Conversion",
+        [
+            ("Enter a full file path or folder path + '[steelblue][[ENTER]][/]' for automatic conversion.", ""),
+            ("[indianred]EXAMPLE:[/] '[steelblue]C:\\Users\\Pictures --webp[/]' + '[steelblue][[ENTER]][/]' -> Converts all images in the folder to WebP.", "")
+        ]);
 
-	private void AddInformationSections(Table table)
-	{
-		var sections = new[]
-		{
-			BuildSection("[lightskyblue1 underline bold]Usage Quick Guide[/]", GetQuickGuideItems()),
-			BuildSection("[lightskyblue1 underline bold]Commands[/]", GetCommandItems()),
-			BuildSection("[lightskyblue1 underline bold]Conversion Format Flags[/]          [lightskyblue1 underline bold]Default Conversion Formats[/]", GetFormatItems())
-		};
+        yield return BuildSection("Current Directory Conversion",
+        [
+            ("Use the command line to navigate to a directory and perform conversions.", ""),
+            ("[steelblue]cd [[path]][/]   - Navigate to the desired directory.", ""),
+            ("[steelblue]--ca[/]         - Converts all images in the current directory.", ""),
+            ("[indianred]EXAMPLE:[/] '[steelblue]cd C:\\Users\\Photos[/]' + '[steelblue][[ENTER]][/]' -> Navigate to the directory.", ""),
+            ("[indianred]EXAMPLE:[/] '[steelblue]--ca --jpg[/]' + '[steelblue][[ENTER]][/]' -> Converts all images in the current directory to JPG.", "")
+        ]);
 
-		foreach (var section in sections)
-		{
-			table.AddRow(section);
-		}
-	}
+        yield return BuildSection("How to Use",
+        [
+            ("Add format flags [italic]if[/] you need a specific output format. These are optional since default mappings are pre-set.", ""),
+            ("Default mappings:",
+             "[indianred].png[/] → [indianred].webp[/] | [indianred].jpg[/] → [indianred].webp[/] | [indianred].jpeg[/] → [indianred].webp[/] | [indianred].webp[/] → [indianred].png[/] | [indianred].gif[/] → [indianred].png[/] | [indianred].tiff[/] → [indianred].png[/] | [indianred].bmp[/] → [indianred].png[/]")
+        ]);
 
-	private IRenderable BuildTree(string header, IEnumerable<string> items)
-	{
-		var tree = new Tree(new Markup(header, Color.White))
-		{
-			Style = new Style(foreground: Color.RosyBrown)
-		};
+        yield return BuildSection("Flags",
+        [
+            ("[steelblue]--png[/]   ", "- Convert to PNG"),
+            ("[steelblue]--jpg[/]   ", "- Convert to JPG"),
+            ("[steelblue]--webp[/]  ", "- Convert to WebP"),
+            ("[steelblue]--gif[/]   ", "- Convert to GIF"),
+            ("[steelblue]--tiff[/]  ", "- Convert to TIFF"),
+            ("[steelblue]--bmp[/]   ", "- Convert to BMP"),
+            ("[steelblue]--ca[/]    ", "- Convert all image files in the current directory")
+        ]);
+    }
 
-		foreach (var node in items.DefaultIfEmpty("[dim italic]None[/]").Select(item => $"[bold white]{item}[/]"))
-		{
-			tree.AddNode(node);
-		}
+    private static IRenderable BuildSection(string title, IEnumerable<(string Key, string Value)> items, string? footer = null)
+    {
+        StringBuilder sb = new();
+        _ = sb.AppendLine($"[lightskyblue1 underline bold]{title.ToUpper()}[/]");
 
-		return tree;
-	}
+        foreach ((string? key, string? value) in items)
+        {
+            _ = sb.AppendLine($"[white]{key}[/] {value}");
+        }
 
-	private IRenderable BuildSection(string title, (string Key, string Value)[] items)
-	{
-		var sectionContent = new StringBuilder().AppendLine(title.ToUpper());
+        if (footer != null)
+        {
+            _ = sb.AppendLine($"\n{footer}");
+        }
 
-		foreach (var (key, value) in items)
-		{
-			sectionContent.AppendLine($"[white]{key}[/] {value}");
-		}
-
-		return new Markup(sectionContent.ToString());
-	}
-
-	private (string Key, string Value)[] GetQuickGuideItems()
-	{
-		return new[]
-		{
-			("[indianred bold]DRAG & DROP[/]", "\n- Drag and drop an image to this window and press '[steelblue][[ENTER]][/]' to convert it. Add a format flag to specify format.\n"),
-			("[indianred bold]NAVIGATION[/]", "\n- Use '[steelblue]cd [[path]][/]' to navigate to a folder containing images. Convert all viable images with '[steelblue]--ca[/]'.")
-		};
-	}
-
-	private (string Key, string Value)[] GetCommandItems()
-	{
-		return new[]
-		{
-			("[steelblue]--ca[/]     ", "- Convert all images in the [lightskyblue1 bold]current directory[/]"),
-			("[steelblue]cd [[path]][/]", "- Change directory"),
-			("[steelblue]help[/]     ", "- Open the detailed instructions menu"),
-			("[steelblue]q[/]        ", "- Exit application")
-		};
-	}
-
-	private (string Key, string Value)[] GetFormatItems()
-	{
-		return new[]
-		{
-			("[steelblue]--png[/]     - Convert to PNG", "      [indianred].png[/] -> [indianred].webp[/]"),
-			("[steelblue]--jpg[/]     - Convert to JPG", "      [indianred].jpg[/] -> [indianred].webp[/]"),
-			("[steelblue]--webp[/]    - Convert to WebP", "     [indianred].webp[/] -> [indianred].png[/]"),
-			("[steelblue]--gif[/]     - Convert to GIF", "      [indianred].gif[/] -> [indianred].png[/]"),
-			("[steelblue]--tiff[/]    - Convert to TIFF", "     [indianred].tiff[/] -> [indianred].png[/]"),
-			("[steelblue]--bmp[/]     - Convert to BMP", "      [indianred].bmp[/] -> [indianred].png[/]")
-		};
-	}
-
-	public List<T> GetHelpDetails<T>()
-	{
-		if (typeof(T) != typeof(IRenderable))
-		{
-			throw new InvalidOperationException($"Help details of type {typeof(T)} are not supported.");
-		}
-
-		var helpDetails = new List<IRenderable>
-		{
-			BuildHelpSection("Drag & Drop"),
-			BuildHelpSection("Direct File/Folder Conversion"),
-			BuildHelpSection("Current Directory Conversion"),
-			BuildHelpSection("How to Use"),
-			BuildHelpSection("Flags")
-		};
-
-		return helpDetails as List<T> ?? throw new CommandException("Error fetching help section");
-	}
-
-	private IRenderable BuildHelpSection(string sectionType)
-	{
-		Dictionary<string, string> defaultConversions = new()
-		{
-			{ Constants.PngFileFormat, Constants.WebpFileFormat },
-			{ Constants.JpgFileFormat, Constants.WebpFileFormat },
-			{ Constants.JpegFileFormat, Constants.WebpFileFormat },
-			{ Constants.WebpFileFormat, Constants.PngFileFormat },
-			{ Constants.GifFileFormat, Constants.PngFileFormat },
-			{ Constants.TiffFileFormat, Constants.PngFileFormat },
-			{ Constants.BmpFileFormat, Constants.PngFileFormat }
-		};
-
-		switch (sectionType)
-		{
-			case "Drag & Drop":
-				return BuildSection("Drag & Drop", new[]
-				{
-			("Drag a file or folder into the PixPorter window. Add an optional format flag if desired.", ""),
-			("[indianred]EXAMPLE:[/] '[steelblue]my_photo.png[/]' + '[steelblue][[ENTER]][/]' -> Converts to the default format (e.g., '[steelblue]my_photo.webp[/]').", ""),
-			("[indianred]EXAMPLE:[/] '[steelblue]my_photo.png --jpg[/]' + '[steelblue][[ENTER]][/]' -> Converts to JPG (e.g., '[steelblue]my_photo.jpg[/]').", "")
-		});
-			case "Direct File/Folder Conversion":
-				return BuildSection("Direct File/Folder Conversion", new[]
-				{
-			("Enter a full file path or a folder path (and an optional format flag) + '[steelblue][[ENTER]][/]' for automatic conversion.", ""),
-			("[indianred]EXAMPLE:[/] '[steelblue]C:\\Users\\Pictures --webp[/]' + '[steelblue][[ENTER]][/]' -> Converts all images in the folder to WebP.", "")
-		});
-			case "Current Directory Conversion":
-				return BuildSection("Current Directory Conversion", new[]
-				{
-			("Use the command line to navigate to a directory and perform conversions.", ""),
-			("[steelblue]cd [[path]][/]   - Navigate to the desired directory.", ""),
-			("[steelblue]--ca[/]         - Converts all images in the current directory.", ""),
-			("[indianred]EXAMPLE:[/] '[steelblue]cd C:\\Users\\Photos[/]' + '[steelblue][[ENTER]][/]' -> Navigate to the directory.", ""),
-			("[indianred]EXAMPLE:[/] '[steelblue]--ca --jpg[/]' + '[steelblue][[ENTER]][/]' -> Converts all images in the current directory to JPG.", "")
-		});
-			case "How to Use":
-				return BuildSection("How to Use", new[]
-				{
-			("Add format flags [italic]if[/] you need a specific output format. These are optional since default mappings are pre-set.", ""),
-			($"Default mappings: {string.Join(" | ", defaultConversions.Select(c => $"[indianred]{c.Key}[/] -> [indianred]{c.Value}[/]"))}", "")
-		});
-			case "Flags":
-				return BuildSection("Flags", new[]
-				{
-			("[steelblue]--png[/]   ", "- Convert to PNG"),
-			("[steelblue]--jpg[/]   ", "- Convert to JPG"),
-			("[steelblue]--webp[/]  ", "- Convert to WebP"),
-			("[steelblue]--gif[/]   ", "- Convert to GIF"),
-			("[steelblue]--tiff[/]  ", "- Convert to TIFF"),
-			("[steelblue]--bmp[/]   ", "- Convert to BMP"),
-			("[steelblue]--ca[/]    ", "- Convert all image files in the current directory"),
-		});
-			default:
-				return new Markup("Section not found");
-		}
-	}
-
-	#endregion
+        return new Markup(sb.ToString());
+    }
 }
