@@ -5,21 +5,108 @@ namespace PixPorter.Common.Helpers;
 
 public static class CommandHelper
 {
+    public static CommandResult Execute(Command command)
+    {
+        switch (command.Name)
+        {
+            case Constants.Quit:
+                return new CommandResultQuit();
+
+            case Constants.Help:
+                return new CommandResultHelp();
+
+            case Constants.ChangeDirectory:
+                if (!Directory.Exists(command.Path))
+                {
+                    return new CommandResultError($"Directory not found: {command.Path}");
+                }
+
+                Directory.SetCurrentDirectory(command.Path);
+                return new CommandResultDirectoryChanged(command.Path);
+
+            case Constants.ConvertFile:
+                return ExecuteConvertFile(command);
+
+            case Constants.ConvertAll:
+                return ExecuteConvertAll(command);
+
+            default:
+                return new CommandResultError("Unknown command.");
+        }
+    }
+
+    public static CommandResult Process(string input)
+    {
+        try
+        {
+            Command command = CommandHelper.Parse(input);
+            return Execute(command);
+        }
+        catch (Exception ex)
+        {
+            return new CommandResultError(ex.Message);
+        }
+    }
+
+    private static CommandResult ExecuteConvertFile(Command command)
+    {
+        List<string> filesToConvert = [command.Path];
+        if (command.AdditionalPaths != null)
+        {
+            filesToConvert.AddRange(command.AdditionalPaths);
+        }
+
+        if (filesToConvert.Count == 1)
+        {
+            if (!File.Exists(command.Path))
+            {
+                return new CommandResultError($"File not found: {command.Path}");
+            }
+
+            string sourceExtension = Path.GetExtension(command.Path);
+            string effectiveTarget = command.TargetExtension ?? Constants.GetDefaultTarget(sourceExtension);
+            string outputPath = Path.ChangeExtension(command.Path, effectiveTarget);
+
+            ConversionHelper.ConvertFile(command.Path, effectiveTarget, command.Quality);
+            string qualityNote = command.Quality.HasValue
+                ? $" [quality: {command.Quality}]"
+                : string.Empty;
+
+            return new CommandResultSuccess($"Converted: {command.Path} → {outputPath}{qualityNote}");
+        }
+
+        return new CommandResultMultiConvert(filesToConvert, command.TargetExtension, command.Quality);
+    }
+
+    private static CommandResult ExecuteConvertAll(Command command)
+    {
+        if (!Directory.Exists(command.Path))
+        {
+            return new CommandResultError($"Directory not found: {command.Path}");
+        }
+
+        List<string> files = ConversionHelper.GetConvertibleFiles(command.Path).ToList();
+        return files.Count == 0
+            ? new CommandResultError("No supported images found.")
+            : new CommandResultMultiConvert(files, command.TargetExtension, command.Quality);
+    }
+
     public static Command Parse(string input)
     {
         input = input.Replace("\"", "").Trim();
+        string inputLower = input.ToLowerInvariant();
 
-        if (IsQuit(input))
+        if (IsQuit(inputLower))
         {
             return new(Constants.Quit, string.Empty, null);
         }
 
-        if (IsHelp(input))
+        if (IsHelp(inputLower))
         {
             return new(Constants.Help, string.Empty, null);
         }
 
-        if (input.StartsWith(Constants.ChangeDirectory))
+        if (inputLower.StartsWith(Constants.ChangeDirectory))
         {
             string newPath = input[Constants.ChangeDirectory.Length..].Trim();
             return new(Constants.ChangeDirectory, newPath, null);
@@ -27,53 +114,82 @@ public static class CommandHelper
 
         string[] parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         string? targetExtension = ExtractTargetExtension(parts);
-        List<string> allPaths = ExtractAllPaths(parts);  // Changed to get ALL paths
 
-        if (parts.Contains(Constants.ConvertAll))
+        int? quality = ExtractQuality(parts);
+        List<string> allPaths = ExtractAllPaths(parts);
+
+        if (parts.Any(p => p.Equals(Constants.ConvertAll, StringComparison.OrdinalIgnoreCase)))
         {
             string path = allPaths.FirstOrDefault() ?? Directory.GetCurrentDirectory();
-            return new(Constants.ConvertAll, path, targetExtension);
+            return new(Constants.ConvertAll, path, targetExtension, quality, null);
         }
 
-        if (allPaths.Any())
+        if (allPaths.Count != 0)
         {
-            // If multiple files, use first as primary and rest as additional
             string primaryPath = allPaths[0];
-            List<string>? additionalPaths = allPaths.Count > 1 ? allPaths.Skip(1).ToList() : null;
-            return new(Constants.ConvertFile, primaryPath, targetExtension, additionalPaths);
+            List<string>? additionalPaths = allPaths.Count > 1
+                ? [.. allPaths.Skip(1)]
+                : null;
+
+            return new(Constants.ConvertFile, primaryPath, targetExtension, quality, additionalPaths);
         }
 
         throw new CommandException("Invalid command.");
     }
 
-    private static bool IsQuit(string input)
-    {
-        return input is Constants.Q or Constants.Quit or Constants.Exit;
-    }
+    private static bool IsQuit(string input) =>
+        input is Constants.Q or Constants.Quit or Constants.Exit;
 
-    private static bool IsHelp(string input)
-    {
-        return input == Constants.Help;
-    }
+    private static bool IsHelp(string input) =>
+        input == Constants.Help;
 
-    private static string? ExtractTargetExtension(string[] parts)
-    {
-        return parts.Select(p => Constants.FormatFlags.TryGetValue(p, out string? ext) ? ext : null)
+    private static string? ExtractTargetExtension(string[] parts) =>
+        parts.Select(p => Constants.FormatFlags.TryGetValue(p, out string? ext) ? ext : null)
              .FirstOrDefault(e => e != null);
-    }
 
-    private static List<string> ExtractAllPaths(string[] parts)  // New method
+    private static int? ExtractQuality(string[] parts)
     {
-        List<string> paths = new();
-
         foreach (string part in parts)
         {
-            // Skip format flags
-            if (Constants.FormatFlags.ContainsKey(part) || part == Constants.ConvertAll)
+            if (part.StartsWith("--quality=", StringComparison.OrdinalIgnoreCase))
+            {
+                string raw = part["--quality=".Length..];
+                if (int.TryParse(raw, out int q) && q >= 1 && q <= 100)
+                {
+                    return q;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static List<string> ExtractAllPaths(string[] parts)
+    {
+        List<string> paths = [];
+        foreach (string part in parts)
+        {
+            if (Constants.FormatFlags.ContainsKey(part))
+            {
                 continue;
+            }
+
+            if (part.Equals(Constants.ConvertAll, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            if (part.StartsWith("--quality=", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            if (part.StartsWith("--", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
 
             string full = Path.GetFullPath(part);
-
             if (File.Exists(part))
             {
                 paths.Add(part);

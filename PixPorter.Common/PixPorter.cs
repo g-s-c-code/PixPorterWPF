@@ -1,13 +1,11 @@
 ﻿using PixPorter.Common.Helpers;
 using PixPorter.Common.Interfaces;
-using PixPorter.Common.Services;
+using PixPorter.Common.Models;
 
 namespace PixPorter.Common;
 
 public class PixPorter(IUserInterface ui)
 {
-    private readonly CommandService _service = new(ui);
-
     public void Run()
     {
         ui.DisplayTitle("PixPorter");
@@ -19,13 +17,14 @@ public class PixPorter(IUserInterface ui)
 
             while (Console.KeyAvailable)
             {
-                Console.ReadKey(true);
+                _ = Console.ReadKey(true);
             }
 
             string input = ui.Read("Enter command:");
             if (!string.IsNullOrWhiteSpace(input))
             {
-                _service.Process(input);
+                CommandResult result = CommandHelper.Process(input);
+                ui.HandleResult(result);
             }
         }
     }
