@@ -5,7 +5,20 @@ namespace PixPorter.Common.Helpers;
 
 public static class CommandHelper
 {
-    public static CommandResult Execute(Command command)
+    public static CommandResult ProcessCommand(string input)
+    {
+        try
+        {
+            Command command = ParseCommand(input);
+            return ExecuteCommand(command);
+        }
+        catch (Exception ex)
+        {
+            return new CommandResultError(ex.Message);
+        }
+    }
+
+    private static CommandResult ExecuteCommand(Command command)
     {
         switch (command.Name)
         {
@@ -25,83 +38,27 @@ public static class CommandHelper
                 return new CommandResultDirectoryChanged(command.Path);
 
             case Constants.ConvertFile:
-                return ExecuteConvertFile(command);
+                return ExecuteCommandConvertFile(command);
 
             case Constants.ConvertAll:
-                return ExecuteConvertAll(command);
+                return ExecuteCommandConvertAll(command);
 
             default:
                 return new CommandResultError("Unknown command.");
         }
     }
 
-    public static CommandResult Process(string input)
-    {
-        try
-        {
-            Command command = CommandHelper.Parse(input);
-            return Execute(command);
-        }
-        catch (Exception ex)
-        {
-            return new CommandResultError(ex.Message);
-        }
-    }
-
-    private static CommandResult ExecuteConvertFile(Command command)
-    {
-        List<string> filesToConvert = [command.Path];
-        if (command.AdditionalPaths != null)
-        {
-            filesToConvert.AddRange(command.AdditionalPaths);
-        }
-
-        if (filesToConvert.Count == 1)
-        {
-            if (!File.Exists(command.Path))
-            {
-                return new CommandResultError($"File not found: {command.Path}");
-            }
-
-            string sourceExtension = Path.GetExtension(command.Path);
-            string effectiveTarget = command.TargetExtension ?? Constants.GetDefaultTarget(sourceExtension);
-            string outputPath = Path.ChangeExtension(command.Path, effectiveTarget);
-
-            ConversionHelper.ConvertFile(command.Path, effectiveTarget, command.Quality);
-            string qualityNote = command.Quality.HasValue
-                ? $" [quality: {command.Quality}]"
-                : string.Empty;
-
-            return new CommandResultSuccess($"Converted: {command.Path} → {outputPath}{qualityNote}");
-        }
-
-        return new CommandResultMultiConvert(filesToConvert, command.TargetExtension, command.Quality);
-    }
-
-    private static CommandResult ExecuteConvertAll(Command command)
-    {
-        if (!Directory.Exists(command.Path))
-        {
-            return new CommandResultError($"Directory not found: {command.Path}");
-        }
-
-        List<string> files = ConversionHelper.GetConvertibleFiles(command.Path).ToList();
-        return files.Count == 0
-            ? new CommandResultError("No supported images found.")
-            : new CommandResultMultiConvert(files, command.TargetExtension, command.Quality);
-    }
-
-    public static Command Parse(string input)
+    private static Command ParseCommand(string input)
     {
         input = input.Replace("\"", "").Trim();
         string inputLower = input.ToLowerInvariant();
 
-        if (IsQuit(inputLower))
+        if (IsCommandQuit(inputLower))
         {
             return new(Constants.Quit, string.Empty, null);
         }
 
-        if (IsHelp(inputLower))
+        if (IsCommandHelp(inputLower))
         {
             return new(Constants.Help, string.Empty, null);
         }
@@ -137,10 +94,53 @@ public static class CommandHelper
         throw new CommandException("Invalid command.");
     }
 
-    private static bool IsQuit(string input) =>
+    private static CommandResult ExecuteCommandConvertFile(Command command)
+    {
+        List<string> filesToConvert = [command.Path];
+        if (command.AdditionalPaths != null)
+        {
+            filesToConvert.AddRange(command.AdditionalPaths);
+        }
+
+        if (filesToConvert.Count == 1)
+        {
+            if (!File.Exists(command.Path))
+            {
+                return new CommandResultError($"File not found: {command.Path}");
+            }
+
+            string sourceExtension = Path.GetExtension(command.Path);
+            string effectiveTarget = command.TargetExtension ?? Constants.GetDefaultTarget(sourceExtension);
+            string outputPath = Path.ChangeExtension(command.Path, effectiveTarget);
+
+            ConversionHelper.ConvertFile(command.Path, effectiveTarget, command.Quality);
+            string qualityNote = command.Quality.HasValue
+                ? $" [quality: {command.Quality}]"
+                : string.Empty;
+
+            return new CommandResultSuccess($"Converted: {command.Path} → {outputPath}{qualityNote}");
+        }
+
+        return new CommandResultMultiConvert(filesToConvert, command.TargetExtension, command.Quality);
+    }
+
+    private static CommandResult ExecuteCommandConvertAll(Command command)
+    {
+        if (!Directory.Exists(command.Path))
+        {
+            return new CommandResultError($"Directory not found: {command.Path}");
+        }
+
+        List<string> files = ConversionHelper.GetConvertibleFiles(command.Path).ToList();
+        return files.Count == 0
+            ? new CommandResultError("No supported images found.")
+            : new CommandResultMultiConvert(files, command.TargetExtension, command.Quality);
+    }
+
+    private static bool IsCommandQuit(string input) =>
         input is Constants.Q or Constants.Quit or Constants.Exit;
 
-    private static bool IsHelp(string input) =>
+    private static bool IsCommandHelp(string input) =>
         input == Constants.Help;
 
     private static string? ExtractTargetExtension(string[] parts) =>

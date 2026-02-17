@@ -23,7 +23,7 @@ public class PixPorter(IUserInterface ui)
             string input = ui.Read("Enter command:");
             if (!string.IsNullOrWhiteSpace(input))
             {
-                CommandResult result = CommandHelper.Process(input);
+                CommandResult result = CommandHelper.ProcessCommand(input);
                 ui.HandleResult(result);
             }
         }
