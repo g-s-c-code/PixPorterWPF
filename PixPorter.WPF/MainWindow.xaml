@@ -189,7 +189,7 @@
                                                            Margin="10,0,0,0"
                                                            VerticalAlignment="Center"
                                                            Foreground="{DynamicResource TextPrimaryBrush}"
-                                                           FontSize="13"
+                                                           FontSize="15"
                                                            Text="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ComboBox}, Converter={StaticResource NullToAuto}}" />
                                                 <Path Grid.Column="1"
                                                       HorizontalAlignment="Center"
@@ -229,7 +229,7 @@
                         <TextBlock Text="{Binding Converter={StaticResource NullToAuto}}"
                                    Padding="10,8"
                                    Foreground="{DynamicResource TextPrimaryBrush}"
-                                   FontSize="13" />
+                                   FontSize="15" />
                     </DataTemplate>
                 </Setter.Value>
             </Setter>
@@ -409,7 +409,7 @@
                 <StackPanel Orientation="Horizontal"
                             VerticalAlignment="Center">
                     <TextBlock Text="PixPorter"
-                               FontSize="15"
+                               FontSize="18"
                                FontWeight="SemiBold"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center" />
@@ -418,7 +418,7 @@
                             Background="{DynamicResource BorderBrush}"
                             Margin="14,0" />
                     <TextBlock Text="Image Format Converter"
-                               FontSize="13"
+                               FontSize="16"
                                Foreground="{DynamicResource TextSecondaryBrush}"
                                VerticalAlignment="Center" />
                 </StackPanel>
@@ -491,7 +491,7 @@
                                    HorizontalAlignment="Center"
                                    Margin="0,0,0,6" />
                         <TextBlock Text="or"
-                                   FontSize="13"
+                                   FontSize="15"
                                    Foreground="{DynamicResource TextTertiaryBrush}"
                                    HorizontalAlignment="Center"
                                    Margin="0,0,0,12" />
@@ -500,7 +500,7 @@
                                 Command="{Binding BrowseFilesCommand}"
                                 HorizontalAlignment="Center" />
                         <TextBlock Text="PNG · JPG · WEBP · GIF · BMP · TIFF"
-                                   FontSize="11"
+                                   FontSize="13"
                                    Foreground="{DynamicResource TextTertiaryBrush}"
                                    HorizontalAlignment="Center"
                                    Margin="0,16,0,0" />
@@ -518,7 +518,7 @@
                                 Padding="16,12">
                             <Grid>
                                 <TextBlock VerticalAlignment="Center"
-                                           FontSize="13"
+                                           FontSize="15"
                                            Foreground="{DynamicResource TextSecondaryBrush}">
                                     <Run Text="{Binding QueuedFiles.Count, Mode=OneWay}" />
                                     <Run Text="file(s) queued" />
@@ -528,7 +528,7 @@
                                         Padding="12,6"
                                         Command="{Binding BrowseFilesCommand}"
                                         HorizontalAlignment="Right"
-                                        FontSize="12" />
+                                        FontSize="14" />
                             </Grid>
                         </Border>
 
@@ -563,18 +563,18 @@
                                                             VerticalAlignment="Center"
                                                             Margin="4,0">
                                                     <TextBlock Text="{Binding FileName}"
-                                                               FontSize="13"
+                                                               FontSize="15"
                                                                Foreground="{DynamicResource TextPrimaryBrush}"
                                                                TextTrimming="CharacterEllipsis" />
                                                     <TextBlock Text="{Binding FileSize}"
-                                                               FontSize="11"
+                                                               FontSize="13"
                                                                Foreground="{DynamicResource TextTertiaryBrush}"
                                                                Margin="0,2,0,0" />
                                                 </StackPanel>
 
                                                 <TextBlock Grid.Column="2"
                                                            Text="{Binding StatusText}"
-                                                           FontSize="12"
+                                                           FontSize="14"
                                                            VerticalAlignment="Center"
                                                            Foreground="{Binding Status, Converter={StaticResource StatusToColor}}"
                                                            Margin="0,0,12,0" />
@@ -587,7 +587,7 @@
                                                         Height="24"
                                                         ToolTip="Remove">
                                                     <TextBlock Text="✕"
-                                                               FontSize="11"
+                                                               FontSize="13"
                                                                Foreground="{DynamicResource TextTertiaryBrush}" />
                                                 </Button>
                                             </Grid>
@@ -612,7 +612,7 @@
 
                         <StackPanel Margin="0,0,0,16">
                             <TextBlock Text="OUTPUT FORMAT"
-                           FontSize="10"
+                           FontSize="12"
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource TextTertiaryBrush}"
                            Margin="0,0,0,8" />
@@ -620,7 +620,7 @@
                           ItemsSource="{Binding FormatOptions}"
                           SelectedItem="{Binding SelectedFormat}" />
                             <TextBlock Text="Default: follows per-format mapping rules"
-                           FontSize="11"
+                           FontSize="13"
                            Foreground="{DynamicResource TextTertiaryBrush}"
                            Margin="0,6,0,0"
                            TextWrapping="Wrap" />
@@ -633,12 +633,12 @@
                         <StackPanel Margin="0,0,0,16">
                             <Grid Margin="0,0,0,8">
                                 <TextBlock Text="Quality"
-                               FontSize="13"
+                               FontSize="15"
                                Foreground="{DynamicResource TextSecondaryBrush}"
                                VerticalAlignment="Center" />
                                 <TextBlock HorizontalAlignment="Right"
                                VerticalAlignment="Center"
-                               FontSize="13"
+                               FontSize="15"
                                FontWeight="Medium"
                                Foreground="{DynamicResource TextPrimaryBrush}">
                         <Run Text="{Binding Quality, Mode=OneWay}" />
@@ -656,7 +656,7 @@
                         Margin="0,0,0,6" />
 
                             <TextBlock Text="{Binding QualityHint}"
-                           FontSize="11"
+                           FontSize="13"
                            Foreground="{DynamicResource TextTertiaryBrush}"
                            TextWrapping="Wrap" />
                         </StackPanel>
@@ -669,20 +669,20 @@
                     Style="{StaticResource GhostButton}"
                     HorizontalAlignment="Stretch"
                     Height="34"
-                    FontSize="12"
+                    FontSize="14"
                     Click="InfoToggle_Click">
                             <Grid Width="210">
                                 <TextBlock Text="Format &amp; Mapping Info"
                                Foreground="{DynamicResource TextSecondaryBrush}"
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"
-                               FontSize="12" />
+                               FontSize="14" />
                                 <TextBlock x:Name="InfoToggleChevron"
                                Text="▾"
                                Foreground="{DynamicResource TextTertiaryBrush}"
                                HorizontalAlignment="Right"
                                VerticalAlignment="Center"
-                               FontSize="11" />
+                               FontSize="13" />
                             </Grid>
                         </Button>
 
@@ -697,7 +697,7 @@
                                   Visibility="Collapsed">
                         <StackPanel>
                             <TextBlock Text="DEFAULT MAPPINGS"
-                           FontSize="10"
+                           FontSize="12"
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource TextTertiaryBrush}"
                            Margin="0,0,0,10" />
@@ -716,16 +716,16 @@
                         Margin="0,12,0,12" />
 
                             <TextBlock Text="QUALITY SUPPORT"
-                           FontSize="10"
+                           FontSize="12"
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource TextTertiaryBrush}"
                            Margin="0,0,0,10" />
                             <StackPanel>
-                                <TextBlock FontSize="12"
+                                <TextBlock FontSize="14"
                                Foreground="{DynamicResource TextSecondaryBrush}"
                                Margin="0,0,0,4"
                                Text="✓  JPG · PNG · WebP" />
-                                <TextBlock FontSize="12"
+                                <TextBlock FontSize="14"
                                Foreground="{DynamicResource TextTertiaryBrush}"
                                Text="✕  GIF · BMP · TIFF" />
                             </StackPanel>
@@ -767,7 +767,7 @@
                     </Style>
                 </Border.Style>
                 <TextBlock Text="{Binding StatusMessage}"
-                           FontSize="13">
+                           FontSize="15">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
