@@ -517,12 +517,19 @@
                                 BorderThickness="0,0,0,1"
                                 Padding="16,12">
                             <Grid>
-                                <TextBlock VerticalAlignment="Center"
-                                           FontSize="15"
-                                           Foreground="{DynamicResource TextSecondaryBrush}">
-                                    <Run Text="{Binding QueuedFiles.Count, Mode=OneWay}" />
-                                    <Run Text="file(s) queued" />
-                                </TextBlock>
+                                <StackPanel Orientation="Horizontal"
+                                            VerticalAlignment="Center">
+                                    <CheckBox Style="{StaticResource CheckBoxStyle}"
+                                              IsChecked="{Binding AllSelected, Mode=TwoWay}"
+                                              VerticalAlignment="Center"
+                                              Margin="0,0,12,0" />
+                                    <TextBlock VerticalAlignment="Center"
+                                               FontSize="15"
+                                               Foreground="{DynamicResource TextSecondaryBrush}">
+                <Run Text="{Binding QueuedFiles.Count, Mode=OneWay}" />
+                <Run Text="file(s) queued" />
+                                    </TextBlock>
+                                </StackPanel>
                                 <Button Content="+ Add more"
                                         Style="{StaticResource GhostButton}"
                                         Padding="12,6"
@@ -540,18 +547,25 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Border Background="Transparent"
-                                                Padding="4,6"
+                                                Padding="0,6"
                                                 Margin="0,1">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="44" />
                                                     <ColumnDefinition Width="8" />
                                                     <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
                                                     <ColumnDefinition Width="Auto" />
                                                     <ColumnDefinition Width="28" />
                                                 </Grid.ColumnDefinitions>
 
-                                                <Border Grid.Column="0"
+                                                <CheckBox Grid.Column="0"
+                                                          IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                          Style="{StaticResource CheckBoxStyle}"
+                                                          VerticalAlignment="Center"
+                                                          HorizontalAlignment="Left"
+                                                          Margin="16,0,0,0" />
+
+                                                <Border Grid.Column="1"
                                                         Width="3"
                                                         Height="32"
                                                         CornerRadius="2"
@@ -559,7 +573,7 @@
                                                         VerticalAlignment="Center"
                                                         Margin="0,0,8,0" />
 
-                                                <StackPanel Grid.Column="1"
+                                                <StackPanel Grid.Column="2"
                                                             VerticalAlignment="Center"
                                                             Margin="4,0">
                                                     <TextBlock Text="{Binding FileName}"
@@ -572,7 +586,7 @@
                                                                Margin="0,2,0,0" />
                                                 </StackPanel>
 
-                                                <TextBlock Grid.Column="2"
+                                                <TextBlock Grid.Column="3"
                                                            Text="{Binding StatusText}"
                                                            FontSize="14"
                                                            VerticalAlignment="Center"
@@ -726,7 +740,7 @@
                     </Grid>
 
                     <StackPanel Grid.Row="2" Margin="0,16,0,0">
-                        <Button Content="Convert All"
+                        <Button Content="{Binding ConvertButtonText}"
                                 Style="{StaticResource FlatButton}"
                                 Command="{Binding ConvertCommand}"
                                 IsEnabled="{Binding IsConverting, Converter={StaticResource InvBoolToVis}}"

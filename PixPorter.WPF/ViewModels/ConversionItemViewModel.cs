@@ -31,6 +31,9 @@ public partial class ConversionItemViewModel : ObservableObject
     [ObservableProperty]
     private string? _errorMessage;
 
+    [ObservableProperty]
+    private bool _isSelected = false;
+
     public ConversionItemViewModel(string filePath)
     {
         FilePath = filePath;
