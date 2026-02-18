@@ -11,7 +11,7 @@
     <Color x:Key="AccentColor">#3D3D3F</Color>
     <Color x:Key="AccentDimColor">#E4E4E7</Color>
     <Color x:Key="DestructiveColor">#DC2626</Color>
-    <Color x:Key="SuccessColor">#2B7FD4</Color>
+    <Color x:Key="SuccessColor">#008EC5</Color>
     <Color x:Key="DropZoneActiveColor">#F4F4F5</Color>
 
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
