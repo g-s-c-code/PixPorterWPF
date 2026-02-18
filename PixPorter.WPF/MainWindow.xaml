@@ -752,10 +752,9 @@
         </Grid>
 
         <Border Grid.Row="2"
-                Margin="20,12,20,16"
-                Visibility="{Binding HasStatusMessage, Converter={StaticResource BoolToVis}}">
+        Margin="20,8,20,20">
             <Border CornerRadius="6"
-                    Padding="14,10">
+            Padding="14,10">
                 <Border.Style>
                     <Style TargetType="Border">
                         <Setter Property="Background" Value="{DynamicResource SurfaceElevatedBrush}" />
@@ -766,12 +765,17 @@
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
-                <TextBlock Text="{Binding StatusMessage}"
-                           FontSize="15">
+                <TextBlock FontSize="13"
+                   TextWrapping="Wrap">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="{Binding StatusMessage}" />
                             <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+                            <Setter Property="Opacity" Value="0" />
                             <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasStatusMessage}" Value="True">
+                                    <Setter Property="Opacity" Value="1" />
+                                </DataTrigger>
                                 <DataTrigger Binding="{Binding StatusIsError}" Value="True">
                                     <Setter Property="Foreground" Value="{DynamicResource DestructiveBrush}" />
                                 </DataTrigger>
