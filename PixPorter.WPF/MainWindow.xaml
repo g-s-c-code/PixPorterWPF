@@ -21,7 +21,6 @@
         <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
         <conv:InverseBoolToVisibilityConverter x:Key="InvBoolToVis" />
         <conv:ConversionStatusToColorConverter x:Key="StatusToColor" />
-        <conv:NullToAutoFormatConverter x:Key="NullToAuto" />
         <conv:CountToVisibilityConverter x:Key="CountToVis" />
         <conv:InverseCountToVisibilityConverter x:Key="InvCountToVis" />
 
@@ -190,7 +189,7 @@
                                                            VerticalAlignment="Center"
                                                            Foreground="{DynamicResource TextPrimaryBrush}"
                                                            FontSize="15"
-                                                           Text="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ComboBox}, Converter={StaticResource NullToAuto}}" />
+                                                           Text="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=ComboBox}}" />
                                                 <Path Grid.Column="1"
                                                       HorizontalAlignment="Center"
                                                       VerticalAlignment="Center"
@@ -214,7 +213,8 @@
                                         CornerRadius="6"
                                         MinWidth="{TemplateBinding ActualWidth}"
                                         MaxHeight="200">
-                                    <ScrollViewer>
+                                    <ScrollViewer Style="{StaticResource ScrollViewerStyle}"
+                                                  HorizontalScrollBarVisibility="Disabled">
                                         <ItemsPresenter />
                                     </ScrollViewer>
                                 </Border>
@@ -226,7 +226,7 @@
             <Setter Property="ItemTemplate">
                 <Setter.Value>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Converter={StaticResource NullToAuto}}"
+                        <TextBlock Text="{Binding}"
                                    Padding="10,8"
                                    Foreground="{DynamicResource TextPrimaryBrush}"
                                    FontSize="15" />
@@ -260,6 +260,12 @@
         </Style>
 
         <Style x:Key="SliderStyle" TargetType="Slider">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.3" />
+                </Trigger>
+            </Style.Triggers>
+            <Setter Property="Opacity" Value="1" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Slider">
@@ -344,55 +350,6 @@
             </Setter>
         </Style>
 
-        <Style x:Key="ScrollBarStyle" TargetType="ScrollBar">
-            <Setter Property="Width" Value="3" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ScrollBar">
-                        <Grid Width="3">
-                            <Track x:Name="PART_Track" IsDirectionReversed="True">
-                                <Track.Thumb>
-                                    <Thumb>
-                                        <Thumb.Template>
-                                            <ControlTemplate TargetType="Thumb">
-                                                <Border Background="{DynamicResource BorderBrush}"
-                                                        CornerRadius="1"
-                                                        Margin="0,2" />
-                                            </ControlTemplate>
-                                        </Thumb.Template>
-                                    </Thumb>
-                                </Track.Thumb>
-                            </Track>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="ScrollViewerStyle" TargetType="ScrollViewer">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ScrollViewer">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <ScrollContentPresenter Grid.Column="0" />
-                            <ScrollBar Grid.Column="1"
-                                       x:Name="PART_VerticalScrollBar"
-                                       Style="{StaticResource ScrollBarStyle}"
-                                       Orientation="Vertical"
-                                       Value="{TemplateBinding VerticalOffset}"
-                                       Maximum="{TemplateBinding ScrollableHeight}"
-                                       ViewportSize="{TemplateBinding ViewportHeight}"
-                                       Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" />
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
     </Window.Resources>
 
     <Grid>
@@ -449,7 +406,7 @@
         <Grid Grid.Row="1" Margin="16,16,16,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="16" />
                 <ColumnDefinition Width="260" />
             </Grid.ColumnDefinitions>
 
@@ -526,8 +483,8 @@
                                     <TextBlock VerticalAlignment="Center"
                                                FontSize="15"
                                                Foreground="{DynamicResource TextSecondaryBrush}">
-                <Run Text="{Binding QueuedFiles.Count, Mode=OneWay}" />
-                <Run Text="file(s) queued" />
+                                        <Run Text="{Binding QueuedFiles.Count, Mode=OneWay}" />
+                                        <Run Text="file(s) queued" />
                                     </TextBlock>
                                 </StackPanel>
                                 <Button Content="+ Add more"
@@ -616,7 +573,8 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
+                        <RowDefinition Height="41*" />
+                        <RowDefinition Height="11*"/>
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
@@ -630,7 +588,7 @@
                                        Margin="0,0,0,8" />
                             <ComboBox Style="{StaticResource ComboBoxStyle}"
                                       ItemsSource="{Binding FormatOptions}"
-                                      SelectedItem="{Binding SelectedFormat}" />
+                                      SelectedItem="{Binding SelectedFormatOption, Mode=TwoWay}" />
                             <TextBlock Text="Default: follows per-format mapping rules"
                                        FontSize="13"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
@@ -643,6 +601,16 @@
                                 Margin="0,0,0,16" />
 
                         <StackPanel Margin="0,0,0,16">
+                            <StackPanel.Style>
+                                <Style TargetType="StackPanel">
+                                    <Setter Property="Opacity" Value="1" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding QualitySupported}" Value="False">
+                                            <Setter Property="Opacity" Value="0.4" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
                             <Grid Margin="0,0,0,8">
                                 <TextBlock Text="Quality"
                                            FontSize="15"
@@ -679,7 +647,7 @@
 
                     </StackPanel>
 
-                    <Grid Grid.Row="1" Margin="0,16,0,0">
+                    <Grid Grid.Row="1" Margin="0,16,0,0" Grid.RowSpan="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
@@ -739,7 +707,7 @@
                         </ScrollViewer>
                     </Grid>
 
-                    <StackPanel Grid.Row="2" Margin="0,16,0,0">
+                    <StackPanel Grid.Row="3" Margin="0,16,0,0">
                         <Button Content="{Binding ConvertButtonText}"
                                 Style="{StaticResource FlatButton}"
                                 Command="{Binding ConvertCommand}"
@@ -752,7 +720,8 @@
                                 Style="{StaticResource GhostButton}"
                                 Command="{Binding ClearQueueCommand}"
                                 HorizontalAlignment="Stretch"
-                                Height="36" />
+                                Height="42"
+                                FontSize="16" />
                     </StackPanel>
                 </Grid>
             </Border>

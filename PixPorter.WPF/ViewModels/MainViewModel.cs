@@ -16,8 +16,27 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<ConversionItemViewModel> _queuedFiles = [];
 
-    [ObservableProperty]
-    private string? _selectedFormat;
+    public const string AutoFormat = "Auto";
+
+    public IReadOnlyList<string> FormatOptions { get; } = [AutoFormat, ".webp", ".png", ".jpg", ".gif", ".bmp", ".tiff"];
+
+    private string _selectedFormatOption = AutoFormat;
+    public string SelectedFormatOption
+    {
+        get => _selectedFormatOption;
+        set
+        {
+            if (SetProperty(ref _selectedFormatOption, value))
+            {
+                OnPropertyChanged(nameof(QualitySupported));
+                OnPropertyChanged(nameof(QualityHint));
+                if (!QualitySupported)
+                    Quality = 100;
+            }
+        }
+    }
+
+    private string? SelectedFormat => SelectedFormatOption == AutoFormat ? null : SelectedFormatOption;
 
     [ObservableProperty]
     private int _quality = 100;
@@ -69,22 +88,12 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public IReadOnlyList<string?> FormatOptions { get; } = [null, ".webp", ".png", ".jpg", ".gif", ".bmp", ".tiff"];
-
     private static bool IsQualitySupported(string? ext) =>
         ext is ".webp" or ".png" or ".jpg" or ".jpeg";
 
     partial void OnIsDarkChanged(bool value)
     {
         ThemeService.Instance.Apply(value);
-    }
-
-    partial void OnSelectedFormatChanged(string? value)
-    {
-        OnPropertyChanged(nameof(QualitySupported));
-        OnPropertyChanged(nameof(QualityHint));
-        if (!QualitySupported)
-            Quality = 100;
     }
 
     partial void OnQueuedFilesChanged(ObservableCollection<ConversionItemViewModel> value)
