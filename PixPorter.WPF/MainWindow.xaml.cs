@@ -50,11 +50,4 @@ public partial class MainWindow : Window
 
         e.Handled = true;
     }
-
-    private void InfoToggle_Click(object sender, RoutedEventArgs e)
-    {
-        bool isVisible = InfoPanel.Visibility == Visibility.Visible;
-        InfoPanel.Visibility = isVisible ? Visibility.Collapsed : Visibility.Visible;
-        InfoToggleChevron.Text = isVisible ? "▾" : "▴";
-    }
 }
