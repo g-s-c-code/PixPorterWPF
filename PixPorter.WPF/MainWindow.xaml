@@ -376,10 +376,6 @@
                             Margin="14,0" />
                     <TextBlock
                 VerticalAlignment="Center" FontSize="16" Foreground="{DynamicResource TextSecondaryBrush}" ><Run FontWeight="Bold" Text="Image Format Converter"/></TextBlock>
-                    <TextBlock Text="Image Format Converter"
-                               FontSize="16"
-                               Foreground="{DynamicResource TextSecondaryBrush}"
-                               VerticalAlignment="Center" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal"
@@ -388,7 +384,7 @@
                     <ToggleButton Style="{StaticResource ToggleThemeButton}"
                                   IsChecked="{Binding IsDark}"
                                   ToolTip="Toggle theme">
-                        <TextBlock FontSize="14">
+                        <TextBlock FontSize="24">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="Text" Value="☀" />
@@ -668,13 +664,13 @@
                                            Foreground="{DynamicResource TextTertiaryBrush}"
                                            Margin="0,0,0,10" ><Run FontWeight="Bold" Text="DEFAULT MAPPINGS"/></TextBlock>
                                 <StackPanel>
-                                    <local:MappingRow From=".png"  To=".webp" Margin="0,0,0,3" Loaded="MappingRow_Loaded" />
+                                    <local:MappingRow From=".webp" To=".png"  Margin="0,0,0,3" Loaded="MappingRow_Loaded" />
+                                    <local:MappingRow From=".png"  To=".webp" Margin="0,0,0,3" />
                                     <local:MappingRow From=".jpg"  To=".webp" Margin="0,0,0,3" />
                                     <local:MappingRow From=".jpeg" To=".webp" Margin="0,0,0,3" />
-                                    <local:MappingRow From=".webp" To=".png"  Margin="0,0,0,3" />
-                                    <local:MappingRow From=".gif"  To=".png"  Margin="0,0,0,3" />
-                                    <local:MappingRow From=".tiff" To=".png"  Margin="0,0,0,3" />
-                                    <local:MappingRow From=".bmp"  To=".png" />
+                                    <local:MappingRow From=".gif"  To=".webp"  Margin="0,0,0,3" />
+                                    <local:MappingRow From=".tiff" To=".webp"  Margin="0,0,0,3" />
+                                    <local:MappingRow From=".bmp"  To=".webp" />
                                 </StackPanel>
 
                                 <Border Height="1"
