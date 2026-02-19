@@ -18,7 +18,7 @@ public partial class MainViewModel : ObservableObject
 
     public const string AutoFormat = "Auto";
 
-    public IReadOnlyList<string> FormatOptions { get; } = [AutoFormat, ".webp", ".png", ".jpg", ".gif", ".bmp", ".tiff"];
+    public IReadOnlyList<string> FormatOptions { get; } = [AutoFormat, "WebP", "PNG", "JPG", "GIF", "BMP", "TIFF"];
 
     private string _selectedFormatOption = AutoFormat;
     public string SelectedFormatOption

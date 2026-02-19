@@ -715,7 +715,7 @@
                                 HorizontalAlignment="Stretch"
                                 Height="42"
                                 FontSize="16"
-                                Margin="0,0,0,10" />
+                                Margin="0,0,0,16" Click="Button_Click" />
                         <Button Content="Clear Queue"
                                 Style="{StaticResource GhostButton}"
                                 Command="{Binding ClearQueueCommand}"
