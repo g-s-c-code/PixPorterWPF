@@ -19,6 +19,7 @@ public partial class ConversionItemViewModel : ObservableObject
     [ObservableProperty] private ConversionStatus _status = ConversionStatus.Pending;
     [ObservableProperty] private string _statusText = "Pending";
     [ObservableProperty] private string? _errorMessage;
+    [ObservableProperty] private string? _outputFileSize;
     [ObservableProperty] private bool _isSelected = false;
 
     public ConversionItemViewModel(string filePath)

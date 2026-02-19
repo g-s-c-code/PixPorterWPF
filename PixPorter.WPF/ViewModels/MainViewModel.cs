@@ -79,6 +79,13 @@ public partial class MainViewModel : ObservableObject
     private static bool IsQualitySupported(string? ext) =>
         ext is ".webp" or ".png" or ".jpg" or ".jpeg";
 
+    private static string FormatOutputBytes(long bytes)
+    {
+        if (bytes >= 1_048_576) return $"{bytes / 1_048_576.0:F1} MB";
+        if (bytes >= 1024) return $"{bytes / 1024.0:F0} KB";
+        return $"{bytes} B";
+    }
+
     partial void OnIsDarkChanged(bool value) => ThemeService.Instance.Apply(value);
 
     partial void OnQueuedFilesChanged(ObservableCollection<ConversionItemViewModel> value)
@@ -134,7 +141,7 @@ public partial class MainViewModel : ObservableObject
         foreach (var item in toConvert)
         {
             item.Status = ConversionStatus.Converting;
-            item.StatusText = "Converting…";
+            item.StatusText = "—";
 
             await Task.Run(() =>
             {
@@ -149,7 +156,17 @@ public partial class MainViewModel : ObservableObject
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         item.Status = ConversionStatus.Done;
-                        item.StatusText = $"→ {targetExt.TrimStart('.').ToUpperInvariant()}";
+                        item.StatusText = targetExt.TrimStart('.').ToUpperInvariant();
+
+                        try
+                        {
+                            string outputPath = Path.ChangeExtension(item.FilePath, targetExt);
+                            item.OutputFileSize = FormatOutputBytes(new FileInfo(outputPath).Length);
+                        }
+                        catch
+                        {
+                            item.OutputFileSize = null;
+                        }
                     });
 
                     success++;
