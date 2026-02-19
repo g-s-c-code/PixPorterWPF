@@ -7,11 +7,11 @@ public partial class MappingRow : UserControl
 {
     public static readonly DependencyProperty FromProperty =
         DependencyProperty.Register(nameof(From), typeof(string), typeof(MappingRow),
-            new PropertyMetadata(string.Empty, OnFromChanged));
+            new PropertyMetadata(string.Empty));
 
     public static readonly DependencyProperty ToProperty =
         DependencyProperty.Register(nameof(To), typeof(string), typeof(MappingRow),
-            new PropertyMetadata(string.Empty, OnToChanged));
+            new PropertyMetadata(string.Empty));
 
     public string From
     {
@@ -28,17 +28,5 @@ public partial class MappingRow : UserControl
     public MappingRow()
     {
         InitializeComponent();
-    }
-
-    private static void OnFromChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is MappingRow row)
-            row.FromText.Text = (string)e.NewValue;
-    }
-
-    private static void OnToChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is MappingRow row)
-            row.ToText.Text = (string)e.NewValue;
     }
 }

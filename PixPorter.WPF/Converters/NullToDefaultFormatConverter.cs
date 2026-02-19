@@ -3,10 +3,10 @@ using System.Windows.Data;
 
 namespace PixPorter.WPF.Converters;
 
-public class NullToAutoFormatConverter : IValueConverter
+public class NullToDefaultFormatConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        => value is null ? "Auto" : ((string)value).TrimStart('.').ToUpperInvariant();
+        => value is null ? "Default" : ((string)value).TrimStart('.').ToUpperInvariant();
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         => throw new NotImplementedException();

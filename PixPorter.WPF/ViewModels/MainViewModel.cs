@@ -13,12 +13,13 @@ namespace PixPorter.WPF.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
-    [ObservableProperty]
-    private ObservableCollection<ConversionItemViewModel> _queuedFiles = [];
-
     public const string DefaultFormat = "Default";
 
-    public IReadOnlyList<string> FormatOptions { get; } = [DefaultFormat, "WebP", "PNG", "JPG", "GIF", "BMP", "TIFF"];
+    public IReadOnlyList<string> FormatOptions { get; } =
+        [DefaultFormat, "WebP", "PNG", "JPG", "GIF", "BMP", "TIFF"];
+
+    [ObservableProperty]
+    private ObservableCollection<ConversionItemViewModel> _queuedFiles = [];
 
     private string _selectedFormatOption = DefaultFormat;
     public string SelectedFormatOption
@@ -38,26 +39,13 @@ public partial class MainViewModel : ObservableObject
 
     private string? SelectedFormat => SelectedFormatOption == DefaultFormat ? null : SelectedFormatOption;
 
-    [ObservableProperty]
-    private int _quality = 100;
-
-    [ObservableProperty]
-    private bool _isConverting = false;
-
-    [ObservableProperty]
-    private bool _isDragOver = false;
-
-    [ObservableProperty]
-    private bool _isDark = true;
-
-    [ObservableProperty]
-    private string _statusMessage = string.Empty;
-
-    [ObservableProperty]
-    private bool _hasStatusMessage = false;
-
-    [ObservableProperty]
-    private bool _statusIsError = false;
+    [ObservableProperty] private int _quality = 100;
+    [ObservableProperty] private bool _isConverting = false;
+    [ObservableProperty] private bool _isDragOver = false;
+    [ObservableProperty] private bool _isDark = true;
+    [ObservableProperty] private string _statusMessage = string.Empty;
+    [ObservableProperty] private bool _hasStatusMessage = false;
+    [ObservableProperty] private bool _statusIsError = false;
 
     public bool QualitySupported =>
         SelectedFormat is null
@@ -80,7 +68,7 @@ public partial class MainViewModel : ObservableObject
         get => QueuedFiles.Count > 0 && QueuedFiles.All(f => f.IsSelected);
         set
         {
-            foreach (ConversionItemViewModel item in QueuedFiles)
+            foreach (var item in QueuedFiles)
                 item.IsSelected = value;
             OnPropertyChanged(nameof(AllSelected));
             OnPropertyChanged(nameof(HasSelection));
@@ -91,34 +79,28 @@ public partial class MainViewModel : ObservableObject
     private static bool IsQualitySupported(string? ext) =>
         ext is ".webp" or ".png" or ".jpg" or ".jpeg";
 
-    partial void OnIsDarkChanged(bool value)
-    {
-        ThemeService.Instance.Apply(value);
-    }
+    partial void OnIsDarkChanged(bool value) => ThemeService.Instance.Apply(value);
 
     partial void OnQueuedFilesChanged(ObservableCollection<ConversionItemViewModel> value)
+        => SubscribeToQueueChanges(value);
+
+    public MainViewModel()
     {
-        SubscribeToQueueChanges(value);
+        SubscribeToQueueChanges(QueuedFiles);
     }
 
     private void SubscribeToQueueChanges(ObservableCollection<ConversionItemViewModel> collection)
-    {
-        collection.CollectionChanged += OnQueueCollectionChanged;
-    }
+        => collection.CollectionChanged += OnQueueCollectionChanged;
 
     private void OnQueueCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         if (e.NewItems != null)
-        {
             foreach (ConversionItemViewModel item in e.NewItems)
                 item.PropertyChanged += OnItemPropertyChanged;
-        }
 
         if (e.OldItems != null)
-        {
             foreach (ConversionItemViewModel item in e.OldItems)
                 item.PropertyChanged -= OnItemPropertyChanged;
-        }
 
         RefreshDerivedProperties();
     }
@@ -133,22 +115,15 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    public MainViewModel()
-    {
-        SubscribeToQueueChanges(QueuedFiles);
-    }
-
     [RelayCommand]
     private async Task ConvertAsync()
     {
         if (QueuedFiles.Count == 0)
             return;
 
-        IEnumerable<ConversionItemViewModel> targets = HasSelection
+        List<ConversionItemViewModel> toConvert = (HasSelection
             ? QueuedFiles.Where(f => f.IsSelected)
-            : QueuedFiles;
-
-        List<ConversionItemViewModel> toConvert = targets.ToList();
+            : QueuedFiles).ToList();
 
         IsConverting = true;
         ClearStatus();
@@ -156,7 +131,7 @@ public partial class MainViewModel : ObservableObject
         int success = 0;
         int failed = 0;
 
-        foreach (ConversionItemViewModel item in toConvert)
+        foreach (var item in toConvert)
         {
             item.Status = ConversionStatus.Converting;
             item.StatusText = "Converting…";
@@ -204,7 +179,7 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void ClearQueue()
     {
-        foreach (ConversionItemViewModel item in QueuedFiles)
+        foreach (var item in QueuedFiles)
             item.PropertyChanged -= OnItemPropertyChanged;
 
         QueuedFiles.Clear();
@@ -225,7 +200,7 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void BrowseFiles()
     {
-        OpenFileDialog dialog = new()
+        var dialog = new OpenFileDialog
         {
             Multiselect = true,
             Filter = "Image Files|*.png;*.jpg;*.jpeg;*.webp;*.gif;*.bmp;*.tiff|All Files|*.*",
@@ -254,15 +229,12 @@ public partial class MainViewModel : ObservableObject
 
     private void AddFiles(string[] paths)
     {
-        HashSet<string> existing = QueuedFiles.Select(f => f.FilePath).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var existing = QueuedFiles.Select(f => f.FilePath).ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         foreach (string path in paths)
         {
-            if (!existing.Contains(path))
-            {
+            if (existing.Add(path))
                 QueuedFiles.Add(new ConversionItemViewModel(path));
-                existing.Add(path);
-            }
         }
 
         RefreshDerivedProperties();

@@ -171,7 +171,7 @@
                                           BorderBrush="{TemplateBinding BorderBrush}"
                                           BorderThickness="{TemplateBinding BorderThickness}"
                                           IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                          Focusable="false"
+                                          Focusable="False"
                                           ClickMode="Press">
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
@@ -240,8 +240,7 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="ComboBoxItem">
-                                <Border Background="{TemplateBinding Background}"
-                                        Padding="2">
+                                <Border Background="{TemplateBinding Background}" Padding="2">
                                     <ContentPresenter />
                                 </Border>
                                 <ControlTemplate.Triggers>
@@ -260,19 +259,11 @@
         </Style>
 
         <Style x:Key="SliderStyle" TargetType="Slider">
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Opacity" Value="0.3" />
-                </Trigger>
-            </Style.Triggers>
             <Setter Property="Opacity" Value="1" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Slider">
                         <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
                             <Track x:Name="PART_Track">
                                 <Track.DecreaseRepeatButton>
                                     <RepeatButton Command="Slider.DecreaseLarge">
@@ -312,6 +303,11 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.3" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="CheckBoxStyle" TargetType="CheckBox">
@@ -349,7 +345,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </Window.Resources>
 
     <Grid>
@@ -359,23 +354,26 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <!-- Header -->
         <Border Grid.Row="0"
                 BorderBrush="{DynamicResource BorderSubtleBrush}"
                 BorderThickness="0,0,0,1">
             <Grid Margin="20,0">
-                <StackPanel Orientation="Horizontal"
-                            VerticalAlignment="Center">
-                    <TextBlock
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="PixPorter"
                                FontSize="18"
-                               FontWeight="SemiBold"
+                               FontWeight="Bold"
                                Foreground="{DynamicResource TextPrimaryBrush}"
-                               VerticalAlignment="Center" ><Run FontWeight="Bold" Text="PixPorter"/></TextBlock>
+                               VerticalAlignment="Center" />
                     <Border Width="1"
                             Height="16"
                             Background="{DynamicResource BorderBrush}"
                             Margin="14,0" />
-                    <TextBlock
-                VerticalAlignment="Center" FontSize="16" Foreground="{DynamicResource TextSecondaryBrush}" ><Run FontWeight="Bold" Text="Image Format Converter"/></TextBlock>
+                    <TextBlock Text="Image Format Converter"
+                               FontSize="16"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               VerticalAlignment="Center" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal"
@@ -401,6 +399,7 @@
             </Grid>
         </Border>
 
+        <!-- Main Content -->
         <Grid Grid.Row="1" Margin="16,16,16,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -408,8 +407,8 @@
                 <ColumnDefinition Width="260" />
             </Grid.ColumnDefinitions>
 
+            <!-- Drop Zone -->
             <Border Grid.Column="0"
-                    x:Name="DropZone"
                     BorderThickness="1.5"
                     CornerRadius="10"
                     AllowDrop="True"
@@ -431,6 +430,7 @@
                 </Border.Style>
 
                 <Grid>
+                    <!-- Empty state -->
                     <StackPanel VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
                                 Visibility="{Binding QueuedFiles.Count, Converter={StaticResource InvCountToVis}}">
@@ -445,22 +445,26 @@
                                    Foreground="{DynamicResource TextSecondaryBrush}"
                                    HorizontalAlignment="Center"
                                    Margin="0,0,0,6" />
-                        <TextBlock FontSize="15"
+                        <TextBlock Text="or"
+                                   FontSize="15"
+                                   FontWeight="Bold"
                                    Foreground="{DynamicResource TextTertiaryBrush}"
                                    HorizontalAlignment="Center"
-                                   Margin="0,0,0,12" ><Run FontWeight="Bold" Text="or"/></TextBlock>
+                                   Margin="0,0,0,12" />
                         <Button Content="Browse Files"
                                 Style="{StaticResource GhostButton}"
                                 Command="{Binding BrowseFilesCommand}"
                                 FontSize="18"
                                 HorizontalAlignment="Center" />
-                        <TextBlock
+                        <TextBlock Text="PNG · JPG · WEBP · GIF · BMP · TIFF"
                                    FontSize="13"
+                                   FontWeight="Bold"
                                    Foreground="{DynamicResource TextTertiaryBrush}"
                                    HorizontalAlignment="Center"
-                                   Margin="0,16,0,0" ><Run FontWeight="Bold" Text="PNG · "/><Run FontWeight="Bold" Text="JPG "/><Run FontWeight="Bold" Text="· WEBP · GIF · BMP · TIFF"/></TextBlock>
+                                   Margin="0,16,0,0" />
                     </StackPanel>
 
+                    <!-- File list -->
                     <Grid Visibility="{Binding QueuedFiles.Count, Converter={StaticResource CountToVis}}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -472,8 +476,7 @@
                                 BorderThickness="0,0,0,1"
                                 Padding="16,12">
                             <Grid>
-                                <StackPanel Orientation="Horizontal"
-                                            VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <CheckBox Style="{StaticResource CheckBoxStyle}"
                                               IsChecked="{Binding AllSelected, Mode=TwoWay}"
                                               VerticalAlignment="Center"
@@ -567,32 +570,32 @@
                 </Grid>
             </Border>
 
+            <!-- Right Panel -->
             <Border Grid.Column="2">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="41*" />
-                        <RowDefinition Height="11*"/>
+                        <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
+                    <!-- Settings -->
                     <StackPanel Grid.Row="0">
-
                         <StackPanel Margin="0,0,0,16">
-                            <TextBlock FontSize="14"
-                                       FontWeight="SemiBold"
+                            <TextBlock Text="OUTPUT FORMAT"
+                                       FontSize="14"
+                                       FontWeight="Bold"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
-                                       Margin="0,0,0,8" ><Run FontWeight="Bold" Text="OUTPUT FORMAT"/></TextBlock>
-                            <ComboBox FontWeight="SemiBold" 
-                                      Style="{StaticResource ComboBoxStyle}"
+                                       Margin="0,0,0,8" />
+                            <ComboBox Style="{StaticResource ComboBoxStyle}"
+                                      FontWeight="SemiBold"
                                       ItemsSource="{Binding FormatOptions}"
-                                      SelectedItem="{Binding SelectedFormatOption, Mode=TwoWay}"
-                                      SelectionChanged="ComboBox_SelectionChanged" />
-                            <TextBlock
+                                      SelectedItem="{Binding SelectedFormatOption, Mode=TwoWay}" />
+                            <TextBlock Text="Default: see per-format default mappings"
                                        FontSize="13"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,6,0,0"
-                                       TextWrapping="Wrap" Text="Default: see per-format default mappings" />
+                                       TextWrapping="Wrap" />
                         </StackPanel>
 
                         <Border Height="1"
@@ -611,77 +614,59 @@
                                 </Style>
                             </StackPanel.Style>
                             <Grid Margin="0,0,0,8">
-                                <TextBlock FontSize="14"
-                                           FontWeight="SemiBold"
-                                           Foreground="{DynamicResource TextTertiaryBrush}"
-                                           Margin="0,0,0,0" ><Run FontWeight="Bold" Text="DEFAULT MAPPINGS"/></TextBlock>
+                                <TextBlock Text="QUALITY"
+                                           FontSize="14"
+                                           FontWeight="Bold"
+                                           Foreground="{DynamicResource TextTertiaryBrush}" />
                                 <TextBlock HorizontalAlignment="Right"
                                            VerticalAlignment="Center"
                                            FontSize="15"
                                            FontWeight="Medium"
                                            Foreground="{DynamicResource TextPrimaryBrush}">
-                                    <Run Text="{Binding Quality, Mode=OneWay}" />
-                                    <Run Text="%" />
+                                    <Run Text="{Binding Quality, Mode=OneWay}" /><Run Text="%" />
                                 </TextBlock>
                             </Grid>
-
                             <Slider Style="{StaticResource SliderStyle}"
                                     Minimum="1"
                                     Maximum="100"
                                     Value="{Binding Quality}"
                                     TickFrequency="1"
                                     IsSnapToTickEnabled="True"
-                                    IsEnabled="{Binding QualitySupported}"
-                                    Margin="0,0,0,0" />
-
-                            <TextBlock
+                                    IsEnabled="{Binding QualitySupported}" />
+                            <TextBlock Text="Applicable to JPG, PNG, and WebP only"
                                        FontSize="13"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,6,0,0"
-                                       TextWrapping="Wrap" Text="Applicable to JPG, PNG, and WebP only" />
+                                       TextWrapping="Wrap" />
                         </StackPanel>
 
                         <Border Height="1"
-                                Background="{DynamicResource BorderSubtleBrush}"
-                                Margin="0,0,0,0" />
-
+                                Background="{DynamicResource BorderSubtleBrush}" />
                     </StackPanel>
 
-                    <Grid Grid.Row="1" Margin="0,16,0,0" Grid.RowSpan="2">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
+                    <!-- Default Mappings -->
+                    <ScrollViewer Grid.Row="1"
+                                  Style="{StaticResource ScrollViewerStyle}"
+                                  VerticalScrollBarVisibility="Auto"
+                                  Padding="0,16,6,0">
+                        <StackPanel>
+                            <TextBlock Text="DEFAULT MAPPINGS"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource TextTertiaryBrush}"
+                                       Margin="0,0,0,10" />
+                            <local:MappingRow From=".webp" To=".png"  Margin="0,0,0,3" />
+                            <local:MappingRow From=".png"  To=".webp" Margin="0,0,0,3" />
+                            <local:MappingRow From=".jpg"  To=".webp" Margin="0,0,0,3" />
+                            <local:MappingRow From=".jpeg" To=".webp" Margin="0,0,0,3" />
+                            <local:MappingRow From=".gif"  To=".webp" Margin="0,0,0,3" />
+                            <local:MappingRow From=".tiff" To=".webp" Margin="0,0,0,3" />
+                            <local:MappingRow From=".bmp"  To=".webp" />
+                        </StackPanel>
+                    </ScrollViewer>
 
-                        <ScrollViewer Grid.Row="1"
-                                      Style="{StaticResource ScrollViewerStyle}"
-                                      VerticalScrollBarVisibility="Auto"
-                                      Padding="0,0,6,0">
-                            <StackPanel>
-                                <TextBlock
-                                           FontSize="14"
-                                           FontWeight="SemiBold"
-                                           Foreground="{DynamicResource TextTertiaryBrush}"
-                                           Margin="0,0,0,10" ><Run FontWeight="Bold" Text="DEFAULT MAPPINGS"/></TextBlock>
-                                <StackPanel>
-                                    <local:MappingRow From=".webp" To=".png"  Margin="0,0,0,3" Loaded="MappingRow_Loaded" />
-                                    <local:MappingRow From=".png"  To=".webp" Margin="0,0,0,3" />
-                                    <local:MappingRow From=".jpg"  To=".webp" Margin="0,0,0,3" />
-                                    <local:MappingRow From=".jpeg" To=".webp" Margin="0,0,0,3" />
-                                    <local:MappingRow From=".gif"  To=".webp"  Margin="0,0,0,3" />
-                                    <local:MappingRow From=".tiff" To=".webp"  Margin="0,0,0,3" />
-                                    <local:MappingRow From=".bmp"  To=".webp" />
-                                </StackPanel>
-
-                                <Border Height="1"
-                                        Background="{DynamicResource BorderSubtleBrush}"
-                                        Margin="0,12,0,12" />
-                                <StackPanel/>
-                            </StackPanel>
-                        </ScrollViewer>
-                    </Grid>
-
-                    <StackPanel Grid.Row="3" Margin="0,16,0,0">
+                    <!-- Action Buttons -->
+                    <StackPanel Grid.Row="2" Margin="0,16,0,0">
                         <Button Content="{Binding ConvertButtonText}"
                                 Style="{StaticResource FlatButton}"
                                 Command="{Binding ConvertCommand}"
@@ -689,7 +674,7 @@
                                 HorizontalAlignment="Stretch"
                                 Height="42"
                                 FontSize="16"
-                                Margin="0,0,0,16" Click="Button_Click" />
+                                Margin="0,0,0,16" />
                         <Button Content="Clear Queue"
                                 Style="{StaticResource GhostButton}"
                                 Command="{Binding ClearQueueCommand}"
@@ -701,10 +686,9 @@
             </Border>
         </Grid>
 
-        <Border Grid.Row="2"
-                Margin="16,16,16,16">
-            <Border CornerRadius="6"
-                    Padding="14,10">
+        <!-- Status Bar -->
+        <Border Grid.Row="2" Margin="16,16,16,16">
+            <Border CornerRadius="6" Padding="14,10">
                 <Border.Style>
                     <Style TargetType="Border">
                         <Setter Property="Background" Value="{DynamicResource SurfaceElevatedBrush}" />
@@ -715,8 +699,7 @@
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
-                <TextBlock FontSize="15"
-                           TextWrapping="Wrap">
+                <TextBlock FontSize="15" TextWrapping="Wrap">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Setter Property="Text" Value="{Binding StatusMessage}" />

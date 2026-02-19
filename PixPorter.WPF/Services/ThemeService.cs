@@ -13,10 +13,7 @@ public sealed class ThemeService
 
     private ThemeService() { }
 
-    public void ApplySystemTheme()
-    {
-        Apply(IsSystemDarkMode());
-    }
+    public void ApplySystemTheme() => Apply(IsSystemDarkMode());
 
     public void Apply(bool dark)
     {

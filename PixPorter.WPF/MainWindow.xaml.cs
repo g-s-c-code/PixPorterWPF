@@ -43,26 +43,10 @@ public partial class MainWindow : Window
 
     private void DropZone_DragOver(object sender, DragEventArgs e)
     {
-        if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            e.Effects = DragDropEffects.Copy;
-        else
-            e.Effects = DragDropEffects.None;
+        e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop)
+            ? DragDropEffects.Copy
+            : DragDropEffects.None;
 
         e.Handled = true;
-    }
-
-    private void Button_Click(object sender, RoutedEventArgs e)
-    {
-
-    }
-
-    private void MappingRow_Loaded(object sender, RoutedEventArgs e)
-    {
-
-    }
-
-    private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-    {
-
     }
 }
