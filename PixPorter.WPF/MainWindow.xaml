@@ -437,7 +437,7 @@
                                 HorizontalAlignment="Center"
                                 Visibility="{Binding QueuedFiles.Count, Converter={StaticResource InvCountToVis}}">
                         <TextBlock Text="⬆"
-                                   FontSize="36"
+                                   FontSize="60"
                                    HorizontalAlignment="Center"
                                    Foreground="{DynamicResource TextTertiaryBrush}"
                                    Margin="0,0,0,12" />
@@ -447,20 +447,20 @@
                                    Foreground="{DynamicResource TextSecondaryBrush}"
                                    HorizontalAlignment="Center"
                                    Margin="0,0,0,6" />
-                        <TextBlock Text="or"
-                                   FontSize="15"
+                        <TextBlock FontSize="15"
                                    Foreground="{DynamicResource TextTertiaryBrush}"
                                    HorizontalAlignment="Center"
-                                   Margin="0,0,0,12" />
+                                   Margin="0,0,0,12" ><Run FontWeight="Bold" Text="or"/></TextBlock>
                         <Button Content="Browse Files"
                                 Style="{StaticResource GhostButton}"
                                 Command="{Binding BrowseFilesCommand}"
+                                FontSize="18"
                                 HorizontalAlignment="Center" />
-                        <TextBlock Text="PNG · JPG · WEBP · GIF · BMP · TIFF"
+                        <TextBlock
                                    FontSize="13"
                                    Foreground="{DynamicResource TextTertiaryBrush}"
                                    HorizontalAlignment="Center"
-                                   Margin="0,16,0,0" />
+                                   Margin="0,16,0,0" ><Run FontWeight="Bold" Text="PNG · "/><Run FontWeight="Bold" Text="JPG "/><Run FontWeight="Bold" Text="· WEBP · GIF · BMP · TIFF"/></TextBlock>
                     </StackPanel>
 
                     <Grid Visibility="{Binding QueuedFiles.Count, Converter={StaticResource CountToVis}}">
@@ -581,15 +581,15 @@
                     <StackPanel Grid.Row="0">
 
                         <StackPanel Margin="0,0,0,16">
-                            <TextBlock Text="OUTPUT FORMAT"
-                                       FontSize="12"
+                            <TextBlock
+                                       FontSize="14"
                                        FontWeight="SemiBold"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
-                                       Margin="0,0,0,8" />
+                                       Margin="0,0,0,8" ><Run FontWeight="Bold" Text="OUTPUT FORMAT"/></TextBlock>
                             <ComboBox Style="{StaticResource ComboBoxStyle}"
                                       ItemsSource="{Binding FormatOptions}"
                                       SelectedItem="{Binding SelectedFormatOption, Mode=TwoWay}" />
-                            <TextBlock Text="Default: follows per-format mapping rules"
+                            <TextBlock Text="Default: follows per-format mapping rules."
                                        FontSize="13"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,6,0,0"
@@ -612,10 +612,10 @@
                                 </Style>
                             </StackPanel.Style>
                             <Grid Margin="0,0,0,8">
-                                <TextBlock Text="Quality"
-                                           FontSize="15"
-                                           Foreground="{DynamicResource TextSecondaryBrush}"
-                                           VerticalAlignment="Center" />
+                                <TextBlock FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextTertiaryBrush}"
+                                           Margin="0,0,0,0" ><Run FontWeight="Bold" Text="DEFAULT MAPPINGS"/></TextBlock>
                                 <TextBlock HorizontalAlignment="Right"
                                            VerticalAlignment="Center"
                                            FontSize="15"
@@ -633,11 +633,12 @@
                                     TickFrequency="1"
                                     IsSnapToTickEnabled="True"
                                     IsEnabled="{Binding QualitySupported}"
-                                    Margin="0,0,0,6" />
+                                    Margin="0,0,0,0" />
 
-                            <TextBlock Text="{Binding QualityHint}"
+                            <TextBlock Text="Applicable to JPG, PNG, and WebP only."
                                        FontSize="13"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
+                                       Margin="0,6,0,0"
                                        TextWrapping="Wrap" />
                         </StackPanel>
 
@@ -653,56 +654,30 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <Grid Grid.Row="0" Margin="0,0,0,12">
-                            <TextBlock Text="FORMAT INFO"
-                                       FontSize="12"
-                                       FontWeight="SemiBold"
-                                       Foreground="{DynamicResource TextTertiaryBrush}"
-                                       VerticalAlignment="Center" />
-                            <Border Height="1"
-                                    Background="{DynamicResource BorderSubtleBrush}"
-                                    Margin="90,0,0,0"
-                                    VerticalAlignment="Center" />
-                        </Grid>
-
                         <ScrollViewer Grid.Row="1"
                                       Style="{StaticResource ScrollViewerStyle}"
                                       VerticalScrollBarVisibility="Auto"
                                       Padding="0,0,6,0">
                             <StackPanel>
-                                <TextBlock Text="DEFAULT MAPPINGS"
-                                           FontSize="12"
+                                <TextBlock
+                                           FontSize="14"
                                            FontWeight="SemiBold"
                                            Foreground="{DynamicResource TextTertiaryBrush}"
-                                           Margin="0,0,0,10" />
+                                           Margin="0,0,0,10" ><Run FontWeight="Bold" Text="DEFAULT MAPPINGS"/></TextBlock>
                                 <StackPanel>
-                                    <local:MappingRow From=".png"  To=".webp" Margin="0,0,0,5" />
-                                    <local:MappingRow From=".jpg"  To=".webp" Margin="0,0,0,5" />
-                                    <local:MappingRow From=".jpeg" To=".webp" Margin="0,0,0,5" />
-                                    <local:MappingRow From=".webp" To=".png"  Margin="0,0,0,5" />
-                                    <local:MappingRow From=".gif"  To=".png"  Margin="0,0,0,5" />
-                                    <local:MappingRow From=".tiff" To=".png"  Margin="0,0,0,5" />
+                                    <local:MappingRow From=".png"  To=".webp" Margin="0,0,0,3" Loaded="MappingRow_Loaded" />
+                                    <local:MappingRow From=".jpg"  To=".webp" Margin="0,0,0,3" />
+                                    <local:MappingRow From=".jpeg" To=".webp" Margin="0,0,0,3" />
+                                    <local:MappingRow From=".webp" To=".png"  Margin="0,0,0,3" />
+                                    <local:MappingRow From=".gif"  To=".png"  Margin="0,0,0,3" />
+                                    <local:MappingRow From=".tiff" To=".png"  Margin="0,0,0,3" />
                                     <local:MappingRow From=".bmp"  To=".png" />
                                 </StackPanel>
 
                                 <Border Height="1"
                                         Background="{DynamicResource BorderSubtleBrush}"
                                         Margin="0,12,0,12" />
-
-                                <TextBlock Text="QUALITY SUPPORT"
-                                           FontSize="12"
-                                           FontWeight="SemiBold"
-                                           Foreground="{DynamicResource TextTertiaryBrush}"
-                                           Margin="0,0,0,10" />
-                                <StackPanel>
-                                    <TextBlock FontSize="14"
-                                               Foreground="{DynamicResource TextSecondaryBrush}"
-                                               Margin="0,0,0,4"
-                                               Text="✓  JPG · PNG · WebP" />
-                                    <TextBlock FontSize="14"
-                                               Foreground="{DynamicResource TextTertiaryBrush}"
-                                               Text="✕  GIF · BMP · TIFF" />
-                                </StackPanel>
+                                <StackPanel/>
                             </StackPanel>
                         </ScrollViewer>
                     </Grid>

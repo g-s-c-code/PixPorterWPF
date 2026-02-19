@@ -3,23 +3,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="50" />
-            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="42" />
+            <ColumnDefinition Width="40" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <TextBlock x:Name="FromText"
                    Grid.Column="0"
-                   FontSize="12"
+                   FontSize="14"
                    FontFamily="Cascadia Code, Consolas, Courier New"
                    Foreground="{DynamicResource TextSecondaryBrush}" />
         <TextBlock Grid.Column="1"
                    Text="→"
-                   FontSize="12"
+                   FontSize="14"
+                   FontWeight="Bold"
                    Foreground="{DynamicResource TextTertiaryBrush}"
                    HorizontalAlignment="Center" />
         <TextBlock x:Name="ToText"
                    Grid.Column="2"
-                   FontSize="12"
+                   FontSize="14"
                    FontFamily="Cascadia Code, Consolas, Courier New"
                    Foreground="{DynamicResource TextSecondaryBrush}" />
     </Grid>

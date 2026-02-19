@@ -55,4 +55,9 @@ public partial class MainWindow : Window
     {
 
     }
+
+    private void MappingRow_Loaded(object sender, RoutedEventArgs e)
+    {
+
+    }
 }

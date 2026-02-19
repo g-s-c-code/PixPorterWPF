@@ -16,11 +16,11 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<ConversionItemViewModel> _queuedFiles = [];
 
-    public const string AutoFormat = "Auto";
+    public const string DefaultFormat = "Default";
 
-    public IReadOnlyList<string> FormatOptions { get; } = [AutoFormat, "WebP", "PNG", "JPG", "GIF", "BMP", "TIFF"];
+    public IReadOnlyList<string> FormatOptions { get; } = [DefaultFormat, "WebP", "PNG", "JPG", "GIF", "BMP", "TIFF"];
 
-    private string _selectedFormatOption = AutoFormat;
+    private string _selectedFormatOption = DefaultFormat;
     public string SelectedFormatOption
     {
         get => _selectedFormatOption;
@@ -36,7 +36,7 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    private string? SelectedFormat => SelectedFormatOption == AutoFormat ? null : SelectedFormatOption;
+    private string? SelectedFormat => SelectedFormatOption == DefaultFormat ? null : SelectedFormatOption;
 
     [ObservableProperty]
     private int _quality = 100;
