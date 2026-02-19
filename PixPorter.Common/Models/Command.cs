@@ -5,4 +5,5 @@ public record Command(
     string Path,
     string? TargetExtension,
     int? Quality = null,
+    bool StripMetadata = false,
     List<string>? AdditionalPaths = null);

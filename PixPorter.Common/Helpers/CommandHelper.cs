@@ -30,9 +30,7 @@ public static class CommandHelper
 
             case Constants.ChangeDirectory:
                 if (!Directory.Exists(command.Path))
-                {
                     return new CommandResultError($"Directory not found: {command.Path}");
-                }
 
                 Directory.SetCurrentDirectory(command.Path);
                 return new CommandResultDirectoryChanged(command.Path);
@@ -54,14 +52,10 @@ public static class CommandHelper
         string inputLower = input.ToLowerInvariant();
 
         if (IsCommandQuit(inputLower))
-        {
             return new(Constants.Quit, string.Empty, null);
-        }
 
         if (IsCommandHelp(inputLower))
-        {
             return new(Constants.Help, string.Empty, null);
-        }
 
         if (inputLower.StartsWith(Constants.ChangeDirectory))
         {
@@ -71,24 +65,21 @@ public static class CommandHelper
 
         string[] parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         string? targetExtension = ExtractTargetExtension(parts);
-
         int? quality = ExtractQuality(parts);
+        bool stripMetadata = ExtractStripMetadata(parts);
         List<string> allPaths = ExtractAllPaths(parts);
 
         if (parts.Any(p => p.Equals(Constants.ConvertAll, StringComparison.OrdinalIgnoreCase)))
         {
             string path = allPaths.FirstOrDefault() ?? Directory.GetCurrentDirectory();
-            return new(Constants.ConvertAll, path, targetExtension, quality, null);
+            return new(Constants.ConvertAll, path, targetExtension, quality, stripMetadata, null);
         }
 
         if (allPaths.Count != 0)
         {
             string primaryPath = allPaths[0];
-            List<string>? additionalPaths = allPaths.Count > 1
-                ? [.. allPaths.Skip(1)]
-                : null;
-
-            return new(Constants.ConvertFile, primaryPath, targetExtension, quality, additionalPaths);
+            List<string>? additionalPaths = allPaths.Count > 1 ? [.. allPaths.Skip(1)] : null;
+            return new(Constants.ConvertFile, primaryPath, targetExtension, quality, stripMetadata, additionalPaths);
         }
 
         throw new CommandException("Invalid command.");
@@ -98,43 +89,37 @@ public static class CommandHelper
     {
         List<string> filesToConvert = [command.Path];
         if (command.AdditionalPaths != null)
-        {
             filesToConvert.AddRange(command.AdditionalPaths);
-        }
 
         if (filesToConvert.Count == 1)
         {
             if (!File.Exists(command.Path))
-            {
                 return new CommandResultError($"File not found: {command.Path}");
-            }
 
             string sourceExtension = Path.GetExtension(command.Path);
             string effectiveTarget = command.TargetExtension ?? Constants.GetDefaultTarget(sourceExtension);
             string outputPath = Path.ChangeExtension(command.Path, effectiveTarget);
 
-            ConversionHelper.ConvertFile(command.Path, effectiveTarget, command.Quality);
-            string qualityNote = command.Quality.HasValue
-                ? $" [quality: {command.Quality}]"
-                : string.Empty;
+            ConversionHelper.ConvertFile(command.Path, effectiveTarget, command.Quality, command.StripMetadata);
 
-            return new CommandResultSuccess($"Converted: {command.Path} → {outputPath}{qualityNote}");
+            string qualityNote = command.Quality.HasValue ? $" [quality: {command.Quality}]" : string.Empty;
+            string metadataNote = command.StripMetadata ? " [metadata stripped]" : string.Empty;
+
+            return new CommandResultSuccess($"Converted: {command.Path} → {outputPath}{qualityNote}{metadataNote}");
         }
 
-        return new CommandResultMultiConvert(filesToConvert, command.TargetExtension, command.Quality);
+        return new CommandResultMultiConvert(filesToConvert, command.TargetExtension, command.Quality, command.StripMetadata);
     }
 
     private static CommandResult ExecuteCommandConvertAll(Command command)
     {
         if (!Directory.Exists(command.Path))
-        {
             return new CommandResultError($"Directory not found: {command.Path}");
-        }
 
         List<string> files = ConversionHelper.GetConvertibleFiles(command.Path).ToList();
         return files.Count == 0
             ? new CommandResultError("No supported images found.")
-            : new CommandResultMultiConvert(files, command.TargetExtension, command.Quality);
+            : new CommandResultMultiConvert(files, command.TargetExtension, command.Quality, command.StripMetadata);
     }
 
     private static bool IsCommandQuit(string input) =>
@@ -155,53 +140,32 @@ public static class CommandHelper
             {
                 string raw = part["--quality=".Length..];
                 if (int.TryParse(raw, out int q) && q >= 1 && q <= 100)
-                {
                     return q;
-                }
             }
         }
 
         return null;
     }
 
+    private static bool ExtractStripMetadata(string[] parts) =>
+        parts.Any(p => p.Equals("--stripmeta", StringComparison.OrdinalIgnoreCase));
+
     private static List<string> ExtractAllPaths(string[] parts)
     {
         List<string> paths = [];
         foreach (string part in parts)
         {
-            if (Constants.FormatFlags.ContainsKey(part))
-            {
-                continue;
-            }
-
-            if (part.Equals(Constants.ConvertAll, StringComparison.OrdinalIgnoreCase))
-            {
-                continue;
-            }
-
-            if (part.StartsWith("--quality=", StringComparison.OrdinalIgnoreCase))
-            {
-                continue;
-            }
-
-            if (part.StartsWith("--", StringComparison.OrdinalIgnoreCase))
-            {
-                continue;
-            }
+            if (Constants.FormatFlags.ContainsKey(part)) continue;
+            if (part.Equals(Constants.ConvertAll, StringComparison.OrdinalIgnoreCase)) continue;
+            if (part.StartsWith("--quality=", StringComparison.OrdinalIgnoreCase)) continue;
+            if (part.Equals("--stripmeta", StringComparison.OrdinalIgnoreCase)) continue;
+            if (part.StartsWith("--", StringComparison.OrdinalIgnoreCase)) continue;
 
             string full = Path.GetFullPath(part);
-            if (File.Exists(part))
-            {
-                paths.Add(part);
-            }
-            else if (File.Exists(full))
-            {
-                paths.Add(full);
-            }
+            if (File.Exists(part)) paths.Add(part);
+            else if (File.Exists(full)) paths.Add(full);
             else if (Directory.Exists(part) || Directory.Exists(full))
-            {
                 paths.Add(Directory.Exists(part) ? part : full);
-            }
         }
 
         return paths;

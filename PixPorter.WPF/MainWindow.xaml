@@ -649,7 +649,94 @@
                         </StackPanel>
 
                         <Border Height="1"
-                                Background="{DynamicResource BorderSubtleBrush}" />
+                                Background="{DynamicResource BorderSubtleBrush}"
+                                Margin="0,0,0,16" />
+
+                        <StackPanel Margin="0,0,0,0">
+                            <TextBlock Text="METADATA"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Foreground="{DynamicResource TextTertiaryBrush}"
+                                       Margin="0,0,0,8" />
+                            <ToggleButton IsChecked="{Binding StripMetadata, Mode=TwoWay}"
+                                          HorizontalAlignment="Stretch"
+                                          Height="34"
+                                          Cursor="Hand">
+                                <ToggleButton.Style>
+                                    <Style TargetType="ToggleButton">
+                                        <Setter Property="Background" Value="{DynamicResource SurfaceElevatedBrush}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+                                        <Setter Property="BorderThickness" Value="1" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <Border Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            CornerRadius="6">
+                                                        <Grid Margin="12,0">
+                                                            <TextBlock Text="Strip Metadata"
+                                                                       FontSize="13"
+                                                                       VerticalAlignment="Center"
+                                                                       Foreground="{TemplateBinding Foreground}" />
+                                                            <Border Width="28"
+                                                                    Height="16"
+                                                                    CornerRadius="8"
+                                                                    HorizontalAlignment="Right"
+                                                                    VerticalAlignment="Center">
+                                                                <Border.Style>
+                                                                    <Style TargetType="Border">
+                                                                        <Setter Property="Background" Value="{DynamicResource BorderBrush}" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding StripMetadata}" Value="True">
+                                                                                <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Border.Style>
+                                                                <Ellipse Width="10"
+                                                                         Height="10"
+                                                                         Fill="{DynamicResource BackgroundBrush}"
+                                                                         VerticalAlignment="Center">
+                                                                    <Ellipse.Style>
+                                                                        <Style TargetType="Ellipse">
+                                                                            <Setter Property="HorizontalAlignment" Value="Left" />
+                                                                            <Setter Property="Margin" Value="3,0,0,0" />
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding StripMetadata}" Value="True">
+                                                                                    <Setter Property="HorizontalAlignment" Value="Right" />
+                                                                                    <Setter Property="Margin" Value="0,0,3,0" />
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </Ellipse.Style>
+                                                                </Ellipse>
+                                                            </Border>
+                                                        </Grid>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Background" Value="{DynamicResource SurfaceElevatedBrush}" />
+                                                            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ToggleButton.Style>
+                            </ToggleButton>
+                            <TextBlock Text="Removes EXIF, IPTC, XMP, and ICC data from the output file."
+                                       FontSize="13"
+                                       Foreground="{DynamicResource TextTertiaryBrush}"
+                                       Margin="0,6,0,0"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <Border Height="1"
+                                Background="{DynamicResource BorderSubtleBrush}"
+                                Margin="0,16,0,0" />
                     </StackPanel>
 
                     <!-- Default Mappings -->

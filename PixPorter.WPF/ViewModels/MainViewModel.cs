@@ -43,6 +43,7 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty] private bool _isConverting = false;
     [ObservableProperty] private bool _isDragOver = false;
     [ObservableProperty] private bool _isDark = true;
+    [ObservableProperty] private bool _stripMetadata = false;
     [ObservableProperty] private string _statusMessage = string.Empty;
     [ObservableProperty] private bool _hasStatusMessage = false;
     [ObservableProperty] private bool _statusIsError = false;
@@ -141,7 +142,7 @@ public partial class MainViewModel : ObservableObject
         foreach (var item in toConvert)
         {
             item.Status = ConversionStatus.Converting;
-            item.StatusText = "—";
+            item.StatusText = "Converting…";
 
             await Task.Run(() =>
             {
@@ -151,7 +152,7 @@ public partial class MainViewModel : ObservableObject
                     string targetExt = SelectedFormat ?? Constants.GetDefaultTarget(sourceExt);
                     int? quality = QualitySupported ? Quality : null;
 
-                    ConversionHelper.ConvertFile(item.FilePath, targetExt, quality);
+                    ConversionHelper.ConvertFile(item.FilePath, targetExt, quality, StripMetadata);
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {

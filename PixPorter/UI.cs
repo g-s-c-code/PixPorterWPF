@@ -37,7 +37,7 @@ public class UI : IUserInterface
                 break;
 
             case CommandResultMultiConvert r:
-                RenderProgress(r.Files, r.TargetExtension, r.Quality);
+                RenderProgress(r.Files, r.TargetExtension, r.Quality, r.StripMetadata);
                 WriteAndWait("\nPress any key to continue...");
                 break;
 
@@ -59,7 +59,7 @@ public class UI : IUserInterface
         AnsiConsole.Write(content);
     }
 
-    private void RenderProgress(IReadOnlyList<string> files, string? targetExtension, int? quality)
+    private void RenderProgress(IReadOnlyList<string> files, string? targetExtension, int? quality, bool stripMetadata)
     {
         int successCount = 0;
         int failCount = 0;
@@ -72,7 +72,7 @@ public class UI : IUserInterface
                 try
                 {
                     string fileTarget = targetExtension ?? Constants.GetDefaultTarget(Path.GetExtension(file));
-                    ConversionHelper.ConvertFile(file, fileTarget, quality);
+                    ConversionHelper.ConvertFile(file, fileTarget, quality, stripMetadata);
                     task.Increment(1);
                     successCount++;
                 }
@@ -222,7 +222,7 @@ public class UI : IUserInterface
             ("[indianred bold]NAVIGATION:[/]",
             "Use '[steelblue]cd [[path]][/]' to navigate folders. Convert all images with '[steelblue]--ca[/]'.\n"),
             ("[indianred bold]FLAGS:[/]",
-            "Add a format flag (e.g. '[steelblue]--jpg[/]') to override the default output format. Use '[steelblue]--quality=N[/]' (1-100) to set output quality — omitting it uses maximum quality. Formats marked [lightskyblue1]*[/] support the quality flag.")
+            "Add a format flag (e.g. '[steelblue]--jpg[/]') to override the default output format. Use '[steelblue]--quality=N[/]' (1-100) to set output quality — omitting it uses maximum quality. Use '[steelblue]--stripmeta[/]' to strip embedded metadata from the output. Formats marked [lightskyblue1]*[/] support the quality flag.")
         ]);
 
         yield return BuildSection("[lightskyblue1 underline bold]Commands[/]",
@@ -241,6 +241,7 @@ public class UI : IUserInterface
             ("[steelblue]--tiff[/]        Convert to TIFF", "             [indianred].tiff[/] → [indianred].png[/]"),
             ("[steelblue]--bmp[/]         Convert to BMP", "              [indianred].bmp[/]  → [indianred].png[/]"),
             ("[steelblue]--quality=N[/]   Set output quality (1-100)", "  [indianred]100 (maximum)[/]"),
+            ("[steelblue]--stripmeta[/]   Strip embedded metadata from output", ""),
             ("[steelblue]--ca[/]          Convert all images in the [lightskyblue1 bold]current directory[/]", "")
         ], skipTitleFormatting: true, trimEnd: true);
     }
@@ -252,14 +253,16 @@ public class UI : IUserInterface
             ("Drag a file or folder into the PixPorter window. Add an optional format flag if desired.", ""),
             ("[indianred]EXAMPLE:[/] '[steelblue]my_photo.png[/]' + '[steelblue][[ENTER]][/]' → Converts to the default format (e.g., '[steelblue]my_photo.webp[/]').", ""),
             ("[indianred]EXAMPLE:[/] '[steelblue]my_photo.png --jpg[/]' + '[steelblue][[ENTER]][/]' → Converts to JPG (e.g., '[steelblue]my_photo.jpg[/]').", ""),
-            ("[indianred]EXAMPLE:[/] '[steelblue]my_photo.png --jpg --quality=85[/]' + '[steelblue][[ENTER]][/]' → Converts to JPG at quality 85.", "")
+            ("[indianred]EXAMPLE:[/] '[steelblue]my_photo.png --jpg --quality=85[/]' + '[steelblue][[ENTER]][/]' → Converts to JPG at quality 85.", ""),
+            ("[indianred]EXAMPLE:[/] '[steelblue]my_photo.png --jpg --stripmeta[/]' + '[steelblue][[ENTER]][/]' → Converts to JPG and strips all embedded metadata.", "")
         ]);
 
         yield return BuildSection("Direct File/Folder Conversion",
         [
             ("Enter a full file path or folder path + '[steelblue][[ENTER]][/]' for automatic conversion.", ""),
             ("[indianred]EXAMPLE:[/] '[steelblue]C:\\Users\\Pictures[/]' + '[steelblue][[ENTER]][/]' → Converts all images in the folder using default format mappings.", ""),
-            ("[indianred]EXAMPLE:[/] '[steelblue]C:\\Users\\Pictures --webp --quality=90[/]' + '[steelblue][[ENTER]][/]' → Converts all images to WebP at quality 90.", "")
+            ("[indianred]EXAMPLE:[/] '[steelblue]C:\\Users\\Pictures --webp --quality=90[/]' + '[steelblue][[ENTER]][/]' → Converts all images to WebP at quality 90.", ""),
+            ("[indianred]EXAMPLE:[/] '[steelblue]C:\\Users\\Pictures --webp --stripmeta[/]' + '[steelblue][[ENTER]][/]' → Converts all images to WebP and strips metadata.", "")
         ]);
 
         yield return BuildSection("Current Directory Conversion",
@@ -267,7 +270,8 @@ public class UI : IUserInterface
             ("Use '[steelblue]cd [[path]][/]' to navigate to a directory, then convert images with '[steelblue]--ca[/]'.", ""),
             ("[indianred]EXAMPLE:[/] '[steelblue]cd C:\\Users\\Photos[/]' + '[steelblue][[ENTER]][/]' → Navigate to the directory.", ""),
             ("[indianred]EXAMPLE:[/] '[steelblue]--ca[/]' + '[steelblue][[ENTER]][/]' → Converts all images using default format mappings.", ""),
-            ("[indianred]EXAMPLE:[/] '[steelblue]--ca --jpg --quality=75[/]' + '[steelblue][[ENTER]][/]' → Converts all images to JPG at quality 75.", "")
+            ("[indianred]EXAMPLE:[/] '[steelblue]--ca --jpg --quality=75[/]' + '[steelblue][[ENTER]][/]' → Converts all images to JPG at quality 75.", ""),
+            ("[indianred]EXAMPLE:[/] '[steelblue]--ca --stripmeta[/]' + '[steelblue][[ENTER]][/]' → Converts all images and strips metadata.", "")
         ]);
 
         yield return BuildSection("Quality",
@@ -276,6 +280,13 @@ public class UI : IUserInterface
             ("[dim]JPG and WebP are lossy — quality directly affects pixel fidelity.[/]", ""),
             ("[dim]PNG is lossless — quality controls compression ratio only, not pixel fidelity.[/]", ""),
             ("[dim]GIF, BMP, and TIFF do not support quality and always use their defaults.[/]", "")
+        ]);
+
+        yield return BuildSection("Metadata",
+        [
+            ("Use '[steelblue]--stripmeta[/]' to remove all embedded metadata from the output file.", ""),
+            ("[dim]Strips EXIF (camera info, GPS), IPTC (copyright, keywords), XMP, and ICC colour profiles.[/]", ""),
+            ("[dim]Useful for reducing file size or removing sensitive location and device data before sharing.[/]", "")
         ]);
 
         yield return BuildSection("Default Format Mappings",
@@ -298,6 +309,7 @@ public class UI : IUserInterface
             ("[steelblue]--tiff[/]      ", "- Convert to TIFF"),
             ("[steelblue]--bmp[/]       ", "- Convert to BMP"),
             ("[steelblue]--quality=N[/] ", "- Set output quality 1–100. [lightskyblue1]*[/] formats only. Defaults to 100."),
+            ("[steelblue]--stripmeta[/] ", "- Strip all embedded metadata (EXIF, IPTC, XMP, ICC) from the output."),
             ("[steelblue]--ca[/]        ", "- Convert all images in the current directory")
         ]);
     }

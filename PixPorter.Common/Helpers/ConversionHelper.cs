@@ -9,7 +9,7 @@ namespace PixPorter.Common.Helpers;
 
 public static class ConversionHelper
 {
-    public static void ConvertFile(string inputPath, string? targetExtension, int? quality = null)
+    public static void ConvertFile(string inputPath, string? targetExtension, int? quality = null, bool stripMetadata = false)
     {
         string sourceExtension = Path.GetExtension(inputPath);
         string outputExtension = targetExtension ?? Constants.GetDefaultTarget(sourceExtension);
@@ -17,14 +17,18 @@ public static class ConversionHelper
 
         using Image image = Image.Load(inputPath);
 
+        if (stripMetadata)
+        {
+            image.Metadata.ExifProfile = null;
+            image.Metadata.IptcProfile = null;
+            image.Metadata.XmpProfile = null;
+            image.Metadata.IccProfile = null;
+        }
+
         if (quality.HasValue)
-        {
             image.Save(outputPath, BuildEncoder(outputExtension, quality.Value));
-        }
         else
-        {
             image.Save(outputPath);
-        }
     }
 
     public static IEnumerable<string> GetConvertibleFiles(string directory) =>
