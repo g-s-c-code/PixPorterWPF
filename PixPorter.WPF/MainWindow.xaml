@@ -41,7 +41,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}"
-                                CornerRadius="6"
+                                CornerRadius="4"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
@@ -75,7 +75,7 @@
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
+                                CornerRadius="4"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
@@ -134,7 +134,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ToggleButton">
                         <Border Background="{TemplateBinding Background}"
-                                CornerRadius="6"
+                                CornerRadius="4"
                                 Width="32" Height="32"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
@@ -157,7 +157,7 @@
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Padding" Value="0" />
             <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontSize" Value="18" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -165,15 +165,10 @@
                         <StackPanel>
                             <ContentPresenter Margin="0,0,0,8"
                                               HorizontalAlignment="Center" />
-                            <Border x:Name="Underline"
-                                    Height="2"
-                                    CornerRadius="1"
-                                    Background="Transparent" />
                         </StackPanel>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-                                <Setter TargetName="Underline" Property="Background" Value="{DynamicResource AccentBrush}" />
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
@@ -209,7 +204,7 @@
                                         <Border Background="{TemplateBinding Background}"
                                                 BorderBrush="{TemplateBinding BorderBrush}"
                                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                                CornerRadius="6">
+                                                CornerRadius="4">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*" />
@@ -241,7 +236,7 @@
                                 <Border Background="{DynamicResource SurfaceBrush}"
                                         BorderBrush="{DynamicResource BorderBrush}"
                                         BorderThickness="1"
-                                        CornerRadius="6"
+                                        CornerRadius="4"
                                         MinWidth="{TemplateBinding ActualWidth}"
                                         MaxHeight="200">
                                     <ScrollViewer Style="{StaticResource ScrollViewerStyle}"
@@ -345,7 +340,7 @@
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Border x:Name="Box"
                                     Width="16" Height="16"
-                                    CornerRadius="3"
+                                    CornerRadius="4"
                                     BorderThickness="1.5"
                                     BorderBrush="{DynamicResource BorderBrush}"
                                     Background="Transparent"
@@ -457,7 +452,7 @@
                     Background="{DynamicResource SurfaceBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1.5"
-                    CornerRadius="10"
+                    CornerRadius="4"
                     AllowDrop="True"
                     Drop="DropZone_Drop"
                     DragEnter="DropZone_DragEnter"
@@ -473,7 +468,7 @@
                     <Border Grid.Row="0"
                             BorderBrush="{DynamicResource BorderSubtleBrush}"
                             BorderThickness="0,0,0,1"
-                            Padding="20,14,20,0">
+                            Padding="24,6,24,0">
                         <StackPanel Orientation="Horizontal">
                             <RadioButton x:Name="QueueTab"
                                          Content="Queue"
@@ -514,7 +509,7 @@
                                        FontSize="30"
                                        HorizontalAlignment="Center"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
-                                       Margin="0,0,0,12" />
+                                       Margin="0,0,0,4" />
                             <TextBlock Text="Drop images or folders here"
                                        FontSize="17" FontWeight="Medium"
                                        Foreground="{DynamicResource TextSecondaryBrush}"
@@ -597,7 +592,7 @@
 
                                                     <Border Grid.Column="1"
                                                             Width="3" Height="32"
-                                                            CornerRadius="2"
+                                                            CornerRadius="4"
                                                             Background="{Binding Status, Converter={StaticResource StatusToColor}}"
                                                             VerticalAlignment="Center"
                                                             Margin="0,0,8,0" />
@@ -758,14 +753,16 @@
                                       VerticalScrollBarVisibility="Auto"
                                       Padding="24,20,20,24"
                                       PreviewMouseWheel="SmoothScroll_PreviewMouseWheel">
-                            <StackPanel>
+                            <StackPanel Margin="16,16,16,16">
 
                                 <!-- Getting Started -->
-                                <TextBlock Style="{StaticResource HelpSectionHeader}" Text="GETTING STARTED" />
+                                <TextBlock Style="{StaticResource HelpSectionHeader}"
+                                           Text="GETTING STARTED" 
+                                           FontSize="16" />
                                 <Border Background="{DynamicResource SurfaceElevatedBrush}"
                                         BorderBrush="{DynamicResource BorderSubtleBrush}"
                                         BorderThickness="1"
-                                        CornerRadius="8"
+                                        CornerRadius="4"
                                         Padding="16,14"
                                         Margin="0,0,0,20">
                                     <StackPanel>
@@ -823,7 +820,9 @@
                                 </Border>
 
                                 <!-- Supported Formats -->
-                                <TextBlock Style="{StaticResource HelpSectionHeader}" Text="SUPPORTED INPUT FORMATS" />
+                                <TextBlock Style="{StaticResource HelpSectionHeader}" 
+                                           Text="SUPPORTED INPUT FORMATS"
+                                           FontSize="16" />
                                 <WrapPanel Margin="0,0,0,6">
                                     <Border Style="{StaticResource FormatBadge}">
                                         <TextBlock Text=".png" FontSize="12" FontWeight="SemiBold"
@@ -867,17 +866,19 @@
                                            Margin="0,4,0,20" />
 
                                 <!-- Default Mappings -->
-                                <TextBlock Style="{StaticResource HelpSectionHeader}" Text="DEFAULT FORMAT MAPPINGS" />
+                                <TextBlock Style="{StaticResource HelpSectionHeader}" 
+                                           Text="DEFAULT FORMAT MAPPINGS" 
+                                           FontSize="16" />
                                 <TextBlock Text="When output format is set to Default, each input format is converted using the mapping below."
                                            Style="{StaticResource HelpBodyText}"
                                            Margin="0,0,0,10" />
                                 <Border Background="{DynamicResource SurfaceElevatedBrush}"
                                         BorderBrush="{DynamicResource BorderSubtleBrush}"
                                         BorderThickness="1"
-                                        CornerRadius="8"
+                                        CornerRadius="4"
                                         Padding="4,4"
                                         Margin="0,0,0,20">
-                                    <StackPanel>
+                                    <StackPanel Margin="4,4,4,4">
                                         <local:MappingRow From=".webp" To=".png"  />
                                         <local:MappingRow From=".png"  To=".webp" />
                                         <local:MappingRow From=".jpg"  To=".webp" />
@@ -892,11 +893,13 @@
                                 </Border>
 
                                 <!-- Quality Setting -->
-                                <TextBlock Style="{StaticResource HelpSectionHeader}" Text="QUALITY SETTING" />
+                                <TextBlock Style="{StaticResource HelpSectionHeader}" 
+                                           Text="QUALITY SETTING" 
+                                           FontSize="16" />
                                 <Border Background="{DynamicResource SurfaceElevatedBrush}"
                                         BorderBrush="{DynamicResource BorderSubtleBrush}"
                                         BorderThickness="1"
-                                        CornerRadius="8"
+                                        CornerRadius="4"
                                         Padding="16,14"
                                         Margin="0,0,0,20">
                                     <StackPanel>
@@ -907,7 +910,7 @@
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
                                             <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                                                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="6" Padding="10,8" Margin="0,0,0,6">
+                                                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="4" Padding="10,8" Margin="0,0,0,6">
                                                     <TextBlock Text="1–50" FontSize="13" FontWeight="Bold"
                                                                Foreground="{DynamicResource DestructiveBrush}"
                                                                FontFamily="Cascadia Code, Consolas, Courier New"
@@ -918,7 +921,7 @@
                                                            FontSize="12" TextAlignment="Center" />
                                             </StackPanel>
                                             <StackPanel Grid.Column="1" Margin="4,0">
-                                                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="6" Padding="10,8" Margin="0,0,0,6">
+                                                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="4" Padding="10,8" Margin="0,0,0,6">
                                                     <TextBlock Text="75–85" FontSize="13" FontWeight="Bold"
                                                                Foreground="{DynamicResource AccentBrush}"
                                                                FontFamily="Cascadia Code, Consolas, Courier New"
@@ -929,7 +932,7 @@
                                                            FontSize="12" TextAlignment="Center" />
                                             </StackPanel>
                                             <StackPanel Grid.Column="2" Margin="8,0,0,0">
-                                                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="6" Padding="10,8" Margin="0,0,0,6">
+                                                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="4" Padding="10,8" Margin="0,0,0,6">
                                                     <TextBlock Text="90–100" FontSize="13" FontWeight="Bold"
                                                                Foreground="{DynamicResource SuccessBrush}"
                                                                FontFamily="Cascadia Code, Consolas, Courier New"
@@ -947,11 +950,13 @@
                                 </Border>
 
                                 <!-- Metadata -->
-                                <TextBlock Style="{StaticResource HelpSectionHeader}" Text="METADATA STRIPPING" />
+                                <TextBlock Style="{StaticResource HelpSectionHeader}" 
+                                           Text="METADATA STRIPPING" 
+                                           FontSize="16" />
                                 <Border Background="{DynamicResource SurfaceElevatedBrush}"
                                         BorderBrush="{DynamicResource BorderSubtleBrush}"
                                         BorderThickness="1"
-                                        CornerRadius="8"
+                                        CornerRadius="4"
                                         Padding="16,14"
                                         Margin="0,0,0,20">
                                     <StackPanel>
@@ -992,11 +997,13 @@
                                 </Border>
 
                                 <!-- Tips -->
-                                <TextBlock Style="{StaticResource HelpSectionHeader}" Text="TIPS" />
+                                <TextBlock Style="{StaticResource HelpSectionHeader}" 
+                                           Text="TIPS"
+                                           FontSize="16" />
                                 <Border Background="{DynamicResource SurfaceElevatedBrush}"
                                         BorderBrush="{DynamicResource BorderSubtleBrush}"
                                         BorderThickness="1"
-                                        CornerRadius="8"
+                                        CornerRadius="4"
                                         Padding="16,14"
                                         Margin="0,0,0,4">
                                     <StackPanel>
@@ -1057,7 +1064,7 @@
             <!-- Drop overlay — sits on top of the entire left panel, only active on Queue tab -->
             <Border Grid.Column="0"
                     BorderThickness="1.5"
-                    CornerRadius="10"
+                    CornerRadius="4"
                     IsHitTestVisible="False">
                 <Border.Style>
                     <Style TargetType="Border">
@@ -1132,11 +1139,10 @@
                                     TickFrequency="1"
                                     IsSnapToTickEnabled="True"
                                     IsEnabled="{Binding QualitySupported}" />
-                            <TextBlock Text="Applicable when output is set to JPG, PNG, or WebP"
-                                       FontSize="13"
+                            <TextBlock FontSize="13"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,6,0,0"
-                                       TextWrapping="Wrap" />
+                                       TextWrapping="Wrap" Text="Applicable when output format is set to JPG, PNG, or WebP" />
                         </StackPanel>
 
                         <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,16,0,16" />
@@ -1174,7 +1180,7 @@
                                             </Style.Triggers>
                                         </Style>
                                     </ToggleButton.Style>
-                                    <Border Width="28" Height="16" CornerRadius="8">
+                                    <Border Width="30" Height="16" CornerRadius="8">
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="Background" Value="{DynamicResource BorderBrush}" />
@@ -1218,7 +1224,7 @@
                                    FontSize="14" FontWeight="Bold"
                                    Foreground="{DynamicResource TextTertiaryBrush}"
                                    Margin="0,0,0,8" />
-                        <Border CornerRadius="6" Padding="12,9" MinHeight="38"
+                        <Border CornerRadius="4" Padding="12,9" MinHeight="38"
                                 Background="{DynamicResource SurfaceElevatedBrush}">
                             <Border.Style>
                                 <Style TargetType="Border">
