@@ -511,7 +511,7 @@
                                     HorizontalAlignment="Center"
                                     Visibility="{Binding QueuedFiles.Count, Converter={StaticResource InvCountToVis}}">
                             <TextBlock Text="⬆"
-                                       FontSize="60"
+                                       FontSize="30"
                                        HorizontalAlignment="Center"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,0,0,12" />
@@ -1132,7 +1132,7 @@
                                     TickFrequency="1"
                                     IsSnapToTickEnabled="True"
                                     IsEnabled="{Binding QualitySupported}" />
-                            <TextBlock Text="Applicable to JPG, PNG, and WebP only"
+                            <TextBlock Text="Applicable when output is set to JPG, PNG, or WebP"
                                        FontSize="13"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,6,0,0"
@@ -1155,7 +1155,7 @@
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding StripMetadata}" Value="True">
                                                     <Setter Property="Text" Value="Enabled" />
-                                                    <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -1180,7 +1180,7 @@
                                                 <Setter Property="Background" Value="{DynamicResource BorderBrush}" />
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding StripMetadata}" Value="True">
-                                                        <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
+                                                        <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -1266,7 +1266,7 @@
                                 IsEnabled="{Binding IsConverting, Converter={StaticResource InvBoolToVis}}"
                                 HorizontalAlignment="Stretch"
                                 Height="42" FontSize="16"
-                                Margin="0,0,0,10" />
+                                Margin="0,0,0,16" />
                         <Button Content="Clear Queue"
                                 Style="{StaticResource GhostButton}"
                                 Command="{Binding ClearQueueCommand}"
