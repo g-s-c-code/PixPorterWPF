@@ -1230,7 +1230,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </Border.Style>
-                            <TextBlock FontSize="12" TextWrapping="Wrap">
+                            <TextBlock FontSize="14" TextWrapping="Wrap">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Text" Value="{Binding StatusMessage}" />

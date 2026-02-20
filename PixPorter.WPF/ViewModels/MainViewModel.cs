@@ -230,7 +230,7 @@ public partial class MainViewModel : ObservableObject
         if (failed == 0)
         {
             AddLog($"Done. {success} file{(success == 1 ? "" : "s")} converted successfully.", LogLevel.Success);
-            ShowStatus($"✓  {success} file{(success == 1 ? "" : "s")} converted successfully.", isError: false);
+            ShowStatus($"{success} file{(success == 1 ? "" : "s")} converted successfully.", isError: false);
         }
         else
         {
