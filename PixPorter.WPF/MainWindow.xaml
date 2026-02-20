@@ -704,6 +704,7 @@
                                           x:Name="LogScrollViewer"
                                           Style="{StaticResource ScrollViewerStyle}"
                                           VerticalScrollBarVisibility="Auto"
+                                          Margin="8"
                                           Padding="16,10"
                                           Visibility="{Binding LogEntries.Count, Converter={StaticResource CountToVis}}"
                                           PreviewMouseWheel="SmoothScroll_PreviewMouseWheel">
