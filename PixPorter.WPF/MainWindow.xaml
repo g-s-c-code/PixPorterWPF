@@ -743,7 +743,7 @@
 
                     <!-- Settings -->
                     <StackPanel Grid.Row="0">
-                        <StackPanel Margin="0,0,0,16">
+                        <StackPanel>
                             <TextBlock Text="OUTPUT FORMAT"
                                        FontSize="14" FontWeight="Bold"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
@@ -759,9 +759,9 @@
                                        TextWrapping="Wrap" />
                         </StackPanel>
 
-                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,0,0,16" />
+                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,16,0,16" />
 
-                        <StackPanel Margin="0,0,0,16">
+                        <StackPanel>
                             <StackPanel.Style>
                                 <Style TargetType="StackPanel">
                                     <Setter Property="Opacity" Value="1" />
@@ -796,14 +796,14 @@
                                        TextWrapping="Wrap" />
                         </StackPanel>
 
-                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,0,0,16" />
+                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,16,0,16" />
 
                         <StackPanel Margin="0,0,0,0">
                             <TextBlock Text="STRIP METADATA"
                                        FontSize="14" FontWeight="Bold"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,0,0,8" />
-                            <Grid>
+                            <Grid Height="16">
                                 <TextBlock VerticalAlignment="Center" FontSize="13">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
@@ -819,9 +819,9 @@
                                     </TextBlock.Style>
                                 </TextBlock>
                                 <ToggleButton IsChecked="{Binding StripMetadata, Mode=TwoWay}"
-                                              HorizontalAlignment="Right"
-                                              VerticalAlignment="Center"
-                                              Cursor="Hand">
+              HorizontalAlignment="Right"
+              VerticalAlignment="Center"
+              Cursor="Hand">
                                     <ToggleButton.Style>
                                         <Style TargetType="ToggleButton" BasedOn="{StaticResource ToggleThemeButton}">
                                             <Style.Triggers>
@@ -843,32 +843,16 @@
                                             </Style>
                                         </Border.Style>
                                         <Ellipse Width="10" Height="10"
-                                                 Fill="{DynamicResource BackgroundBrush}"
-                                                 VerticalAlignment="Center"
-                                                 HorizontalAlignment="Left">
+                 Fill="{DynamicResource BackgroundBrush}"
+                 VerticalAlignment="Center">
                                             <Ellipse.Style>
                                                 <Style TargetType="Ellipse">
+                                                    <Setter Property="HorizontalAlignment" Value="Left" />
                                                     <Setter Property="Margin" Value="3,0,0,0" />
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding StripMetadata}" Value="True">
-                                                            <DataTrigger.EnterActions>
-                                                                <BeginStoryboard>
-                                                                    <Storyboard>
-                                                                        <ThicknessAnimation Storyboard.TargetProperty="Margin"
-                                                                                            To="0,0,3,0"
-                                                                                            Duration="0:0:0.2" />
-                                                                    </Storyboard>
-                                                                </BeginStoryboard>
-                                                            </DataTrigger.EnterActions>
-                                                            <DataTrigger.ExitActions>
-                                                                <BeginStoryboard>
-                                                                    <Storyboard>
-                                                                        <ThicknessAnimation Storyboard.TargetProperty="Margin"
-                                                                                            To="3,0,0,0"
-                                                                                            Duration="0:0:0.2" />
-                                                                    </Storyboard>
-                                                                </BeginStoryboard>
-                                                            </DataTrigger.ExitActions>
+                                                            <Setter Property="HorizontalAlignment" Value="Right" />
+                                                            <Setter Property="Margin" Value="0,0,3,0" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -884,7 +868,7 @@
                                        TextWrapping="Wrap" />
                         </StackPanel>
 
-                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,16,0,0" />
+                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,16,0,16" />
                     </StackPanel>
 
                     <!-- Default Mappings -->
