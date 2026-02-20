@@ -12,18 +12,21 @@ public static class Constants
 
     public static readonly Dictionary<string, string> FormatFlags = new(StringComparer.OrdinalIgnoreCase)
     {
-        { "--png", ".png" },
-        { "--jpg", ".jpg" },
-        { "--jpeg", ".jpg" },
+        { "--png",  ".png"  },
+        { "--jpg",  ".jpg"  },
+        { "--jpeg", ".jpg"  },
         { "--webp", ".webp" },
-        { "--gif", ".gif" },
-        { "--bmp", ".bmp" },
-        { "--tiff", ".tiff" }
+        { "--gif",  ".gif"  },
+        { "--bmp",  ".bmp"  },
+        { "--tiff", ".tiff" },
+        { "--tga",  ".tga"  },
+        { "--qoi",  ".qoi"  },
+        { "--pbm",  ".pbm"  }
     };
 
     public static readonly HashSet<string> SupportedExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
-        ".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".tiff"
+        ".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".tiff", ".tga", ".qoi", ".pbm"
     };
 
     public static string GetDefaultTarget(string sourceExtension) =>

@@ -25,6 +25,9 @@
         <conv:InverseCountToVisibilityConverter x:Key="InvCountToVis" />
         <conv:StringToVisibilityConverter x:Key="StringToVis" />
 
+        <!-- Log level color converter defined inline -->
+        <conv:LogLevelToColorConverter x:Key="LogLevelToColor" />
+
         <Style x:Key="FlatButton" TargetType="Button">
             <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
             <Setter Property="Foreground" Value="{DynamicResource BackgroundBrush}" />
@@ -40,8 +43,7 @@
                         <Border Background="{TemplateBinding Background}"
                                 CornerRadius="6"
                                 Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                             VerticalAlignment="Center" />
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -75,8 +77,7 @@
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="6"
                                 Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                             VerticalAlignment="Center" />
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -105,12 +106,10 @@
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}"
                                 CornerRadius="4"
-                                Width="24"
-                                Height="24"
+                                Width="24" Height="24"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center" />
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -136,17 +135,48 @@
                     <ControlTemplate TargetType="ToggleButton">
                         <Border Background="{TemplateBinding Background}"
                                 CornerRadius="6"
-                                Width="32"
-                                Height="32"
+                                Width="32" Height="32"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center" />
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" Value="{DynamicResource SurfaceElevatedBrush}" />
                                 <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TabButtonStyle" TargetType="RadioButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource TextTertiaryBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <StackPanel>
+                            <ContentPresenter Margin="0,0,0,8"
+                                              HorizontalAlignment="Center" />
+                            <Border x:Name="Underline"
+                                    Height="2"
+                                    CornerRadius="1"
+                                    Background="Transparent" />
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                                <Setter TargetName="Underline" Property="Background" Value="{DynamicResource AccentBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -270,9 +300,7 @@
                                     <RepeatButton Command="Slider.DecreaseLarge">
                                         <RepeatButton.Template>
                                             <ControlTemplate TargetType="RepeatButton">
-                                                <Border Height="2"
-                                                        Background="{DynamicResource AccentBrush}"
-                                                        CornerRadius="1" />
+                                                <Border Height="2" Background="{DynamicResource AccentBrush}" CornerRadius="1" />
                                             </ControlTemplate>
                                         </RepeatButton.Template>
                                     </RepeatButton>
@@ -281,9 +309,7 @@
                                     <Thumb>
                                         <Thumb.Template>
                                             <ControlTemplate TargetType="Thumb">
-                                                <Ellipse Width="14"
-                                                         Height="14"
-                                                         Fill="{DynamicResource AccentBrush}" />
+                                                <Ellipse Width="14" Height="14" Fill="{DynamicResource AccentBrush}" />
                                             </ControlTemplate>
                                         </Thumb.Template>
                                     </Thumb>
@@ -292,9 +318,7 @@
                                     <RepeatButton Command="Slider.IncreaseLarge">
                                         <RepeatButton.Template>
                                             <ControlTemplate TargetType="RepeatButton">
-                                                <Border Height="2"
-                                                        Background="{DynamicResource BorderBrush}"
-                                                        CornerRadius="1" />
+                                                <Border Height="2" Background="{DynamicResource BorderBrush}" CornerRadius="1" />
                                             </ControlTemplate>
                                         </RepeatButton.Template>
                                     </RepeatButton>
@@ -320,8 +344,7 @@
                     <ControlTemplate TargetType="CheckBox">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Border x:Name="Box"
-                                    Width="16"
-                                    Height="16"
+                                    Width="16" Height="16"
                                     CornerRadius="3"
                                     BorderThickness="1.5"
                                     BorderBrush="{DynamicResource BorderBrush}"
@@ -362,21 +385,17 @@
             <Grid Margin="20,0">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="PixPorter"
-                               FontSize="18"
-                               FontWeight="Bold"
+                               FontSize="18" FontWeight="Bold"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center" />
-                    <Border Width="1"
-                            Height="16"
+                    <Border Width="1" Height="16"
                             Background="{DynamicResource BorderBrush}"
                             Margin="14,0" />
                     <TextBlock Text="Image Format Converter"
-                               FontSize="16"
-                               FontWeight="Bold"
+                               FontSize="16" FontWeight="Bold"
                                Foreground="{DynamicResource TextSecondaryBrush}"
                                VerticalAlignment="Center" />
                 </StackPanel>
-
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center">
@@ -408,8 +427,10 @@
                 <ColumnDefinition Width="260" />
             </Grid.ColumnDefinitions>
 
-            <!-- Drop Zone -->
+            <!-- Left: Tabbed Panel -->
             <Border Grid.Column="0"
+                    Background="{DynamicResource SurfaceBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1.5"
                     CornerRadius="10"
                     AllowDrop="True"
@@ -417,10 +438,290 @@
                     DragEnter="DropZone_DragEnter"
                     DragLeave="DropZone_DragLeave"
                     DragOver="DropZone_DragOver">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Tab Bar -->
+                    <Border Grid.Row="0"
+                            BorderBrush="{DynamicResource BorderSubtleBrush}"
+                            BorderThickness="0,0,0,1"
+                            Padding="20,14,20,0">
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton x:Name="QueueTab"
+                                         Content="Queue"
+                                         Style="{StaticResource TabButtonStyle}"
+                                         IsChecked="True"
+                                         Margin="0,0,24,0"
+                                         GroupName="MainTabs" />
+                            <RadioButton x:Name="LogTab"
+                                         Content="Log"
+                                         Style="{StaticResource TabButtonStyle}"
+                                         GroupName="MainTabs" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Queue Tab Content -->
+                    <Grid Grid.Row="1">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsChecked, ElementName=QueueTab}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+
+                        <!-- Empty state -->
+                        <StackPanel VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Visibility="{Binding QueuedFiles.Count, Converter={StaticResource InvCountToVis}}">
+                            <TextBlock Text="⬆"
+                                       FontSize="60"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{DynamicResource TextTertiaryBrush}"
+                                       Margin="0,0,0,12" />
+                            <TextBlock Text="Drop images or folders here"
+                                       FontSize="17" FontWeight="Medium"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,6" />
+                            <TextBlock Text="or"
+                                       FontSize="15" FontWeight="Bold"
+                                       Foreground="{DynamicResource TextTertiaryBrush}"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,12" />
+                            <Button Content="Browse Files"
+                                    Style="{StaticResource GhostButton}"
+                                    Command="{Binding BrowseFilesCommand}"
+                                    FontSize="18"
+                                    HorizontalAlignment="Center" />
+                            <TextBlock Text="PNG · JPG · WEBP · GIF · BMP · TIFF · TGA · QOI · PBM"
+                                       FontSize="13" FontWeight="Bold"
+                                       Foreground="{DynamicResource TextTertiaryBrush}"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,16,0,0" />
+                        </StackPanel>
+
+                        <!-- File list -->
+                        <Grid Visibility="{Binding QueuedFiles.Count, Converter={StaticResource CountToVis}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Border Grid.Row="0"
+                                    BorderBrush="{DynamicResource BorderSubtleBrush}"
+                                    BorderThickness="0,0,0,1"
+                                    Padding="16,12">
+                                <Grid>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <CheckBox Style="{StaticResource CheckBoxStyle}"
+                                                  IsChecked="{Binding AllSelected, Mode=TwoWay}"
+                                                  VerticalAlignment="Center"
+                                                  Margin="0,0,12,0" />
+                                        <TextBlock VerticalAlignment="Center"
+                                                   FontSize="15"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}">
+                                            <Run Text="{Binding QueuedFiles.Count, Mode=OneWay}" />
+                                            <Run Text="file(s) queued" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <Button Content="+ Add more"
+                                            Style="{StaticResource GhostButton}"
+                                            Padding="12,6"
+                                            Command="{Binding BrowseFilesCommand}"
+                                            HorizontalAlignment="Right"
+                                            FontSize="14" />
+                                </Grid>
+                            </Border>
+
+                            <ScrollViewer Grid.Row="1"
+                                          Style="{StaticResource ScrollViewerStyle}"
+                                          VerticalScrollBarVisibility="Auto"
+                                          Padding="12,8"
+                                          PreviewMouseWheel="SmoothScroll_PreviewMouseWheel">
+                                <ItemsControl ItemsSource="{Binding QueuedFiles}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="Transparent" Padding="0,6" Margin="0,1">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="44" />
+                                                        <ColumnDefinition Width="8" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="74" />
+                                                        <ColumnDefinition Width="38" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <CheckBox Grid.Column="0"
+                                                              IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                              Style="{StaticResource CheckBoxStyle}"
+                                                              VerticalAlignment="Center"
+                                                              HorizontalAlignment="Left"
+                                                              Margin="16,0,0,0" />
+
+                                                    <Border Grid.Column="1"
+                                                            Width="3" Height="32"
+                                                            CornerRadius="2"
+                                                            Background="{Binding Status, Converter={StaticResource StatusToColor}}"
+                                                            VerticalAlignment="Center"
+                                                            Margin="0,0,8,0" />
+
+                                                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="4,0">
+                                                        <TextBlock Text="{Binding FileName}"
+                                                                   FontSize="15"
+                                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                                   TextTrimming="CharacterEllipsis" />
+                                                        <TextBlock Text="{Binding FileSize}"
+                                                                   FontSize="13"
+                                                                   Foreground="{DynamicResource TextTertiaryBrush}"
+                                                                   Margin="0,2,0,0" />
+                                                    </StackPanel>
+
+                                                    <StackPanel Grid.Column="3"
+                                                                VerticalAlignment="Center"
+                                                                HorizontalAlignment="Left"
+                                                                Margin="0,0,12,0">
+                                                        <TextBlock Text="{Binding StatusText}"
+                                                                   FontSize="14"
+                                                                   Foreground="{Binding Status, Converter={StaticResource StatusToColor}}" />
+                                                        <TextBlock Text="{Binding OutputFileSize}"
+                                                                   FontSize="12"
+                                                                   Foreground="{DynamicResource SuccessBrush}"
+                                                                   Visibility="{Binding OutputFileSize, Converter={StaticResource StringToVis}}"
+                                                                   Margin="0,2,0,0" />
+                                                    </StackPanel>
+
+                                                    <Button Grid.Column="4"
+                                                            Style="{StaticResource IconButton}"
+                                                            Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                            CommandParameter="{Binding}"
+                                                            ToolTip="Remove">
+                                                        <TextBlock Text="✕"
+                                                                   FontSize="13"
+                                                                   Foreground="{DynamicResource TextTertiaryBrush}" />
+                                                    </Button>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
+                    </Grid>
+
+                    <!-- Log Tab Content -->
+                    <Grid Grid.Row="1">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsChecked, ElementName=LogTab}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!-- Log toolbar -->
+                            <Border Grid.Row="0"
+                                    BorderBrush="{DynamicResource BorderSubtleBrush}"
+                                    BorderThickness="0,0,0,1"
+                                    Padding="16,12">
+                                <Grid>
+                                    <TextBlock VerticalAlignment="Center"
+                                               FontSize="13"
+                                               Foreground="{DynamicResource TextTertiaryBrush}"
+                                               FontFamily="Cascadia Code, Consolas, Courier New">
+                                        <Run Text="{Binding LogEntries.Count, Mode=OneWay}" />
+                                        <Run Text="entries" />
+                                    </TextBlock>
+                                    <Button Content="Clear"
+                                            Style="{StaticResource GhostButton}"
+                                            Padding="12,6"
+                                            Command="{Binding ClearLogCommand}"
+                                            HorizontalAlignment="Right"
+                                            FontSize="14" />
+                                </Grid>
+                            </Border>
+
+                            <!-- Empty log state -->
+                            <StackPanel Grid.Row="1"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Visibility="{Binding LogEntries.Count, Converter={StaticResource InvCountToVis}}">
+                                <TextBlock Text="No log entries yet."
+                                           FontSize="15"
+                                           FontFamily="Cascadia Code, Consolas, Courier New"
+                                           Foreground="{DynamicResource TextTertiaryBrush}"
+                                           HorizontalAlignment="Center" />
+                                <TextBlock Text="Convert some files to see output here."
+                                           FontSize="13"
+                                           FontFamily="Cascadia Code, Consolas, Courier New"
+                                           Foreground="{DynamicResource TextTertiaryBrush}"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,6,0,0" />
+                            </StackPanel>
+
+                            <!-- Log entries -->
+                            <ScrollViewer Grid.Row="1"
+                                          x:Name="LogScrollViewer"
+                                          Style="{StaticResource ScrollViewerStyle}"
+                                          VerticalScrollBarVisibility="Auto"
+                                          Padding="16,10"
+                                          Visibility="{Binding LogEntries.Count, Converter={StaticResource CountToVis}}"
+                                          PreviewMouseWheel="SmoothScroll_PreviewMouseWheel">
+                                <ItemsControl ItemsSource="{Binding LogEntries}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,0,0,10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="64" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0"
+                                                           Text="{Binding Timestamp}"
+                                                           FontSize="12"
+                                                           FontFamily="Cascadia Code, Consolas, Courier New"
+                                                           Foreground="{DynamicResource TextTertiaryBrush}"
+                                                           VerticalAlignment="Top"
+                                                           Margin="0,1,0,0" />
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding Message}"
+                                                           FontSize="13"
+                                                           FontFamily="Cascadia Code, Consolas, Courier New"
+                                                           Foreground="{Binding Level, Converter={StaticResource LogLevelToColor}}"
+                                                           TextWrapping="Wrap" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- Drop overlay — sits on top of the entire left panel, only active on Queue tab -->
+            <Border Grid.Column="0"
+                    BorderThickness="1.5"
+                    CornerRadius="10"
+                    IsHitTestVisible="False">       
                 <Border.Style>
                     <Style TargetType="Border">
-                        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
-                        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderBrush" Value="Transparent" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsDragOver}" Value="True">
                                 <Setter Property="Background" Value="{DynamicResource DropZoneActiveBrush}" />
@@ -429,153 +730,6 @@
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
-
-                <Grid>
-                    <!-- Empty state -->
-                    <StackPanel VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Visibility="{Binding QueuedFiles.Count, Converter={StaticResource InvCountToVis}}">
-                        <TextBlock Text="⬆"
-                                   FontSize="60"
-                                   HorizontalAlignment="Center"
-                                   Foreground="{DynamicResource TextTertiaryBrush}"
-                                   Margin="0,0,0,12" />
-                        <TextBlock Text="Drop images or folders here"
-                                   FontSize="17"
-                                   FontWeight="Medium"
-                                   Foreground="{DynamicResource TextSecondaryBrush}"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,0,0,6" />
-                        <TextBlock Text="or"
-                                   FontSize="15"
-                                   FontWeight="Bold"
-                                   Foreground="{DynamicResource TextTertiaryBrush}"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,0,0,12" />
-                        <Button Content="Browse Files"
-                                Style="{StaticResource GhostButton}"
-                                Command="{Binding BrowseFilesCommand}"
-                                FontSize="18"
-                                HorizontalAlignment="Center" />
-                        <TextBlock Text="PNG · JPG · WEBP · GIF · BMP · TIFF"
-                                   FontSize="13"
-                                   FontWeight="Bold"
-                                   Foreground="{DynamicResource TextTertiaryBrush}"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,16,0,0" />
-                    </StackPanel>
-
-                    <!-- File list -->
-                    <Grid Visibility="{Binding QueuedFiles.Count, Converter={StaticResource CountToVis}}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-
-                        <Border Grid.Row="0"
-                                BorderBrush="{DynamicResource BorderSubtleBrush}"
-                                BorderThickness="0,0,0,1"
-                                Padding="16,12">
-                            <Grid>
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <CheckBox Style="{StaticResource CheckBoxStyle}"
-                                              IsChecked="{Binding AllSelected, Mode=TwoWay}"
-                                              VerticalAlignment="Center"
-                                              Margin="0,0,12,0" />
-                                    <TextBlock VerticalAlignment="Center"
-                                               FontSize="15"
-                                               Foreground="{DynamicResource TextSecondaryBrush}">
-                                        <Run Text="{Binding QueuedFiles.Count, Mode=OneWay}" />
-                                        <Run Text="file(s) queued" />
-                                    </TextBlock>
-                                </StackPanel>
-                                <Button Content="+ Add more"
-                                        Style="{StaticResource GhostButton}"
-                                        Padding="12,6"
-                                        Command="{Binding BrowseFilesCommand}"
-                                        HorizontalAlignment="Right"
-                                        FontSize="14" />
-                            </Grid>
-                        </Border>
-
-                        <ScrollViewer Grid.Row="1"
-                                      Style="{StaticResource ScrollViewerStyle}"
-                                      VerticalScrollBarVisibility="Auto"
-                                      Padding="12,8">
-                            <ItemsControl ItemsSource="{Binding QueuedFiles}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Background="Transparent"
-                                                Padding="0,6"
-                                                Margin="0,1">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="44" />
-                                                    <ColumnDefinition Width="8" />
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="64" />
-                                                    <ColumnDefinition Width="28" />
-                                                </Grid.ColumnDefinitions>
-
-                                                <CheckBox Grid.Column="0"
-                                                          IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                                          Style="{StaticResource CheckBoxStyle}"
-                                                          VerticalAlignment="Center"
-                                                          HorizontalAlignment="Left"
-                                                          Margin="16,0,0,0" />
-
-                                                <Border Grid.Column="1"
-                                                        Width="3"
-                                                        Height="32"
-                                                        CornerRadius="2"
-                                                        Background="{Binding Status, Converter={StaticResource StatusToColor}}"
-                                                        VerticalAlignment="Center"
-                                                        Margin="0,0,8,0" />
-
-                                                <StackPanel Grid.Column="2"
-                                                            VerticalAlignment="Center"
-                                                            Margin="4,0">
-                                                    <TextBlock Text="{Binding FileName}"
-                                                               FontSize="15"
-                                                               Foreground="{DynamicResource TextPrimaryBrush}"
-                                                               TextTrimming="CharacterEllipsis" />
-                                                    <TextBlock Text="{Binding FileSize}"
-                                                               FontSize="13"
-                                                               Foreground="{DynamicResource TextTertiaryBrush}"
-                                                               Margin="0,2,0,0" />
-                                                </StackPanel>
-
-                                                <StackPanel Grid.Column="3"
-                                                            VerticalAlignment="Center"
-                                                            HorizontalAlignment="Left"
-                                                            Margin="0,0,12,0">
-                                                    <TextBlock Text="{Binding StatusText}"
-                                                               FontSize="14"
-                                                               Foreground="{Binding Status, Converter={StaticResource StatusToColor}}" />
-                                                    <TextBlock Text="{Binding OutputFileSize}"
-                                                               FontSize="12"
-                                                               Foreground="{DynamicResource SuccessBrush}"
-                                                               Visibility="{Binding OutputFileSize, Converter={StaticResource StringToVis}}"
-                                                               Margin="0,2,0,0" />
-                                                </StackPanel>
-
-                                                <Button Grid.Column="4"
-                                                        Style="{StaticResource IconButton}"
-                                                        Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                        CommandParameter="{Binding}"
-                                                        ToolTip="Remove">
-                                                    <TextBlock Text="✕"
-                                                               FontSize="13"
-                                                               Foreground="{DynamicResource TextTertiaryBrush}" />
-                                                </Button>
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-                    </Grid>
-                </Grid>
             </Border>
 
             <!-- Right Panel -->
@@ -589,10 +743,9 @@
 
                     <!-- Settings -->
                     <StackPanel Grid.Row="0">
-                        <StackPanel>
+                        <StackPanel Margin="0,0,0,16">
                             <TextBlock Text="OUTPUT FORMAT"
-                                       FontSize="14"
-                                       FontWeight="Bold"
+                                       FontSize="14" FontWeight="Bold"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,0,0,8" />
                             <ComboBox Style="{StaticResource ComboBoxStyle}"
@@ -606,9 +759,7 @@
                                        TextWrapping="Wrap" />
                         </StackPanel>
 
-                        <Border Height="1"
-                                Background="{DynamicResource BorderSubtleBrush}"
-                                Margin="0,16,0,16" />
+                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,0,0,16" />
 
                         <StackPanel Margin="0,0,0,16">
                             <StackPanel.Style>
@@ -623,20 +774,17 @@
                             </StackPanel.Style>
                             <Grid Margin="0,0,0,8">
                                 <TextBlock Text="QUALITY"
-                                           FontSize="14"
-                                           FontWeight="Bold"
+                                           FontSize="14" FontWeight="Bold"
                                            Foreground="{DynamicResource TextTertiaryBrush}" />
                                 <TextBlock HorizontalAlignment="Right"
                                            VerticalAlignment="Center"
-                                           FontSize="14"
-                                           FontWeight="Medium"
+                                           FontSize="15" FontWeight="Medium"
                                            Foreground="{DynamicResource TextPrimaryBrush}">
                                     <Run Text="{Binding Quality, Mode=OneWay}" /><Run Text="%" />
                                 </TextBlock>
                             </Grid>
                             <Slider Style="{StaticResource SliderStyle}"
-                                    Minimum="1"
-                                    Maximum="100"
+                                    Minimum="1" Maximum="100"
                                     Value="{Binding Quality}"
                                     TickFrequency="1"
                                     IsSnapToTickEnabled="True"
@@ -648,20 +796,15 @@
                                        TextWrapping="Wrap" />
                         </StackPanel>
 
-                        <Border Height="1"
-                                Background="{DynamicResource BorderSubtleBrush}"
-                                Margin="0,0,0,16" />
+                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,0,0,16" />
 
-                        <StackPanel>
+                        <StackPanel Margin="0,0,0,0">
                             <TextBlock Text="STRIP METADATA"
-                                       FontSize="14"
-                                       FontWeight="Bold"
+                                       FontSize="14" FontWeight="Bold"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,0,0,8" />
-                            <Grid Height="16">
-                                <TextBlock VerticalAlignment="Center"
-                                           FontSize="14"
-                                           FontWeight="Medium">
+                            <Grid>
+                                <TextBlock VerticalAlignment="Center" FontSize="13">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Text" Value="Disabled" />
@@ -669,7 +812,7 @@
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding StripMetadata}" Value="True">
                                                     <Setter Property="Text" Value="Enabled" />
-                                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -678,33 +821,54 @@
                                 <ToggleButton IsChecked="{Binding StripMetadata, Mode=TwoWay}"
                                               HorizontalAlignment="Right"
                                               VerticalAlignment="Center"
-                                              Style="{StaticResource ToggleThemeButton}"
                                               Cursor="Hand">
-                                    <Border Width="28"
-                                            Height="16"
-                                            CornerRadius="8">
+                                    <ToggleButton.Style>
+                                        <Style TargetType="ToggleButton" BasedOn="{StaticResource ToggleThemeButton}">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="Transparent" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ToggleButton.Style>
+                                    <Border Width="28" Height="16" CornerRadius="8">
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="Background" Value="{DynamicResource BorderBrush}" />
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding StripMetadata}" Value="True">
-                                                        <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
+                                                        <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </Border.Style>
-                                        <Ellipse Width="10"
-                                                 Height="10"
+                                        <Ellipse Width="10" Height="10"
                                                  Fill="{DynamicResource BackgroundBrush}"
-                                                 VerticalAlignment="Center">
+                                                 VerticalAlignment="Center"
+                                                 HorizontalAlignment="Left">
                                             <Ellipse.Style>
                                                 <Style TargetType="Ellipse">
-                                                    <Setter Property="HorizontalAlignment" Value="Left" />
                                                     <Setter Property="Margin" Value="3,0,0,0" />
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding StripMetadata}" Value="True">
-                                                            <Setter Property="HorizontalAlignment" Value="Right" />
-                                                            <Setter Property="Margin" Value="0,0,3,0" />
+                                                            <DataTrigger.EnterActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                                                                            To="0,0,3,0"
+                                                                                            Duration="0:0:0.2" />
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </DataTrigger.EnterActions>
+                                                            <DataTrigger.ExitActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <ThicknessAnimation Storyboard.TargetProperty="Margin"
+                                                                                            To="3,0,0,0"
+                                                                                            Duration="0:0:0.2" />
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </DataTrigger.ExitActions>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -720,20 +884,18 @@
                                        TextWrapping="Wrap" />
                         </StackPanel>
 
-                        <Border Height="1"
-                                Background="{DynamicResource BorderSubtleBrush}"
-                                Margin="0,16,0,16" />
+                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,16,0,0" />
                     </StackPanel>
 
                     <!-- Default Mappings -->
                     <ScrollViewer Grid.Row="1"
                                   Style="{StaticResource ScrollViewerStyle}"
                                   VerticalScrollBarVisibility="Auto"
-                                  Padding="0,16,6,0">
+                                  Padding="0,16,6,0"
+                                  PreviewMouseWheel="SmoothScroll_PreviewMouseWheel">
                         <StackPanel>
                             <TextBlock Text="DEFAULT MAPPINGS"
-                                       FontSize="14"
-                                       FontWeight="Bold"
+                                       FontSize="14" FontWeight="Bold"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,0,0,10" />
                             <local:MappingRow From=".webp" To=".png"  Margin="0,0,0,3" />
@@ -742,7 +904,10 @@
                             <local:MappingRow From=".jpeg" To=".webp" Margin="0,0,0,3" />
                             <local:MappingRow From=".gif"  To=".webp" Margin="0,0,0,3" />
                             <local:MappingRow From=".tiff" To=".webp" Margin="0,0,0,3" />
-                            <local:MappingRow From=".bmp"  To=".webp" />
+                            <local:MappingRow From=".bmp"  To=".webp" Margin="0,0,0,3" />
+                            <local:MappingRow From=".tga"  To=".webp" Margin="0,0,0,3" />
+                            <local:MappingRow From=".qoi"  To=".webp" Margin="0,0,0,3" />
+                            <local:MappingRow From=".pbm"  To=".webp" />
                         </StackPanel>
                     </ScrollViewer>
 
@@ -753,15 +918,12 @@
                                 Command="{Binding ConvertCommand}"
                                 IsEnabled="{Binding IsConverting, Converter={StaticResource InvBoolToVis}}"
                                 HorizontalAlignment="Stretch"
-                                Height="42"
-                                FontSize="16"
+                                Height="42" FontSize="16"
                                 Margin="0,0,0,16" />
                         <Button Content="Clear Queue"
                                 Style="{StaticResource GhostButton}"
                                 Command="{Binding ClearQueueCommand}"
-                                HorizontalAlignment="Stretch"
-                                Height="42"
-                                FontSize="16" />
+                                Height="42" FontSize="16" />
                     </StackPanel>
                 </Grid>
             </Border>

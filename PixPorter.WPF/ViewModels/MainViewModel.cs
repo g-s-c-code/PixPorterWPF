@@ -11,15 +11,27 @@ using System.Windows;
 
 namespace PixPorter.WPF.ViewModels;
 
+public enum LogLevel { Info, Success, Error }
+
+public class LogEntry
+{
+    public string Timestamp { get; init; } = string.Empty;
+    public string Message { get; init; } = string.Empty;
+    public LogLevel Level { get; init; } = LogLevel.Info;
+}
+
 public partial class MainViewModel : ObservableObject
 {
     public const string DefaultFormat = "Default";
 
     public IReadOnlyList<string> FormatOptions { get; } =
-        [DefaultFormat, "WebP", "PNG", "JPG", "GIF", "BMP", "TIFF"];
+        [DefaultFormat, "WebP", "PNG", "JPG", "GIF", "BMP", "TIFF", "TGA", "QOI", "PBM"];
 
     [ObservableProperty]
     private ObservableCollection<ConversionItemViewModel> _queuedFiles = [];
+
+    [ObservableProperty]
+    private ObservableCollection<LogEntry> _logEntries = [];
 
     private string _selectedFormatOption = DefaultFormat;
     public string SelectedFormatOption
@@ -61,7 +73,6 @@ public partial class MainViewModel : ObservableObject
                 : "Quality not supported for this format.";
 
     public bool HasSelection => QueuedFiles.Any(f => f.IsSelected);
-
     public string ConvertButtonText => HasSelection ? "Convert Selected" : "Convert All";
 
     public bool AllSelected
@@ -123,6 +134,16 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    private void AddLog(string message, LogLevel level = LogLevel.Info)
+    {
+        LogEntries.Add(new LogEntry
+        {
+            Timestamp = DateTime.Now.ToString("HH:mm:ss"),
+            Message = message,
+            Level = level
+        });
+    }
+
     [RelayCommand]
     private async Task ConvertAsync()
     {
@@ -136,38 +157,54 @@ public partial class MainViewModel : ObservableObject
         IsConverting = true;
         ClearStatus();
 
+        AddLog($"Starting conversion of {toConvert.Count} file{(toConvert.Count == 1 ? "" : "s")}.");
+
         int success = 0;
         int failed = 0;
 
         foreach (var item in toConvert)
         {
             item.Status = ConversionStatus.Converting;
-            item.StatusText = "Converting…";
+            item.StatusText = "—";
 
             await Task.Run(() =>
             {
                 try
                 {
                     string sourceExt = Path.GetExtension(item.FilePath);
-                    string targetExt = SelectedFormat ?? Constants.GetDefaultTarget(sourceExt);
+                    string targetExt = SelectedFormat is not null
+                        ? $".{SelectedFormat.ToLowerInvariant()}"
+                        : Constants.GetDefaultTarget(sourceExt);
                     int? quality = QualitySupported ? Quality : null;
 
                     ConversionHelper.ConvertFile(item.FilePath, targetExt, quality, StripMetadata);
+
+                    string outputPath = Path.ChangeExtension(item.FilePath, targetExt);
+                    string outputSize = string.Empty;
+
+                    try
+                    {
+                        long bytes = new FileInfo(outputPath).Length;
+                        outputSize = FormatOutputBytes(bytes);
+                    }
+                    catch { }
 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         item.Status = ConversionStatus.Done;
                         item.StatusText = targetExt.TrimStart('.').ToUpperInvariant();
+                        item.OutputFileSize = outputSize;
 
-                        try
-                        {
-                            string outputPath = Path.ChangeExtension(item.FilePath, targetExt);
-                            item.OutputFileSize = FormatOutputBytes(new FileInfo(outputPath).Length);
-                        }
-                        catch
-                        {
-                            item.OutputFileSize = null;
-                        }
+                        string qualityNote = quality.HasValue ? $"  quality={quality}" : string.Empty;
+                        string metaNote = StripMetadata ? "  stripmeta=true" : string.Empty;
+                        string sizeNote = !string.IsNullOrEmpty(item.FileSize) && !string.IsNullOrEmpty(outputSize)
+                            ? $"  {item.FileSize} → {outputSize}"
+                            : string.Empty;
+
+                        AddLog(
+                            $"[OK]  {item.FileName}  →  {Path.GetFileName(outputPath)}{sizeNote}{qualityNote}{metaNote}\n" +
+                            $"      {outputPath}",
+                            LogLevel.Success);
                     });
 
                     success++;
@@ -179,6 +216,8 @@ public partial class MainViewModel : ObservableObject
                         item.Status = ConversionStatus.Failed;
                         item.StatusText = "Failed";
                         item.ErrorMessage = ex.Message;
+
+                        AddLog($"[ERR] {item.FileName}\n      {ex.Message}", LogLevel.Error);
                     });
 
                     failed++;
@@ -189,9 +228,15 @@ public partial class MainViewModel : ObservableObject
         IsConverting = false;
 
         if (failed == 0)
+        {
+            AddLog($"Done. {success} file{(success == 1 ? "" : "s")} converted successfully.", LogLevel.Success);
             ShowStatus($"✓  {success} file{(success == 1 ? "" : "s")} converted successfully.", isError: false);
+        }
         else
+        {
+            AddLog($"Done. {success} succeeded, {failed} failed.", LogLevel.Error);
             ShowStatus($"{success} converted, {failed} failed.", isError: true);
+        }
     }
 
     [RelayCommand]
@@ -204,6 +249,9 @@ public partial class MainViewModel : ObservableObject
         ClearStatus();
         RefreshDerivedProperties();
     }
+
+    [RelayCommand]
+    private void ClearLog() => LogEntries.Clear();
 
     [RelayCommand]
     private void RemoveFile(ConversionItemViewModel item)
@@ -221,7 +269,7 @@ public partial class MainViewModel : ObservableObject
         var dialog = new OpenFileDialog
         {
             Multiselect = true,
-            Filter = "Image Files|*.png;*.jpg;*.jpeg;*.webp;*.gif;*.bmp;*.tiff|All Files|*.*",
+            Filter = "Image Files|*.png;*.jpg;*.jpeg;*.webp;*.gif;*.bmp;*.tiff;*.tga;*.qoi;*.pbm|All Files|*.*",
             Title = "Select images to convert"
         };
 

@@ -142,9 +142,7 @@ public class UI : IUserInterface
         _ = table.Columns[0].Padding(0, 0);
 
         foreach (IRenderable section in GetInformationSections())
-        {
             _ = table.AddRow(section);
-        }
 
         return table;
     }
@@ -191,9 +189,7 @@ public class UI : IUserInterface
 
         _ = table.AddColumn(new TableColumn(string.Empty)).HideHeaders();
         foreach (IRenderable section in GetHelpSections())
-        {
             _ = table.AddRow(section);
-        }
 
         return table;
     }
@@ -206,9 +202,7 @@ public class UI : IUserInterface
         };
 
         foreach (string? item in items.DefaultIfEmpty("[dim italic]None[/]"))
-        {
             _ = tree.AddNode($"[bold white]{item}[/]");
-        }
 
         return tree;
     }
@@ -228,20 +222,23 @@ public class UI : IUserInterface
         yield return BuildSection("[lightskyblue1 underline bold]Commands[/]",
         [
             ("[steelblue]cd [[path]][/] ", "   Change directory"),
-            ("[steelblue]help[/]      ", "   Open the detailed instructions menu"),
-            ("[steelblue]q[/]         ", "   Exit application")
+            ("[steelblue]help[/]      ",   "   Open the detailed instructions menu"),
+            ("[steelblue]q[/]         ",   "   Exit application")
         ]);
 
         yield return BuildSection("[lightskyblue1 underline bold]FLAGS[/]                                      [lightskyblue1 underline bold]DEFAULTS[/]",
         [
-            ("[steelblue]--webp[/]        Convert to WebP[lightskyblue1]*[/]", "            [indianred].webp[/] → [indianred].png[/]"),
-            ("[steelblue]--png[/]         Convert to PNG[lightskyblue1]*[/]", "             [indianred].png[/]  → [indianred].webp[/]"),
-            ("[steelblue]--jpg[/]         Convert to JPG[lightskyblue1]*[/]", "             [indianred].jpg[/]  → [indianred].webp[/]"),
-            ("[steelblue]--gif[/]         Convert to GIF", "              [indianred].gif[/]  → [indianred].png[/]"),
-            ("[steelblue]--tiff[/]        Convert to TIFF", "             [indianred].tiff[/] → [indianred].png[/]"),
-            ("[steelblue]--bmp[/]         Convert to BMP", "              [indianred].bmp[/]  → [indianred].png[/]"),
-            ("[steelblue]--quality=N[/]   Set output quality (1-100)", "  [indianred]100 (maximum)[/]"),
-            ("[steelblue]--stripmeta[/]   Strip embedded metadata from output", ""),
+            ("[steelblue]--webp[/]        Convert to WebP[lightskyblue1]*[/]",       "            [indianred].webp[/] → [indianred].png[/]"),
+            ("[steelblue]--png[/]         Convert to PNG[lightskyblue1]*[/]",        "             [indianred].png[/]  → [indianred].webp[/]"),
+            ("[steelblue]--jpg[/]         Convert to JPG[lightskyblue1]*[/]",        "             [indianred].jpg[/]  → [indianred].webp[/]"),
+            ("[steelblue]--gif[/]         Convert to GIF",                           "              [indianred].gif[/]  → [indianred].webp[/]"),
+            ("[steelblue]--tiff[/]        Convert to TIFF",                          "             [indianred].tiff[/] → [indianred].webp[/]"),
+            ("[steelblue]--bmp[/]         Convert to BMP",                           "              [indianred].bmp[/]  → [indianred].webp[/]"),
+            ("[steelblue]--tga[/]         Convert to TGA",                           "              [indianred].tga[/]  → [indianred].webp[/]"),
+            ("[steelblue]--qoi[/]         Convert to QOI",                           "              [indianred].qoi[/]  → [indianred].webp[/]"),
+            ("[steelblue]--pbm[/]         Convert to PBM",                           "              [indianred].pbm[/]  → [indianred].webp[/]"),
+            ("[steelblue]--quality=N[/]   Set output quality (1-100)",               "  [indianred]100 (maximum)[/]"),
+            ("[steelblue]--stripmeta[/]   Strip embedded metadata from output",      ""),
             ("[steelblue]--ca[/]          Convert all images in the [lightskyblue1 bold]current directory[/]", "")
         ], skipTitleFormatting: true, trimEnd: true);
     }
@@ -279,7 +276,7 @@ public class UI : IUserInterface
             ("Use '[steelblue]--quality=N[/]' to control output quality, where N is between [white]1[/] (smallest file) and [white]100[/] (best quality). Omitting it defaults to maximum quality.", ""),
             ("[dim]JPG and WebP are lossy — quality directly affects pixel fidelity.[/]", ""),
             ("[dim]PNG is lossless — quality controls compression ratio only, not pixel fidelity.[/]", ""),
-            ("[dim]GIF, BMP, and TIFF do not support quality and always use their defaults.[/]", "")
+            ("[dim]GIF, BMP, TIFF, TGA, QOI, and PBM do not support quality and always use their defaults.[/]", "")
         ]);
 
         yield return BuildSection("Metadata",
@@ -295,9 +292,12 @@ public class UI : IUserInterface
             ("[indianred].jpg[/]  → [indianred].webp[/]", ""),
             ("[indianred].jpeg[/] → [indianred].webp[/]", ""),
             ("[indianred].webp[/] → [indianred].png[/]",  ""),
-            ("[indianred].gif[/]  → [indianred].png[/]",  ""),
-            ("[indianred].tiff[/] → [indianred].png[/]",  ""),
-            ("[indianred].bmp[/]  → [indianred].png[/]",  "")
+            ("[indianred].gif[/]  → [indianred].webp[/]", ""),
+            ("[indianred].tiff[/] → [indianred].webp[/]", ""),
+            ("[indianred].bmp[/]  → [indianred].webp[/]", ""),
+            ("[indianred].tga[/]  → [indianred].webp[/]", ""),
+            ("[indianred].qoi[/]  → [indianred].webp[/]", ""),
+            ("[indianred].pbm[/]  → [indianred].webp[/]", "")
         ]);
 
         yield return BuildSection("Flags",
@@ -308,6 +308,9 @@ public class UI : IUserInterface
             ("[steelblue]--gif[/]       ", "- Convert to GIF"),
             ("[steelblue]--tiff[/]      ", "- Convert to TIFF"),
             ("[steelblue]--bmp[/]       ", "- Convert to BMP"),
+            ("[steelblue]--tga[/]       ", "- Convert to TGA"),
+            ("[steelblue]--qoi[/]       ", "- Convert to QOI"),
+            ("[steelblue]--pbm[/]       ", "- Convert to PBM"),
             ("[steelblue]--quality=N[/] ", "- Set output quality 1–100. [lightskyblue1]*[/] formats only. Defaults to 100."),
             ("[steelblue]--stripmeta[/] ", "- Strip all embedded metadata (EXIF, IPTC, XMP, ICC) from the output."),
             ("[steelblue]--ca[/]        ", "- Convert all images in the current directory")
@@ -322,14 +325,10 @@ public class UI : IUserInterface
             : sb.AppendLine($"[lightskyblue1 underline bold]{title.ToUpper()}[/]");
 
         foreach ((string? key, string? value) in items)
-        {
             _ = sb.AppendLine($"[white]{key}[/] {value}");
-        }
 
         if (footer != null)
-        {
             _ = sb.Append(footer);
-        }
 
         string raw = sb.ToString();
         return new Markup(trimEnd ? raw.TrimEnd() : raw);
