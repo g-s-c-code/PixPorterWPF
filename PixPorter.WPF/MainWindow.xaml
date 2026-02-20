@@ -369,13 +369,38 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Help section header style -->
+        <Style x:Key="HelpSectionHeader" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextTertiaryBrush}" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+
+        <!-- Help body text style -->
+        <Style x:Key="HelpBodyText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="LineHeight" Value="20" />
+        </Style>
+
+        <!-- Help tag / badge style -->
+        <Style x:Key="FormatBadge" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource SurfaceElevatedBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Margin" Value="0,0,4,4" />
+        </Style>
     </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="52" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Header -->
@@ -420,7 +445,7 @@
         </Border>
 
         <!-- Main Content -->
-        <Grid Grid.Row="1" Margin="16,16,16,0">
+        <Grid Grid.Row="1" Margin="16,16,16,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="16" />
@@ -458,6 +483,11 @@
                                          GroupName="MainTabs" />
                             <RadioButton x:Name="LogTab"
                                          Content="Log"
+                                         Style="{StaticResource TabButtonStyle}"
+                                         Margin="0,0,24,0"
+                                         GroupName="MainTabs" />
+                            <RadioButton x:Name="HelpTab"
+                                         Content="Help"
                                          Style="{StaticResource TabButtonStyle}"
                                          GroupName="MainTabs" />
                         </StackPanel>
@@ -710,6 +740,317 @@
                             </ScrollViewer>
                         </Grid>
                     </Grid>
+
+                    <!-- Help Tab Content -->
+                    <Grid Grid.Row="1">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsChecked, ElementName=HelpTab}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+
+                        <ScrollViewer Style="{StaticResource ScrollViewerStyle}"
+                                      VerticalScrollBarVisibility="Auto"
+                                      Padding="24,20,20,24"
+                                      PreviewMouseWheel="SmoothScroll_PreviewMouseWheel">
+                            <StackPanel>
+
+                                <!-- Getting Started -->
+                                <TextBlock Style="{StaticResource HelpSectionHeader}" Text="GETTING STARTED" />
+                                <Border Background="{DynamicResource SurfaceElevatedBrush}"
+                                        BorderBrush="{DynamicResource BorderSubtleBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Padding="16,14"
+                                        Margin="0,0,0,20">
+                                    <StackPanel>
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="28" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="1" FontSize="13" FontWeight="Bold"
+                                                       Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Top" Margin="0,1,0,0"/>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="Add files to the queue"
+                                                           FontSize="13" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                                           Margin="0,0,0,2" />
+                                                <TextBlock Text="Drag &amp; drop image files or folders onto the Queue panel, or click Browse Files."
+                                                           Style="{StaticResource HelpBodyText}" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="28,0,0,10" />
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="28" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="2" FontSize="13" FontWeight="Bold"
+                                                       Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Top" Margin="0,1,0,0"/>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="Choose your output format"
+                                                           FontSize="13" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                                           Margin="0,0,0,2" />
+                                                <TextBlock Text="Select a target format from the dropdown, or leave it on Default to use the per-format mappings shown below."
+                                                           Style="{StaticResource HelpBodyText}" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="28,0,0,10" />
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="28" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="3" FontSize="13" FontWeight="Bold"
+                                                       Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Top" Margin="0,1,0,0"/>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Text="Convert"
+                                                           FontSize="13" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                                           Margin="0,0,0,2" />
+                                                <TextBlock Text="Hit Convert. Output files are saved alongside the originals with the new extension."
+                                                           Style="{StaticResource HelpBodyText}" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Supported Formats -->
+                                <TextBlock Style="{StaticResource HelpSectionHeader}" Text="SUPPORTED INPUT FORMATS" />
+                                <WrapPanel Margin="0,0,0,6">
+                                    <Border Style="{StaticResource FormatBadge}">
+                                        <TextBlock Text=".png" FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" FontFamily="Cascadia Code, Consolas, Courier New"/>
+                                    </Border>
+                                    <Border Style="{StaticResource FormatBadge}">
+                                        <TextBlock Text=".jpg / .jpeg" FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" FontFamily="Cascadia Code, Consolas, Courier New"/>
+                                    </Border>
+                                    <Border Style="{StaticResource FormatBadge}">
+                                        <TextBlock Text=".webp" FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" FontFamily="Cascadia Code, Consolas, Courier New"/>
+                                    </Border>
+                                    <Border Style="{StaticResource FormatBadge}">
+                                        <TextBlock Text=".gif" FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" FontFamily="Cascadia Code, Consolas, Courier New"/>
+                                    </Border>
+                                    <Border Style="{StaticResource FormatBadge}">
+                                        <TextBlock Text=".bmp" FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" FontFamily="Cascadia Code, Consolas, Courier New"/>
+                                    </Border>
+                                    <Border Style="{StaticResource FormatBadge}">
+                                        <TextBlock Text=".tiff" FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" FontFamily="Cascadia Code, Consolas, Courier New"/>
+                                    </Border>
+                                    <Border Style="{StaticResource FormatBadge}">
+                                        <TextBlock Text=".tga" FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" FontFamily="Cascadia Code, Consolas, Courier New"/>
+                                    </Border>
+                                    <Border Style="{StaticResource FormatBadge}">
+                                        <TextBlock Text=".qoi" FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" FontFamily="Cascadia Code, Consolas, Courier New"/>
+                                    </Border>
+                                    <Border Style="{StaticResource FormatBadge}">
+                                        <TextBlock Text=".pbm" FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" FontFamily="Cascadia Code, Consolas, Courier New"/>
+                                    </Border>
+                                </WrapPanel>
+                                <TextBlock Text="Folders are scanned recursively — all supported images inside will be added."
+                                           Style="{StaticResource HelpBodyText}"
+                                           Margin="0,4,0,20" />
+
+                                <!-- Default Mappings -->
+                                <TextBlock Style="{StaticResource HelpSectionHeader}" Text="DEFAULT FORMAT MAPPINGS" />
+                                <TextBlock Text="When output format is set to Default, each input format is converted using the mapping below."
+                                           Style="{StaticResource HelpBodyText}"
+                                           Margin="0,0,0,10" />
+                                <Border Background="{DynamicResource SurfaceElevatedBrush}"
+                                        BorderBrush="{DynamicResource BorderSubtleBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Padding="4,4"
+                                        Margin="0,0,0,20">
+                                    <StackPanel>
+                                        <local:MappingRow From=".webp" To=".png"  />
+                                        <local:MappingRow From=".png"  To=".webp" />
+                                        <local:MappingRow From=".jpg"  To=".webp" />
+                                        <local:MappingRow From=".jpeg" To=".webp" />
+                                        <local:MappingRow From=".gif"  To=".webp" />
+                                        <local:MappingRow From=".tiff" To=".webp" />
+                                        <local:MappingRow From=".bmp"  To=".webp" />
+                                        <local:MappingRow From=".tga"  To=".webp" />
+                                        <local:MappingRow From=".qoi"  To=".webp" />
+                                        <local:MappingRow From=".pbm"  To=".webp" />
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Quality Setting -->
+                                <TextBlock Style="{StaticResource HelpSectionHeader}" Text="QUALITY SETTING" />
+                                <Border Background="{DynamicResource SurfaceElevatedBrush}"
+                                        BorderBrush="{DynamicResource BorderSubtleBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Padding="16,14"
+                                        Margin="0,0,0,20">
+                                    <StackPanel>
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                                                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="6" Padding="10,8" Margin="0,0,0,6">
+                                                    <TextBlock Text="1–50" FontSize="13" FontWeight="Bold"
+                                                               Foreground="{DynamicResource DestructiveBrush}"
+                                                               FontFamily="Cascadia Code, Consolas, Courier New"
+                                                               HorizontalAlignment="Center" />
+                                                </Border>
+                                                <TextBlock Text="Smaller file, noticeable compression"
+                                                           Style="{StaticResource HelpBodyText}"
+                                                           FontSize="12" TextAlignment="Center" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Margin="4,0">
+                                                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="6" Padding="10,8" Margin="0,0,0,6">
+                                                    <TextBlock Text="75–85" FontSize="13" FontWeight="Bold"
+                                                               Foreground="{DynamicResource AccentBrush}"
+                                                               FontFamily="Cascadia Code, Consolas, Courier New"
+                                                               HorizontalAlignment="Center" />
+                                                </Border>
+                                                <TextBlock Text="Recommended — good balance"
+                                                           Style="{StaticResource HelpBodyText}"
+                                                           FontSize="12" TextAlignment="Center" />
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" Margin="8,0,0,0">
+                                                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="6" Padding="10,8" Margin="0,0,0,6">
+                                                    <TextBlock Text="90–100" FontSize="13" FontWeight="Bold"
+                                                               Foreground="{DynamicResource SuccessBrush}"
+                                                               FontFamily="Cascadia Code, Consolas, Courier New"
+                                                               HorizontalAlignment="Center" />
+                                                </Border>
+                                                <TextBlock Text="Near-lossless, larger file size"
+                                                           Style="{StaticResource HelpBodyText}"
+                                                           FontSize="12" TextAlignment="Center" />
+                                            </StackPanel>
+                                        </Grid>
+                                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,4,0,10" />
+                                        <TextBlock Text="Quality only applies to JPG, PNG, and WebP output. Lossless formats like BMP and TIFF ignore this setting."
+                                                   Style="{StaticResource HelpBodyText}" FontSize="12" />
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Metadata -->
+                                <TextBlock Style="{StaticResource HelpSectionHeader}" Text="METADATA STRIPPING" />
+                                <Border Background="{DynamicResource SurfaceElevatedBrush}"
+                                        BorderBrush="{DynamicResource BorderSubtleBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Padding="16,14"
+                                        Margin="0,0,0,20">
+                                    <StackPanel>
+                                        <TextBlock Text="When enabled, the following metadata is removed from output files:"
+                                                   Style="{StaticResource HelpBodyText}"
+                                                   Margin="0,0,0,10" />
+                                        <WrapPanel>
+                                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="4" Padding="8,4" Margin="0,0,6,6">
+                                                <TextBlock Text="EXIF" FontSize="12" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextSecondaryBrush}"
+                                                           FontFamily="Cascadia Code, Consolas, Courier New"/>
+                                            </Border>
+                                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="4" Padding="8,4" Margin="0,0,6,6">
+                                                <TextBlock Text="IPTC" FontSize="12" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextSecondaryBrush}"
+                                                           FontFamily="Cascadia Code, Consolas, Courier New"/>
+                                            </Border>
+                                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="4" Padding="8,4" Margin="0,0,6,6">
+                                                <TextBlock Text="XMP" FontSize="12" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextSecondaryBrush}"
+                                                           FontFamily="Cascadia Code, Consolas, Courier New"/>
+                                            </Border>
+                                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="4" Padding="8,4" Margin="0,0,6,6">
+                                                <TextBlock Text="ICC Profile" FontSize="12" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextSecondaryBrush}"
+                                                           FontFamily="Cascadia Code, Consolas, Courier New"/>
+                                            </Border>
+                                        </WrapPanel>
+                                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,8,0,10" />
+                                        <TextBlock Style="{StaticResource HelpBodyText}" FontSize="12">
+                                            <Run Text="Useful for" />
+                                            <Run Text="privacy" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <Run Text="(strips GPS, camera, and author data) and for" />
+                                            <Run Text="smaller files." FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <Run Text="ICC stripping may affect color accuracy in color-managed workflows." />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Tips -->
+                                <TextBlock Style="{StaticResource HelpSectionHeader}" Text="TIPS" />
+                                <Border Background="{DynamicResource SurfaceElevatedBrush}"
+                                        BorderBrush="{DynamicResource BorderSubtleBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Padding="16,14"
+                                        Margin="0,0,0,4">
+                                    <StackPanel>
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="20" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="→" FontSize="13"
+                                                       Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Top" Margin="0,1,0,0"/>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="Drop an entire folder to batch-convert all supported images inside, including subfolders."
+                                                       Style="{StaticResource HelpBodyText}" />
+                                        </Grid>
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="20" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="→" FontSize="13"
+                                                       Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Top" Margin="0,1,0,0"/>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="Use the checkbox in the queue header to quickly select or deselect all files, then remove just the ones you don't need."
+                                                       Style="{StaticResource HelpBodyText}" />
+                                        </Grid>
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="20" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="→" FontSize="13"
+                                                       Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Top" Margin="0,1,0,0"/>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="Output files are written next to the originals. No files are overwritten — existing outputs are skipped with a warning in the Log."
+                                                       Style="{StaticResource HelpBodyText}" />
+                                        </Grid>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="20" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="→" FontSize="13"
+                                                       Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Top" Margin="0,1,0,0"/>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="Check the Log tab after conversion for a detailed summary of what succeeded, was skipped, or failed."
+                                                       Style="{StaticResource HelpBodyText}" />
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+
                 </Grid>
             </Border>
 
@@ -717,7 +1058,7 @@
             <Border Grid.Column="0"
                     BorderThickness="1.5"
                     CornerRadius="10"
-                    IsHitTestVisible="False">       
+                    IsHitTestVisible="False">
                 <Border.Style>
                     <Style TargetType="Border">
                         <Setter Property="Background" Value="Transparent" />
@@ -737,7 +1078,9 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
@@ -819,9 +1162,9 @@
                                     </TextBlock.Style>
                                 </TextBlock>
                                 <ToggleButton IsChecked="{Binding StripMetadata, Mode=TwoWay}"
-              HorizontalAlignment="Right"
-              VerticalAlignment="Center"
-              Cursor="Hand">
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              Cursor="Hand">
                                     <ToggleButton.Style>
                                         <Style TargetType="ToggleButton" BasedOn="{StaticResource ToggleThemeButton}">
                                             <Style.Triggers>
@@ -843,8 +1186,8 @@
                                             </Style>
                                         </Border.Style>
                                         <Ellipse Width="10" Height="10"
-                 Fill="{DynamicResource BackgroundBrush}"
-                 VerticalAlignment="Center">
+                                                 Fill="{DynamicResource BackgroundBrush}"
+                                                 VerticalAlignment="Center">
                                             <Ellipse.Style>
                                                 <Style TargetType="Ellipse">
                                                     <Setter Property="HorizontalAlignment" Value="Left" />
@@ -869,41 +1212,61 @@
                         </StackPanel>
 
                         <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,16,0,16" />
+
+                        <!-- Status Information -->
+                        <TextBlock Text="STATUS INFORMATION"
+                                   FontSize="14" FontWeight="Bold"
+                                   Foreground="{DynamicResource TextTertiaryBrush}"
+                                   Margin="0,0,0,8" />
+                        <Border CornerRadius="6" Padding="12,9" MinHeight="38"
+                                Background="{DynamicResource SurfaceElevatedBrush}">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="{DynamicResource SurfaceElevatedBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding StatusIsError}" Value="True">
+                                            <Setter Property="Background" Value="#1A2020" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <TextBlock FontSize="12" TextWrapping="Wrap">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="{Binding StatusMessage}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+                                        <Setter Property="Opacity" Value="0" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasStatusMessage}" Value="True">
+                                                <Setter Property="Opacity" Value="1" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding StatusIsError}" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource DestructiveBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Border>
+
+                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,16,0,0" />
                     </StackPanel>
 
-                    <!-- Default Mappings -->
-                    <ScrollViewer Grid.Row="1"
-                                  Style="{StaticResource ScrollViewerStyle}"
-                                  VerticalScrollBarVisibility="Auto"
-                                  Padding="0,16,6,0"
-                                  PreviewMouseWheel="SmoothScroll_PreviewMouseWheel">
-                        <StackPanel>
-                            <TextBlock Text="DEFAULT MAPPINGS"
-                                       FontSize="14" FontWeight="Bold"
-                                       Foreground="{DynamicResource TextTertiaryBrush}"
-                                       Margin="0,0,0,10" />
-                            <local:MappingRow From=".webp" To=".png"  Margin="0,0,0,3" />
-                            <local:MappingRow From=".png"  To=".webp" Margin="0,0,0,3" />
-                            <local:MappingRow From=".jpg"  To=".webp" Margin="0,0,0,3" />
-                            <local:MappingRow From=".jpeg" To=".webp" Margin="0,0,0,3" />
-                            <local:MappingRow From=".gif"  To=".webp" Margin="0,0,0,3" />
-                            <local:MappingRow From=".tiff" To=".webp" Margin="0,0,0,3" />
-                            <local:MappingRow From=".bmp"  To=".webp" Margin="0,0,0,3" />
-                            <local:MappingRow From=".tga"  To=".webp" Margin="0,0,0,3" />
-                            <local:MappingRow From=".qoi"  To=".webp" Margin="0,0,0,3" />
-                            <local:MappingRow From=".pbm"  To=".webp" />
-                        </StackPanel>
-                    </ScrollViewer>
+                    <!-- Spacer row -->
+                    <Border Grid.Row="1" Height="16" />
+
+                    <!-- Filler -->
+                    <Border Grid.Row="2" />
 
                     <!-- Action Buttons -->
-                    <StackPanel Grid.Row="2" Margin="0,16,0,0">
+                    <StackPanel Grid.Row="3">
                         <Button Content="{Binding ConvertButtonText}"
                                 Style="{StaticResource FlatButton}"
                                 Command="{Binding ConvertCommand}"
                                 IsEnabled="{Binding IsConverting, Converter={StaticResource InvBoolToVis}}"
                                 HorizontalAlignment="Stretch"
                                 Height="42" FontSize="16"
-                                Margin="0,0,0,16" />
+                                Margin="0,0,0,10" />
                         <Button Content="Clear Queue"
                                 Style="{StaticResource GhostButton}"
                                 Command="{Binding ClearQueueCommand}"
@@ -912,38 +1275,5 @@
                 </Grid>
             </Border>
         </Grid>
-
-        <!-- Status Bar -->
-        <Border Grid.Row="2" Margin="16,16,16,16">
-            <Border CornerRadius="6" Padding="14,10">
-                <Border.Style>
-                    <Style TargetType="Border">
-                        <Setter Property="Background" Value="{DynamicResource SurfaceElevatedBrush}" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding StatusIsError}" Value="True">
-                                <Setter Property="Background" Value="#1A2020" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
-                <TextBlock FontSize="15" TextWrapping="Wrap">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Text" Value="{Binding StatusMessage}" />
-                            <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
-                            <Setter Property="Opacity" Value="0" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding HasStatusMessage}" Value="True">
-                                    <Setter Property="Opacity" Value="1" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding StatusIsError}" Value="True">
-                                    <Setter Property="Foreground" Value="{DynamicResource DestructiveBrush}" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-            </Border>
-        </Border>
     </Grid>
 </Window>
