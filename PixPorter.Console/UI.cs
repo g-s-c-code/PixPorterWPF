@@ -11,6 +11,7 @@ namespace PixPorter.Console;
 public class UI : IUserInterface
 {
     private const int LayoutWidth = 150;
+    private const int DirectoryPanelWidth = 56;
 
     public void HandleResult(CommandResult result)
     {
@@ -111,14 +112,16 @@ public class UI : IUserInterface
 
     private static Table PixPorterUI(Table left, Panel right)
     {
+        int leftWidth = (int)(LayoutWidth * 0.675);
+        int rightWidth = LayoutWidth - leftWidth;
+
         Table table = new()
         {
             Border = TableBorder.Horizontal,
-            Title = new TableTitle("[lightskyblue1 bold]PixPorter - Image Format Converter[/]")
         };
 
-        _ = table.AddColumn(new TableColumn(left).Padding(0, 0));
-        _ = table.AddColumn(new TableColumn(right).Padding(0, 0));
+        _ = table.AddColumn(new TableColumn(left).Padding(0, 0).Width(leftWidth));
+        _ = table.AddColumn(new TableColumn(right).Padding(0, 0).Width(rightWidth));
 
         return table;
     }
@@ -158,7 +161,7 @@ public class UI : IUserInterface
         return new Panel(path)
         {
             Border = BoxBorder.None,
-            Width = LayoutWidth
+            Width = DirectoryPanelWidth
         };
     }
 
@@ -167,7 +170,7 @@ public class UI : IUserInterface
         Table table = new()
         {
             Border = TableBorder.Simple,
-            Width = LayoutWidth
+            Width = DirectoryPanelWidth
         };
 
         _ = table.AddColumn(new TableColumn(BuildTree("Folders:".ToUpper(), directories)));
@@ -209,37 +212,36 @@ public class UI : IUserInterface
 
     private static IEnumerable<IRenderable> GetInformationSections()
     {
-        yield return BuildSection("[lightskyblue1 underline bold]Usage Quick Guide[/]",
+        yield return BuildSection("[lightskyblue1 underline bold]PixPorter - Image Format Converter[/]",
         [
             ("[indianred bold]DRAG & DROP:[/]",
-            "Drag and drop an image or folder into the window and press '[steelblue][[ENTER]][/]' to convert it."),
+            "Drag and drop an image or folder into the window and press '[steelblue][[ENTER]][/]' to convert all images in it.\n"),
             ("[indianred bold]NAVIGATION:[/]",
-            "Use '[steelblue]cd [[path]][/]' to navigate folders. Convert all images with '[steelblue]--ca[/]'."),
+            "Use '[steelblue]cd [[path]][/]' to navigate folders.\n"),
             ("[indianred bold]FLAGS:[/]",
-            "Add a format flag (e.g. '[steelblue]--jpg[/]') to override the default output format. Use '[steelblue]--quality=N[/]' (1-100) to set output quality — omitting it uses maximum quality. Use '[steelblue]--stripmeta[/]' to strip embedded metadata from the output. Formats marked [lightskyblue1]*[/] support the quality flag.")
-        ]);
+            "Add a format flag (e.g. '[steelblue]--jpg[/]') to override the output format. Use '[steelblue]--quality=N[/]' (1-100) to set quality; omit for max. Use '[steelblue]--stripmeta[/]' to strip metadata. Formats marked [lightskyblue1]*[/] support quality. Convert all images with '[steelblue]--ca[/]'.")]);
 
-        yield return BuildSection("[lightskyblue1 underline bold]Commands[/]",
+        yield return BuildSection("[lightskyblue1 bold]Commands[/]",
         [
             ("[steelblue]cd [[path]][/] ", "   Change directory"),
             ("[steelblue]help[/]      ",   "   Open the detailed instructions menu"),
             ("[steelblue]q[/]         ",   "   Exit application")
         ]);
 
-        yield return BuildSection("[lightskyblue1 underline bold]FLAGS[/]                                      [lightskyblue1 underline bold]DEFAULTS[/]",
+        yield return BuildSection("[lightskyblue1 bold]FLAGS[/]                                            [lightskyblue1 bold]DEFAULTS[/]",
         [
-            ("[steelblue]--webp[/]        Convert to WebP[lightskyblue1]*[/]",       "            [indianred].webp[/] → [indianred].png[/]"),
-            ("[steelblue]--png[/]         Convert to PNG[lightskyblue1]*[/]",        "             [indianred].png[/]  → [indianred].webp[/]"),
-            ("[steelblue]--jpg[/]         Convert to JPG[lightskyblue1]*[/]",        "             [indianred].jpg[/]  → [indianred].webp[/]"),
-            ("[steelblue]--gif[/]         Convert to GIF",                           "              [indianred].gif[/]  → [indianred].webp[/]"),
-            ("[steelblue]--tiff[/]        Convert to TIFF",                          "             [indianred].tiff[/] → [indianred].webp[/]"),
-            ("[steelblue]--bmp[/]         Convert to BMP",                           "              [indianred].bmp[/]  → [indianred].webp[/]"),
-            ("[steelblue]--tga[/]         Convert to TGA",                           "              [indianred].tga[/]  → [indianred].webp[/]"),
-            ("[steelblue]--qoi[/]         Convert to QOI",                           "              [indianred].qoi[/]  → [indianred].webp[/]"),
-            ("[steelblue]--pbm[/]         Convert to PBM",                           "              [indianred].pbm[/]  → [indianred].webp[/]"),
-            ("[steelblue]--quality=N[/]   Set output quality (1-100)",               "  [indianred]100 (maximum)[/]"),
-            ("[steelblue]--stripmeta[/]   Strip embedded metadata from output",      ""),
-            ("[steelblue]--ca[/]          Convert all images in the [lightskyblue1 bold]current directory[/]", "")
+            ("[steelblue]--webp[/]           Convert to WebP[lightskyblue1]*[/]",       "               [indianred].webp[/] → [indianred].png[/]"),
+            ("[steelblue]--png[/]            Convert to PNG[lightskyblue1]*[/]",        "                [indianred].png[/]  → [indianred].webp[/]"),
+            ("[steelblue]--jpg[/]            Convert to JPG[lightskyblue1]*[/]",        "                [indianred].jpg[/]  → [indianred].webp[/]"),
+            ("[steelblue]--gif[/]            Convert to GIF",                           "                 [indianred].gif[/]  → [indianred].webp[/]"),
+            ("[steelblue]--tiff[/]           Convert to TIFF",                          "                [indianred].tiff[/] → [indianred].webp[/]"),
+            ("[steelblue]--bmp[/]            Convert to BMP",                           "                 [indianred].bmp[/]  → [indianred].webp[/]"),
+            ("[steelblue]--tga[/]            Convert to TGA",                           "                 [indianred].tga[/]  → [indianred].webp[/]"),
+            ("[steelblue]--qoi[/]            Convert to QOI",                           "                 [indianred].qoi[/]  → [indianred].webp[/]"),
+            ("[steelblue]--pbm[/]            Convert to PBM",                           "                 [indianred].pbm[/]  → [indianred].webp[/]"),
+            ("[steelblue]--quality=N[/]      Set output quality (1-100)",               "     [indianred]100 (maximum)[/]"),
+            ("[steelblue]--stripmeta[/]      Strip embedded metadata from output",      ""),
+            ("[steelblue]--ca[/]             Convert all images in the [lightskyblue1 bold]current directory[/]", "")
         ], skipTitleFormatting: true, trimEnd: true);
     }
 
@@ -322,7 +324,7 @@ public class UI : IUserInterface
         StringBuilder sb = new();
         _ = skipTitleFormatting
             ? sb.AppendLine(title)
-            : sb.AppendLine($"[lightskyblue1 underline bold]{title.ToUpper()}[/]");
+            : sb.AppendLine($"[lightskyblue1 bold]{title.ToUpper()}[/]");
 
         foreach ((string? key, string? value) in items)
             _ = sb.AppendLine($"[white]{key}[/] {value}");

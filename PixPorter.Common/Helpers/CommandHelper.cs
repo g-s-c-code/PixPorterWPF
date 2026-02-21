@@ -67,19 +67,45 @@ public static class CommandHelper
         string? targetExtension = ExtractTargetExtension(parts);
         int? quality = ExtractQuality(parts);
         bool stripMetadata = ExtractStripMetadata(parts);
-        List<string> allPaths = ExtractAllPaths(parts);
 
         if (parts.Any(p => p.Equals(Constants.ConvertAll, StringComparison.OrdinalIgnoreCase)))
         {
+            List<string> allPaths = ExtractAllPaths(parts);
             string path = allPaths.FirstOrDefault() ?? Directory.GetCurrentDirectory();
             return new(Constants.ConvertAll, path, targetExtension, quality, stripMetadata, null);
         }
 
-        if (allPaths.Count != 0)
+        List<string> nonFlagParts = [.. parts
+            .Where(p => !Constants.FormatFlags.ContainsKey(p))
+            .Where(p => !p.Equals(Constants.ConvertAll, StringComparison.OrdinalIgnoreCase))
+            .Where(p => !p.StartsWith("--quality=", StringComparison.OrdinalIgnoreCase))
+            .Where(p => !p.Equals("--stripmeta", StringComparison.OrdinalIgnoreCase))
+            .Where(p => !p.StartsWith("--", StringComparison.OrdinalIgnoreCase))];
+
+        for (int len = nonFlagParts.Count; len >= 1; len--)
         {
-            string primaryPath = allPaths[0];
-            List<string>? additionalPaths = allPaths.Count > 1 ? [.. allPaths.Skip(1)] : null;
-            return new(Constants.ConvertFile, primaryPath, targetExtension, quality, stripMetadata, additionalPaths);
+            string candidate = string.Join(" ", nonFlagParts.Take(len));
+            string fullCandidate = Path.GetFullPath(candidate);
+
+            if (File.Exists(candidate) || File.Exists(fullCandidate))
+            {
+                string primaryPath = File.Exists(candidate) ? candidate : fullCandidate;
+                List<string>? additionalPaths = null;
+
+                if (len < nonFlagParts.Count)
+                {
+                    additionalPaths = ExtractAllPaths([.. nonFlagParts.Skip(len)]);
+                    if (additionalPaths.Count == 0) additionalPaths = null;
+                }
+
+                return new(Constants.ConvertFile, primaryPath, targetExtension, quality, stripMetadata, additionalPaths);
+            }
+
+            if (Directory.Exists(candidate) || Directory.Exists(fullCandidate))
+            {
+                string dirPath = Directory.Exists(candidate) ? candidate : fullCandidate;
+                return new(Constants.ConvertAll, dirPath, targetExtension, quality, stripMetadata, null);
+            }
         }
 
         throw new CommandException("Invalid command.");
