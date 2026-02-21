@@ -66,30 +66,6 @@ public partial class MainWindow : Window
         if (sender is not ScrollViewer sv) return;
 
         e.Handled = true;
-
-        double target = sv.VerticalOffset - (e.Delta * 0.6);
-        target = Math.Max(0, Math.Min(target, sv.ScrollableHeight));
-
-        var animation = new DoubleAnimation
-        {
-            To = target,
-            Duration = TimeSpan.FromMilliseconds(400),
-            EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
-        };
-
-        sv.BeginAnimation(ScrollViewerBehavior.VerticalOffsetProperty, animation);
-    }
-}
-
-public static class ScrollViewerBehavior
-{
-    public static readonly DependencyProperty VerticalOffsetProperty =
-        DependencyProperty.RegisterAttached("VerticalOffset", typeof(double), typeof(ScrollViewerBehavior),
-            new PropertyMetadata(0.0, OnVerticalOffsetChanged));
-
-    private static void OnVerticalOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is ScrollViewer sv)
-            sv.ScrollToVerticalOffset((double)e.NewValue);
+        sv.ScrollToVerticalOffset(sv.VerticalOffset - (e.Delta * 0.5));
     }
 }

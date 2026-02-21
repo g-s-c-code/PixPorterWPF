@@ -2,17 +2,17 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Color x:Key="BackgroundColor">#FAFAFA</Color>
     <Color x:Key="SurfaceColor">#FFFFFF</Color>
-    <Color x:Key="SurfaceElevatedColor">#F4F4F5</Color>
-    <Color x:Key="BorderColor">#E4E4E7</Color>
-    <Color x:Key="BorderSubtleColor">#F0F0F0</Color>
+    <Color x:Key="SurfaceElevatedColor">#F0F0F2</Color>
+    <Color x:Key="BorderColor">#C4C4C8</Color>
+    <Color x:Key="BorderSubtleColor">#DCDCE0</Color>
     <Color x:Key="TextPrimaryColor">#09090B</Color>
-    <Color x:Key="TextSecondaryColor">#71717A</Color>
-    <Color x:Key="TextTertiaryColor">#A1A1AA</Color>
-    <Color x:Key="AccentColor">#3D3D3F</Color>
-    <Color x:Key="AccentDimColor">#E4E4E7</Color>
+    <Color x:Key="TextSecondaryColor">#3F3F46</Color>
+    <Color x:Key="TextTertiaryColor">#71717A</Color>
+    <Color x:Key="AccentColor">#18181B</Color>
+    <Color x:Key="AccentDimColor">#D4D4D8</Color>
     <Color x:Key="DestructiveColor">#DC2626</Color>
-    <Color x:Key="SuccessColor">#008EC5</Color>
-    <Color x:Key="DropZoneActiveColor">#F4F4F5</Color>
+    <Color x:Key="SuccessColor">#005F87</Color>
+    <Color x:Key="DropZoneActiveColor">#F0F0F2</Color>
 
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
     <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />

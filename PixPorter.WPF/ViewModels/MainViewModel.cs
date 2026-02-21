@@ -63,7 +63,7 @@ public partial class MainViewModel : ObservableObject
     public bool QualitySupported =>
         SelectedFormat is null
             ? QueuedFiles.Count == 0 || QueuedFiles.All(f => IsQualitySupported(Path.GetExtension(f.FilePath)))
-            : IsQualitySupported(SelectedFormat);
+            : IsQualitySupported($".{SelectedFormat.ToLowerInvariant()}");
 
     public string QualityHint =>
         !QualitySupported && SelectedFormat is null && QueuedFiles.Count > 0

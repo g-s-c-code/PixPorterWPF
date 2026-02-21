@@ -41,7 +41,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}"
-                                CornerRadius="4"
+                                CornerRadius="8"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
@@ -75,7 +75,7 @@
                         <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="4"
+                                CornerRadius="8"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
@@ -105,7 +105,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}"
-                                CornerRadius="4"
+                                CornerRadius="8"
                                 Width="24" Height="24"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
@@ -134,7 +134,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ToggleButton">
                         <Border Background="{TemplateBinding Background}"
-                                CornerRadius="4"
+                                CornerRadius="8"
                                 Width="32" Height="32"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
@@ -204,7 +204,7 @@
                                         <Border Background="{TemplateBinding Background}"
                                                 BorderBrush="{TemplateBinding BorderBrush}"
                                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                                CornerRadius="4">
+                                                CornerRadius="8">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*" />
@@ -236,7 +236,7 @@
                                 <Border Background="{DynamicResource SurfaceBrush}"
                                         BorderBrush="{DynamicResource BorderBrush}"
                                         BorderThickness="1"
-                                        CornerRadius="4"
+                                        CornerRadius="8"
                                         MinWidth="{TemplateBinding ActualWidth}"
                                         MaxHeight="200">
                                     <ScrollViewer Style="{StaticResource ScrollViewerStyle}"
@@ -266,7 +266,10 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="ComboBoxItem">
-                                <Border Background="{TemplateBinding Background}" Padding="2">
+                                <Border Background="{TemplateBinding Background}"
+                                        CornerRadius="6"
+                                        Margin="4,2"
+                                        Padding="2">        
                                     <ContentPresenter />
                                 </Border>
                                 <ControlTemplate.Triggers>
@@ -340,24 +343,17 @@
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Border x:Name="Box"
                                     Width="16" Height="16"
-                                    CornerRadius="4"
+                                    CornerRadius="8"
                                     BorderThickness="1.5"
                                     BorderBrush="{DynamicResource BorderBrush}"
                                     Background="Transparent"
-                                    Margin="0,0,8,0">
-                                <Path x:Name="Check"
-                                      Data="M 2 8 L 6 12 L 14 4"
-                                      Stroke="{DynamicResource BackgroundBrush}"
-                                      StrokeThickness="1.5"
-                                      Visibility="Collapsed" />
-                            </Border>
+                                    Margin="0,0,8,0" /> 
                             <ContentPresenter VerticalAlignment="Center" />
                         </StackPanel>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter TargetName="Box" Property="Background" Value="{DynamicResource AccentBrush}" />
                                 <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                                <Setter TargetName="Check" Property="Visibility" Value="Visible" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -452,7 +448,7 @@
                     Background="{DynamicResource SurfaceBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1.5"
-                    CornerRadius="4"
+                    CornerRadius="8"
                     AllowDrop="True"
                     Drop="DropZone_Drop"
                     DragEnter="DropZone_DragEnter"
@@ -592,7 +588,7 @@
 
                                                     <Border Grid.Column="1"
                                                             Width="3" Height="32"
-                                                            CornerRadius="4"
+                                                            CornerRadius="8"
                                                             Background="{Binding Status, Converter={StaticResource StatusToColor}}"
                                                             VerticalAlignment="Center"
                                                             Margin="0,0,8,0" />
@@ -763,7 +759,7 @@
                                 <Border Background="{DynamicResource SurfaceElevatedBrush}"
                                         BorderBrush="{DynamicResource BorderSubtleBrush}"
                                         BorderThickness="1"
-                                        CornerRadius="4"
+                                        CornerRadius="8"
                                         Padding="16,14"
                                         Margin="0,0,0,20">
                                     <StackPanel>
@@ -876,7 +872,7 @@
                                 <Border Background="{DynamicResource SurfaceElevatedBrush}"
                                         BorderBrush="{DynamicResource BorderSubtleBrush}"
                                         BorderThickness="1"
-                                        CornerRadius="4"
+                                        CornerRadius="8"
                                         Padding="4,4"
                                         Margin="0,0,0,20">
                                     <StackPanel Margin="4,4,4,4">
@@ -900,7 +896,7 @@
                                 <Border Background="{DynamicResource SurfaceElevatedBrush}"
                                         BorderBrush="{DynamicResource BorderSubtleBrush}"
                                         BorderThickness="1"
-                                        CornerRadius="4"
+                                        CornerRadius="8"
                                         Padding="16,14"
                                         Margin="0,0,0,20">
                                     <StackPanel>
@@ -911,7 +907,7 @@
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
                                             <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                                                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="4" Padding="10,8" Margin="0,0,0,6">
+                                                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8" Padding="10,8" Margin="0,0,0,6">
                                                     <TextBlock Text="1–50" FontSize="13" FontWeight="Bold"
                                                                Foreground="{DynamicResource DestructiveBrush}"
                                                                FontFamily="Cascadia Code, Consolas, Courier New"
@@ -922,7 +918,7 @@
                                                            FontSize="12" TextAlignment="Center" />
                                             </StackPanel>
                                             <StackPanel Grid.Column="1" Margin="4,0">
-                                                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="4" Padding="10,8" Margin="0,0,0,6">
+                                                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8" Padding="10,8" Margin="0,0,0,6">
                                                     <TextBlock Text="75–85" FontSize="13" FontWeight="Bold"
                                                                Foreground="{DynamicResource AccentBrush}"
                                                                FontFamily="Cascadia Code, Consolas, Courier New"
@@ -933,7 +929,7 @@
                                                            FontSize="12" TextAlignment="Center" />
                                             </StackPanel>
                                             <StackPanel Grid.Column="2" Margin="8,0,0,0">
-                                                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="4" Padding="10,8" Margin="0,0,0,6">
+                                                <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8" Padding="10,8" Margin="0,0,0,6">
                                                     <TextBlock Text="90–100" FontSize="13" FontWeight="Bold"
                                                                Foreground="{DynamicResource SuccessBrush}"
                                                                FontFamily="Cascadia Code, Consolas, Courier New"
@@ -945,8 +941,14 @@
                                             </StackPanel>
                                         </Grid>
                                         <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,4,0,10" />
-                                        <TextBlock Text="Quality only applies to JPG, PNG, and WebP output. Lossless formats like BMP and TIFF ignore this setting."
-                                                   Style="{StaticResource HelpBodyText}" FontSize="12" />
+                                        <TextBlock Text="Quality only applies to JPG, PNG, and WebP output. Lossless formats like BMP, TIFF, TGA, QOI, and PBM ignore this setting."
+                                                   Style="{StaticResource HelpBodyText}" 
+                                                   FontSize="12"
+                                                   Margin="0,0,0,6" />
+                                        <TextBlock Style="{StaticResource HelpBodyText}" FontSize="12">
+                                            <Run FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Text="PNG note: " />
+                                            <Run Text="PNG is always lossless — no pixel data is ever discarded. The quality value controls the compression level instead. Higher values mean less compression, producing larger files that save and load faster. Lower values compress more aggressively, producing smaller files at the cost of encode/decode speed." />
+                                                                                </TextBlock>
                                     </StackPanel>
                                 </Border>
 
@@ -957,7 +959,7 @@
                                 <Border Background="{DynamicResource SurfaceElevatedBrush}"
                                         BorderBrush="{DynamicResource BorderSubtleBrush}"
                                         BorderThickness="1"
-                                        CornerRadius="4"
+                                        CornerRadius="8"
                                         Padding="16,14"
                                         Margin="0,0,0,20">
                                     <StackPanel>
@@ -965,22 +967,22 @@
                                                    Style="{StaticResource HelpBodyText}"
                                                    Margin="0,0,0,10" />
                                         <WrapPanel>
-                                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="4" Padding="8,4" Margin="0,0,6,6">
+                                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8" Padding="8,4" Margin="0,0,6,6">
                                                 <TextBlock Text="EXIF" FontSize="12" FontWeight="SemiBold"
                                                            Foreground="{DynamicResource TextSecondaryBrush}"
                                                            FontFamily="Cascadia Code, Consolas, Courier New"/>
                                             </Border>
-                                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="4" Padding="8,4" Margin="0,0,6,6">
+                                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8" Padding="8,4" Margin="0,0,6,6">
                                                 <TextBlock Text="IPTC" FontSize="12" FontWeight="SemiBold"
                                                            Foreground="{DynamicResource TextSecondaryBrush}"
                                                            FontFamily="Cascadia Code, Consolas, Courier New"/>
                                             </Border>
-                                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="4" Padding="8,4" Margin="0,0,6,6">
+                                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8" Padding="8,4" Margin="0,0,6,6">
                                                 <TextBlock Text="XMP" FontSize="12" FontWeight="SemiBold"
                                                            Foreground="{DynamicResource TextSecondaryBrush}"
                                                            FontFamily="Cascadia Code, Consolas, Courier New"/>
                                             </Border>
-                                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="4" Padding="8,4" Margin="0,0,6,6">
+                                            <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="8" Padding="8,4" Margin="0,0,6,6">
                                                 <TextBlock Text="ICC Profile" FontSize="12" FontWeight="SemiBold"
                                                            Foreground="{DynamicResource TextSecondaryBrush}"
                                                            FontFamily="Cascadia Code, Consolas, Courier New"/>
@@ -1004,7 +1006,7 @@
                                 <Border Background="{DynamicResource SurfaceElevatedBrush}"
                                         BorderBrush="{DynamicResource BorderSubtleBrush}"
                                         BorderThickness="1"
-                                        CornerRadius="4"
+                                        CornerRadius="8"
                                         Padding="16,14"
                                         Margin="0,0,0,4">
                                     <StackPanel>
@@ -1065,7 +1067,7 @@
             <!-- Drop overlay — sits on top of the entire left panel, only active on Queue tab -->
             <Border Grid.Column="0"
                     BorderThickness="1.5"
-                    CornerRadius="4"
+                    CornerRadius="8"
                     IsHitTestVisible="False">
                 <Border.Style>
                     <Style TargetType="Border">
@@ -1103,11 +1105,11 @@
                                       FontWeight="SemiBold"
                                       ItemsSource="{Binding FormatOptions}"
                                       SelectedItem="{Binding SelectedFormatOption, Mode=TwoWay}" />
-                            <TextBlock Text="Default: see per-format default mappings"
+                            <TextBlock
                                        FontSize="13"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,6,0,0"
-                                       TextWrapping="Wrap" />
+                                       TextWrapping="Wrap" ><Run FontWeight="Medium" Text="Default: see per-format default mappings."/></TextBlock>
                         </StackPanel>
 
                         <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,16,0,16" />
@@ -1118,7 +1120,7 @@
                                     <Setter Property="Opacity" Value="1" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding QualitySupported}" Value="False">
-                                            <Setter Property="Opacity" Value="0.4" />
+                                            <Setter Property="Opacity" Value="0.7" />
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -1143,7 +1145,36 @@
                             <TextBlock FontSize="13"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,6,0,0"
-                                       TextWrapping="Wrap" Text="Applicable when output format is set to JPG, PNG, or WebP" />
+                                       FontWeight="Medium"
+                                       TextWrapping="Wrap">
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Text" Value="Higher values preserve more detail. Applies to JPG, PNG, and WebP." />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedFormatOption}" Value="PNG">
+                                                <Setter Property="Text" Value="PNG is always lossless. A higher Quality value means less compression and larger files." />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SelectedFormatOption}" Value="GIF">
+                                                <Setter Property="Text" Value="GIF does not support quality adjustment. This setting has no effect." />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SelectedFormatOption}" Value="BMP">
+                                                <Setter Property="Text" Value="BMP is uncompressed. This setting has no effect." />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SelectedFormatOption}" Value="TIFF">
+                                                <Setter Property="Text" Value="TIFF does not support quality adjustment. This setting has no effect." />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SelectedFormatOption}" Value="TGA">
+                                                <Setter Property="Text" Value="TGA does not support quality adjustment. This setting has no effect." />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SelectedFormatOption}" Value="QOI">
+                                                <Setter Property="Text" Value="QOI is always lossless. This setting has no effect." />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding SelectedFormatOption}" Value="PBM">
+                                                <Setter Property="Text" Value="PBM is always uncompressed. This setting has no effect." />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style><Run FontWeight="Bold"/></TextBlock>
                         </StackPanel>
 
                         <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,16,0,16" />
@@ -1154,7 +1185,7 @@
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,0,0,8" />
                             <Grid Height="16">
-                                <TextBlock VerticalAlignment="Center" FontSize="13">
+                                <TextBlock VerticalAlignment="Center" FontSize="13" FontWeight="Medium">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Text" Value="Disabled" />
@@ -1213,6 +1244,7 @@
                             </Grid>
                             <TextBlock Text="Removes EXIF, IPTC, XMP, and ICC data from the output file."
                                        FontSize="13"
+                                       FontWeight="Medium"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,6,0,0"
                                        TextWrapping="Wrap" />
@@ -1225,7 +1257,7 @@
                                    FontSize="14" FontWeight="Bold"
                                    Foreground="{DynamicResource TextTertiaryBrush}"
                                    Margin="0,0,0,8" />
-                        <Border CornerRadius="4" Padding="12,9" MinHeight="38"
+                        <Border CornerRadius="8" Padding="12,9" MinHeight="38"
                                 Background="{DynamicResource SurfaceElevatedBrush}">
                             <Border.Style>
                                 <Style TargetType="Border">

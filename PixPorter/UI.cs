@@ -212,9 +212,9 @@ public class UI : IUserInterface
         yield return BuildSection("[lightskyblue1 underline bold]Usage Quick Guide[/]",
         [
             ("[indianred bold]DRAG & DROP:[/]",
-            "Drag and drop an image or folder into the window and press '[steelblue][[ENTER]][/]' to convert it.\n"),
+            "Drag and drop an image or folder into the window and press '[steelblue][[ENTER]][/]' to convert it."),
             ("[indianred bold]NAVIGATION:[/]",
-            "Use '[steelblue]cd [[path]][/]' to navigate folders. Convert all images with '[steelblue]--ca[/]'.\n"),
+            "Use '[steelblue]cd [[path]][/]' to navigate folders. Convert all images with '[steelblue]--ca[/]'."),
             ("[indianred bold]FLAGS:[/]",
             "Add a format flag (e.g. '[steelblue]--jpg[/]') to override the default output format. Use '[steelblue]--quality=N[/]' (1-100) to set output quality — omitting it uses maximum quality. Use '[steelblue]--stripmeta[/]' to strip embedded metadata from the output. Formats marked [lightskyblue1]*[/] support the quality flag.")
         ]);
