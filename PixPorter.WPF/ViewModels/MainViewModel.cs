@@ -54,7 +54,7 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty] private int _quality = 100;
     [ObservableProperty] private bool _isConverting = false;
     [ObservableProperty] private bool _isDragOver = false;
-    [ObservableProperty] private bool _isDark = true;
+    [ObservableProperty] private bool _isDark = DetectSystemDarkMode();
     [ObservableProperty] private bool _stripMetadata = false;
     [ObservableProperty] private string _statusMessage = string.Empty;
     [ObservableProperty] private bool _hasStatusMessage = false;
@@ -106,6 +106,7 @@ public partial class MainViewModel : ObservableObject
     public MainViewModel()
     {
         SubscribeToQueueChanges(QueuedFiles);
+        ThemeService.Instance.Apply(_isDark);
     }
 
     private void SubscribeToQueueChanges(ObservableCollection<ConversionItemViewModel> collection)
@@ -142,6 +143,22 @@ public partial class MainViewModel : ObservableObject
             Message = message,
             Level = level
         });
+    }
+
+    private static bool DetectSystemDarkMode()
+    {
+        try
+        {
+            object? value = Registry.GetValue(
+                @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize",
+                "AppsUseLightTheme",
+                1);
+            return value is int i && i == 0;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     [RelayCommand]
