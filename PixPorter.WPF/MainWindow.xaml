@@ -477,8 +477,8 @@
                                          Style="{StaticResource TabButtonStyle}"
                                          Margin="0,0,24,0"
                                          GroupName="MainTabs" />
-                            <RadioButton x:Name="HelpTab"
-                                         Content="Help"
+                            <RadioButton x:Name="InformationTab"
+                                         Content="Information"
                                          Style="{StaticResource TabButtonStyle}"
                                          GroupName="MainTabs" />
                         </StackPanel>
@@ -739,7 +739,7 @@
                             <Style TargetType="Grid">
                                 <Setter Property="Visibility" Value="Collapsed" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsChecked, ElementName=HelpTab}" Value="True">
+                                    <DataTrigger Binding="{Binding IsChecked, ElementName=InformationTab}" Value="True">
                                         <Setter Property="Visibility" Value="Visible" />
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -1056,7 +1056,65 @@
                                         </Grid>
                                     </StackPanel>
                                 </Border>
+                                <!-- About -->
+                                <TextBlock Style="{StaticResource HelpSectionHeader}"
+                                           Text="ABOUT"
+                                           FontSize="16"
+                                           Margin="0,16,0,8" />
+                                <Border Background="{DynamicResource SurfaceElevatedBrush}"
+                                        BorderBrush="{DynamicResource BorderSubtleBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="8"
+                                        Padding="16,14"
+                                        Margin="0,0,0,4">
+                                    <StackPanel>
 
+                                        <!-- App identity -->
+                                        <TextBlock Text="PixPorter"
+                                                   FontSize="15" FontWeight="Bold"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                   Margin="0,0,0,2" />
+                                        <TextBlock Text="Image Format Converter"
+                                                   Style="{StaticResource HelpBodyText}"
+                                                   FontSize="12"
+                                                   Margin="0,0,0,12" />
+
+                                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,0,0,12" />
+
+                                        <!-- Legal -->
+                                        <TextBlock Text="LICENSE"
+                                                   Style="{StaticResource HelpSectionHeader}" />
+                                        <TextBlock Style="{StaticResource HelpBodyText}" FontSize="12"
+                                                   Text="PixPorter is a commercial application. All rights reserved. Redistribution or modification of this software without permission is not permitted." />
+
+                                        <!-- Open source -->
+                                        <TextBlock Text="OPEN SOURCE LIBRARIES"
+                                                   Style="{StaticResource HelpSectionHeader}" 
+                                                   Margin="0,10,0,6"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="20" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="→" FontSize="13"
+                                                       Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Top" Margin="0,1,0,0" />
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock Style="{StaticResource HelpBodyText}" FontSize="12">
+                                                    <Run FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Text="SixLabors.ImageSharp" />
+                                                    <Run Text="— Image processing and format conversion engine." />
+                                                </TextBlock>
+                                                <TextBlock Text="Licensed under the Apache License 2.0. © Six Labors. sixlabors.com/products/imagesharp"
+                                                           Style="{StaticResource HelpBodyText}"
+                                                           FontSize="11"
+                                                           Foreground="{DynamicResource TextTertiaryBrush}"
+                                                           Margin="0,2,0,0" />
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,0,0,12" />
+
+                                    </StackPanel>
+                                </Border>
                             </StackPanel>
                         </ScrollViewer>
                     </Grid>
