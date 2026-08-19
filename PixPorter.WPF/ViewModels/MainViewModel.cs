@@ -20,6 +20,19 @@ public class LogEntry
     public LogLevel Level { get; init; } = LogLevel.Info;
 }
 
+public readonly record struct ConversionSettings(
+    string? Format,
+    int? Quality,
+    bool StripMetadata,
+    string? OutputDirectory,
+    IReadOnlySet<string> SourcesToPreserve);
+
+public readonly record struct ConversionOutcome(
+    string OutputPath,
+    string TargetExtension,
+    int? Quality,
+    string OutputSize);
+
 public partial class MainViewModel : ObservableObject
 {
     public const string DefaultFormat = "Default";
@@ -32,6 +45,9 @@ public partial class MainViewModel : ObservableObject
 
     [ObservableProperty]
     private ObservableCollection<LogEntry> _logEntries = [];
+
+    private ObservableCollection<ConversionItemViewModel>? _observedQueue;
+    private CancellationTokenSource? _conversionCancellation;
 
     private string _selectedFormatOption = DefaultFormat;
     public string SelectedFormatOption
@@ -59,6 +75,18 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty] private string _statusMessage = string.Empty;
     [ObservableProperty] private bool _hasStatusMessage = false;
     [ObservableProperty] private bool _statusIsError = false;
+    [ObservableProperty] private string? _customOutputFolder = null;
+
+    public bool HasCustomOutputFolder => !string.IsNullOrEmpty(CustomOutputFolder);
+
+    partial void OnCustomOutputFolderChanged(string? value)
+    {
+        OnPropertyChanged(nameof(HasCustomOutputFolder));
+        OnPropertyChanged(nameof(OutputFolderDisplay));
+    }
+
+    public string OutputFolderDisplay =>
+        string.IsNullOrEmpty(CustomOutputFolder) ? "Same as source" : CustomOutputFolder;
 
     public bool QualitySupported =>
         SelectedFormat is null
@@ -91,26 +119,39 @@ public partial class MainViewModel : ObservableObject
     private static bool IsQualitySupported(string? ext) =>
         ext is ".webp" or ".png" or ".jpg" or ".jpeg";
 
-    private static string FormatOutputBytes(long bytes)
-    {
-        if (bytes >= 1_048_576) return $"{bytes / 1_048_576.0:F1} MB";
-        if (bytes >= 1024) return $"{bytes / 1024.0:F0} KB";
-        return $"{bytes} B";
-    }
+    private static string Pluralise(int count) => count == 1 ? string.Empty : "s";
 
     partial void OnIsDarkChanged(bool value) => ThemeService.Instance.Apply(value);
 
     partial void OnQueuedFilesChanged(ObservableCollection<ConversionItemViewModel> value)
-        => SubscribeToQueueChanges(value);
+        => ObserveQueue(value);
 
     public MainViewModel()
     {
-        SubscribeToQueueChanges(QueuedFiles);
+        ObserveQueue(QueuedFiles);
         ThemeService.Instance.Apply(_isDark);
     }
 
-    private void SubscribeToQueueChanges(ObservableCollection<ConversionItemViewModel> collection)
-        => collection.CollectionChanged += OnQueueCollectionChanged;
+    private void ObserveQueue(ObservableCollection<ConversionItemViewModel> collection)
+    {
+        if (ReferenceEquals(_observedQueue, collection))
+            return;
+
+        if (_observedQueue is not null)
+        {
+            _observedQueue.CollectionChanged -= OnQueueCollectionChanged;
+            foreach (var item in _observedQueue)
+                item.PropertyChanged -= OnItemPropertyChanged;
+        }
+
+        _observedQueue = collection;
+        collection.CollectionChanged += OnQueueCollectionChanged;
+
+        foreach (var item in collection)
+            item.PropertyChanged += OnItemPropertyChanged;
+
+        RefreshDerivedProperties();
+    }
 
     private void OnQueueCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
@@ -161,100 +202,178 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    private Task OnUiThreadAsync(Action action) =>
+        Application.Current.Dispatcher.InvokeAsync(action).Task;
+
+    private ConversionSettings CaptureSettings(IEnumerable<ConversionItemViewModel> queue) => new(
+        SelectedFormat,
+        QualitySupported ? Quality : null,
+        StripMetadata,
+        CustomOutputFolder,
+        queue.Select(f => Path.GetFullPath(f.FilePath)).ToHashSet(StringComparer.OrdinalIgnoreCase));
+
+    private static ConversionOutcome ConvertSingle(ConversionItemViewModel item, ConversionSettings settings)
+    {
+        string targetExtension = settings.Format is not null
+            ? $".{settings.Format.ToLowerInvariant()}"
+            : Constants.GetDefaultTarget(Path.GetExtension(item.FilePath));
+
+        string outputPath = ConversionHelper.ConvertFile(
+            item.FilePath,
+            targetExtension,
+            settings.Quality,
+            settings.StripMetadata,
+            settings.OutputDirectory,
+            settings.SourcesToPreserve);
+
+        return new ConversionOutcome(
+            outputPath,
+            targetExtension,
+            settings.Quality,
+            FileSizeFormatter.DescribeFile(outputPath));
+    }
+
+    private static string DescribeSuccess(
+        ConversionItemViewModel item,
+        ConversionOutcome outcome,
+        bool strippedMetadata)
+    {
+        string sizeNote = !string.IsNullOrEmpty(item.FileSize) && !string.IsNullOrEmpty(outcome.OutputSize)
+            ? $"  {item.FileSize} -> {outcome.OutputSize}"
+            : string.Empty;
+        string qualityNote = outcome.Quality.HasValue ? $"  quality={outcome.Quality}" : string.Empty;
+        string metadataNote = strippedMetadata ? "  stripmeta=true" : string.Empty;
+
+        return $"[OK]  {item.FileName}  ->  {Path.GetFileName(outcome.OutputPath)}{sizeNote}{qualityNote}{metadataNote}\n" +
+               $"      {outcome.OutputPath}";
+    }
+
     [RelayCommand]
     private async Task ConvertAsync()
     {
-        if (QueuedFiles.Count == 0)
+        if (QueuedFiles.Count == 0 || IsConverting)
             return;
 
-        List<ConversionItemViewModel> toConvert = (HasSelection
+        List<ConversionItemViewModel> queue = (HasSelection
             ? QueuedFiles.Where(f => f.IsSelected)
             : QueuedFiles).ToList();
 
+        ConversionSettings settings = CaptureSettings(queue);
+
+        using CancellationTokenSource cancellation = new();
+        _conversionCancellation = cancellation;
+
         IsConverting = true;
         ClearStatus();
+        AddLog($"Starting conversion of {queue.Count} file{Pluralise(queue.Count)}.");
 
-        AddLog($"Starting conversion of {toConvert.Count} file{(toConvert.Count == 1 ? "" : "s")}.");
-
-        int success = 0;
+        int succeeded = 0;
         int failed = 0;
 
-        foreach (var item in toConvert)
+        try
         {
-            item.Status = ConversionStatus.Converting;
-            item.StatusText = "—";
-
-            await Task.Run(() =>
-            {
-                try
+            await Parallel.ForEachAsync(
+                queue,
+                new ParallelOptions
                 {
-                    string sourceExt = Path.GetExtension(item.FilePath);
-                    string targetExt = SelectedFormat is not null
-                        ? $".{SelectedFormat.ToLowerInvariant()}"
-                        : Constants.GetDefaultTarget(sourceExt);
-                    int? quality = QualitySupported ? Quality : null;
-
-                    ConversionHelper.ConvertFile(item.FilePath, targetExt, quality, StripMetadata);
-
-                    string outputPath = Path.ChangeExtension(item.FilePath, targetExt);
-                    string outputSize = string.Empty;
+                    MaxDegreeOfParallelism = Environment.ProcessorCount,
+                    CancellationToken = cancellation.Token
+                },
+                async (item, token) =>
+                {
+                    await OnUiThreadAsync(() =>
+                    {
+                        item.Status = ConversionStatus.Converting;
+                        item.StatusText = "...";
+                    });
 
                     try
                     {
-                        long bytes = new FileInfo(outputPath).Length;
-                        outputSize = FormatOutputBytes(bytes);
+                        token.ThrowIfCancellationRequested();
+                        ConversionOutcome outcome = ConvertSingle(item, settings);
+                        Interlocked.Increment(ref succeeded);
+
+                        await OnUiThreadAsync(() =>
+                        {
+                            item.Status = ConversionStatus.Done;
+                            item.StatusText = outcome.TargetExtension.TrimStart('.').ToUpperInvariant();
+                            item.OutputFileSize = outcome.OutputSize;
+                            AddLog(DescribeSuccess(item, outcome, settings.StripMetadata), LogLevel.Success);
+                        });
                     }
-                    catch { }
-
-                    Application.Current.Dispatcher.Invoke(() =>
+                    catch (OperationCanceledException)
                     {
-                        item.Status = ConversionStatus.Done;
-                        item.StatusText = targetExt.TrimStart('.').ToUpperInvariant();
-                        item.OutputFileSize = outputSize;
-
-                        string qualityNote = quality.HasValue ? $"  quality={quality}" : string.Empty;
-                        string metaNote = StripMetadata ? "  stripmeta=true" : string.Empty;
-                        string sizeNote = !string.IsNullOrEmpty(item.FileSize) && !string.IsNullOrEmpty(outputSize)
-                            ? $"  {item.FileSize} → {outputSize}"
-                            : string.Empty;
-
-                        AddLog(
-                            $"[OK]  {item.FileName}  →  {Path.GetFileName(outputPath)}{sizeNote}{qualityNote}{metaNote}\n" +
-                            $"      {outputPath}",
-                            LogLevel.Success);
-                    });
-
-                    success++;
-                }
-                catch (Exception ex)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
+                        await OnUiThreadAsync(() =>
+                        {
+                            item.Status = ConversionStatus.Pending;
+                            item.StatusText = "Cancelled";
+                        });
+                        throw;
+                    }
+                    catch (Exception exception)
                     {
-                        item.Status = ConversionStatus.Failed;
-                        item.StatusText = "Failed";
-                        item.ErrorMessage = ex.Message;
+                        Interlocked.Increment(ref failed);
 
-                        AddLog($"[ERR] {item.FileName}\n      {ex.Message}", LogLevel.Error);
-                    });
-
-                    failed++;
-                }
-            });
+                        await OnUiThreadAsync(() =>
+                        {
+                            item.Status = ConversionStatus.Failed;
+                            item.StatusText = "Failed";
+                            item.ErrorMessage = exception.Message;
+                            AddLog($"[ERR] {item.FileName}\n      {exception.Message}", LogLevel.Error);
+                        });
+                    }
+                });
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        finally
+        {
+            _conversionCancellation = null;
+            IsConverting = false;
         }
 
-        IsConverting = false;
+        ReportCompletion(succeeded, failed, cancellation.IsCancellationRequested);
+    }
+
+    private void ReportCompletion(int succeeded, int failed, bool cancelled)
+    {
+        if (cancelled)
+        {
+            AddLog($"Cancelled. {succeeded} file{Pluralise(succeeded)} converted before stopping.", LogLevel.Error);
+            ShowStatus($"Cancelled after {succeeded} file{Pluralise(succeeded)}.", isError: true);
+            return;
+        }
 
         if (failed == 0)
         {
-            AddLog($"Done. {success} file{(success == 1 ? "" : "s")} converted successfully.", LogLevel.Success);
-            ShowStatus($"{success} file{(success == 1 ? "" : "s")} converted successfully.", isError: false);
+            AddLog($"Done. {succeeded} file{Pluralise(succeeded)} converted successfully.", LogLevel.Success);
+            ShowStatus($"{succeeded} file{Pluralise(succeeded)} converted successfully.", isError: false);
+            return;
         }
-        else
-        {
-            AddLog($"Done. {success} succeeded, {failed} failed.", LogLevel.Error);
-            ShowStatus($"{success} converted, {failed} failed.", isError: true);
-        }
+
+        AddLog($"Done. {succeeded} succeeded, {failed} failed.", LogLevel.Error);
+        ShowStatus($"{succeeded} converted, {failed} failed.", isError: true);
     }
+
+    [RelayCommand]
+    private void CancelConversion() => _conversionCancellation?.Cancel();
+
+    [RelayCommand]
+    private void SelectOutputFolder()
+    {
+        OpenFolderDialog dialog = new()
+        {
+            Title = "Choose an output folder",
+            Multiselect = false
+        };
+
+        if (dialog.ShowDialog() == true)
+            CustomOutputFolder = dialog.FolderName;
+    }
+
+    [RelayCommand]
+    private void UseSourceFolder() => CustomOutputFolder = null;
 
     [RelayCommand]
     private void ClearQueue()

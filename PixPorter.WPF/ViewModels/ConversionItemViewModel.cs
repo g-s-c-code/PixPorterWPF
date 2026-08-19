@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using PixPorter.Common.Helpers;
 using System.IO;
 
 namespace PixPorter.WPF.ViewModels;
@@ -26,22 +27,6 @@ public partial class ConversionItemViewModel : ObservableObject
     {
         FilePath = filePath;
         FileName = Path.GetFileName(filePath);
-
-        try
-        {
-            long bytes = new FileInfo(filePath).Length;
-            FileSize = FormatBytes(bytes);
-        }
-        catch
-        {
-            FileSize = string.Empty;
-        }
-    }
-
-    private static string FormatBytes(long bytes)
-    {
-        if (bytes >= 1_048_576) return $"{bytes / 1_048_576.0:F1} MB";
-        if (bytes >= 1024) return $"{bytes / 1024.0:F0} KB";
-        return $"{bytes} B";
+        FileSize = FileSizeFormatter.DescribeFile(filePath);
     }
 }

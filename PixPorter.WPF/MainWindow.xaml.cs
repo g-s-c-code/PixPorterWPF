@@ -15,6 +15,15 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         ((MainViewModel)DataContext).LogEntries.CollectionChanged += LogEntries_CollectionChanged;
+        QueueFilesPassedOnCommandLine();
+    }
+
+    private void QueueFilesPassedOnCommandLine()
+    {
+        string[] paths = [.. Environment.GetCommandLineArgs().Skip(1)];
+
+        if (paths.Length > 0)
+            ViewModel.HandleDrop(paths);
     }
 
     private void LogEntries_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

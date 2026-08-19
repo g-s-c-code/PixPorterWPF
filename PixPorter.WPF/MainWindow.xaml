@@ -1310,6 +1310,50 @@
 
                         <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,16,0,16" />
 
+                        <!-- Output Folder -->
+                        <StackPanel>
+                            <TextBlock Text="OUTPUT FOLDER"
+                                       FontSize="14" FontWeight="Bold"
+                                       Foreground="{DynamicResource TextTertiaryBrush}"
+                                       Margin="0,0,0,8" />
+                            <Border CornerRadius="8" Padding="12,9" MinHeight="38"
+                                    Background="{DynamicResource SurfaceElevatedBrush}">
+                                <TextBlock Text="{Binding OutputFolderDisplay}"
+                                           FontSize="13"
+                                           FontWeight="Medium"
+                                           TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding OutputFolderDisplay}"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           VerticalAlignment="Center" />
+                            </Border>
+                            <Grid Margin="0,8,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0"
+                                        Content="Choose Folder"
+                                        Style="{StaticResource GhostButton}"
+                                        Command="{Binding SelectOutputFolderCommand}"
+                                        Height="34" FontSize="14" />
+                                <Button Grid.Column="2"
+                                        Content="Reset"
+                                        Style="{StaticResource GhostButton}"
+                                        Command="{Binding UseSourceFolderCommand}"
+                                        Visibility="{Binding HasCustomOutputFolder, Converter={StaticResource BoolToVis}}"
+                                        Height="34" FontSize="14" Padding="14,0" />
+                            </Grid>
+                            <TextBlock Text="Converted files are written beside the originals unless a folder is chosen."
+                                       FontSize="13"
+                                       FontWeight="Medium"
+                                       Foreground="{DynamicResource TextTertiaryBrush}"
+                                       Margin="0,6,0,0"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,16,0,16" />
+
                         <!-- Status Information -->
                         <TextBlock Text="STATUS INFORMATION"
                                    FontSize="14" FontWeight="Bold"
@@ -1360,7 +1404,14 @@
                         <Button Content="{Binding ConvertButtonText}"
                                 Style="{StaticResource FlatButton}"
                                 Command="{Binding ConvertCommand}"
-                                IsEnabled="{Binding IsConverting, Converter={StaticResource InvBoolToVis}}"
+                                Visibility="{Binding IsConverting, Converter={StaticResource InvBoolToVis}}"
+                                HorizontalAlignment="Stretch"
+                                Height="42" FontSize="16"
+                                Margin="0,0,0,16" />
+                        <Button Content="Cancel"
+                                Style="{StaticResource FlatButton}"
+                                Command="{Binding CancelConversionCommand}"
+                                Visibility="{Binding IsConverting, Converter={StaticResource BoolToVis}}"
                                 HorizontalAlignment="Stretch"
                                 Height="42" FontSize="16"
                                 Margin="0,0,0,16" />

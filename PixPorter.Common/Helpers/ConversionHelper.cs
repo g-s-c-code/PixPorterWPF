@@ -12,11 +12,17 @@ namespace PixPorter.Common.Helpers;
 
 public static class ConversionHelper
 {
-    public static void ConvertFile(string inputPath, string? targetExtension, int? quality = null, bool stripMetadata = false)
+    public static string ConvertFile(
+        string inputPath,
+        string? targetExtension,
+        int? quality = null,
+        bool stripMetadata = false,
+        string? outputDirectory = null,
+        IReadOnlySet<string>? sourcesToPreserve = null)
     {
         string sourceExtension = Path.GetExtension(inputPath);
         string outputExtension = targetExtension ?? Constants.GetDefaultTarget(sourceExtension);
-        string outputPath = Path.ChangeExtension(inputPath, outputExtension);
+        string outputPath = ResolveOutputPath(inputPath, outputExtension, outputDirectory, sourcesToPreserve);
 
         using Image image = Image.Load(inputPath);
 
@@ -32,6 +38,39 @@ public static class ConversionHelper
             image.Save(outputPath, BuildEncoder(outputExtension, quality.Value));
         else
             image.Save(outputPath);
+
+        return outputPath;
+    }
+
+    private static string ResolveOutputPath(
+        string inputPath,
+        string outputExtension,
+        string? outputDirectory,
+        IReadOnlySet<string>? sourcesToPreserve)
+    {
+        string directory = string.IsNullOrWhiteSpace(outputDirectory)
+            ? Path.GetDirectoryName(inputPath) ?? string.Empty
+            : outputDirectory;
+
+        Directory.CreateDirectory(directory);
+
+        string baseName = Path.GetFileNameWithoutExtension(inputPath);
+        string candidate = Path.Combine(directory, baseName + outputExtension);
+
+        return WouldDestroyASource(candidate, inputPath, sourcesToPreserve)
+            ? Path.Combine(directory, $"{baseName}-converted{outputExtension}")
+            : candidate;
+    }
+
+    private static bool WouldDestroyASource(
+        string candidate,
+        string inputPath,
+        IReadOnlySet<string>? sourcesToPreserve)
+    {
+        string resolved = Path.GetFullPath(candidate);
+
+        return string.Equals(resolved, Path.GetFullPath(inputPath), StringComparison.OrdinalIgnoreCase)
+            || (sourcesToPreserve?.Contains(resolved) ?? false);
     }
 
     public static IEnumerable<string> GetConvertibleFiles(string directory) =>
