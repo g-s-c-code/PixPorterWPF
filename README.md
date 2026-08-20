@@ -2,7 +2,7 @@
 
 A Windows desktop image converter. Drop files or folders in, pick a format, convert.
 
-![PixPorter](pixporter.png)
+![PixPorter](pixporter.webp)
 
 ## What it does
 
