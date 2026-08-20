@@ -269,7 +269,7 @@
                                 <Border Background="{TemplateBinding Background}"
                                         CornerRadius="6"
                                         Margin="4,2"
-                                        Padding="2">        
+                                        Padding="2">
                                     <ContentPresenter />
                                 </Border>
                                 <ControlTemplate.Triggers>
@@ -347,7 +347,7 @@
                                     BorderThickness="1.5"
                                     BorderBrush="{DynamicResource BorderBrush}"
                                     Background="Transparent"
-                                    Margin="0,0,8,0" /> 
+                                    Margin="0,0,8,0" />
                             <ContentPresenter VerticalAlignment="Center" />
                         </StackPanel>
                         <ControlTemplate.Triggers>
@@ -948,7 +948,7 @@
                                         <TextBlock Style="{StaticResource HelpBodyText}" FontSize="12">
                                             <Run FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}" Text="PNG note: " />
                                             <Run Text="PNG is always lossless — no pixel data is ever discarded. The quality value controls the compression level instead. Higher values mean less compression, producing larger files that save and load faster. Lower values compress more aggressively, producing smaller files at the cost of encode/decode speed." />
-                                                                                </TextBlock>
+                                        </TextBlock>
                                     </StackPanel>
                                 </Border>
 
@@ -1157,200 +1157,198 @@
                                   Style="{StaticResource ScrollViewerStyle}"
                                   VerticalScrollBarVisibility="Auto"
                                   PreviewMouseWheel="SmoothScroll_PreviewMouseWheel">
-                    <StackPanel Margin="0,0,6,0">
-                        <StackPanel>
-                            <TextBlock Text="OUTPUT FORMAT"
+                        <StackPanel Margin="0,0,6,0">
+                            <StackPanel>
+                                <TextBlock Text="OUTPUT FORMAT"
                                        FontSize="14" FontWeight="Bold"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,0,0,8" />
-                            <ComboBox Style="{StaticResource ComboBoxStyle}"
+                                <ComboBox Style="{StaticResource ComboBoxStyle}"
                                       FontWeight="SemiBold"
                                       ItemsSource="{Binding FormatOptions}"
                                       SelectedItem="{Binding SelectedFormatOption, Mode=TwoWay}" />
-                            <TextBlock
+                                <TextBlock
                                        FontSize="13"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,4,0,0"
                                        TextWrapping="Wrap" ><Run FontWeight="Medium" Text="Default: see per-format default mappings."/></TextBlock>
-                        </StackPanel>
+                            </StackPanel>
 
-                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,9,0,9" />
+                            <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,9,0,9" />
 
-                        <StackPanel>
-                            <StackPanel.Style>
-                                <Style TargetType="StackPanel">
-                                    <Setter Property="Opacity" Value="1" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding QualitySupported}" Value="False">
-                                            <Setter Property="Opacity" Value="0.7" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </StackPanel.Style>
-                            <Grid Margin="0,0,0,8">
-                                <TextBlock Text="QUALITY"
+                            <StackPanel>
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Opacity" Value="1" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding QualitySupported}" Value="False">
+                                                <Setter Property="Opacity" Value="0.7" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <Grid Margin="0,0,0,8">
+                                    <TextBlock Text="QUALITY"
                                            FontSize="14" FontWeight="Bold"
                                            Foreground="{DynamicResource TextTertiaryBrush}" />
-                                <TextBlock HorizontalAlignment="Right"
+                                    <TextBlock HorizontalAlignment="Right"
                                            VerticalAlignment="Center"
                                            FontSize="15" FontWeight="Medium"
                                            Foreground="{DynamicResource TextPrimaryBrush}">
                                     <Run Text="{Binding Quality, Mode=OneWay}" /><Run Text="%" />
-                                </TextBlock>
-                            </Grid>
-                            <Slider Style="{StaticResource SliderStyle}"
+                                    </TextBlock>
+                                </Grid>
+                                <Slider Style="{StaticResource SliderStyle}"
                                     Minimum="1" Maximum="100"
                                     Value="{Binding Quality}"
                                     TickFrequency="1"
                                     IsSnapToTickEnabled="True"
                                     IsEnabled="{Binding QualitySupported}" />
-                            <TextBlock FontSize="13"
+                                <TextBlock FontSize="13"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,4,0,0"
                                        FontWeight="Medium"
                                        TextWrapping="Wrap">
-                                <TextBlock.Style>
-                                    <Style TargetType="{x:Type TextBlock}">
-                                        <Setter Property="Text" Value="Higher values preserve more detail. Applies to JPG, PNG, and WebP." />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding SelectedFormatOption}" Value="PNG">
-                                                <Setter Property="Text" Value="PNG is always lossless. A higher Quality value means less compression and larger files." />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding SelectedFormatOption}" Value="GIF">
-                                                <Setter Property="Text" Value="GIF does not support quality adjustment. This setting has no effect." />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding SelectedFormatOption}" Value="BMP">
-                                                <Setter Property="Text" Value="BMP is uncompressed. This setting has no effect." />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding SelectedFormatOption}" Value="TIFF">
-                                                <Setter Property="Text" Value="TIFF does not support quality adjustment. This setting has no effect." />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding SelectedFormatOption}" Value="TGA">
-                                                <Setter Property="Text" Value="TGA does not support quality adjustment. This setting has no effect." />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding SelectedFormatOption}" Value="QOI">
-                                                <Setter Property="Text" Value="QOI is always lossless. This setting has no effect." />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding SelectedFormatOption}" Value="PBM">
-                                                <Setter Property="Text" Value="PBM is always uncompressed. This setting has no effect." />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style><Run FontWeight="Bold"/></TextBlock>
-                        </StackPanel>
-
-                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,9,0,9" />
-
-                        <StackPanel Margin="0,0,0,0">
-                            <TextBlock Text="STRIP METADATA"
-                                       FontSize="14" FontWeight="Bold"
-                                       Foreground="{DynamicResource TextTertiaryBrush}"
-                                       Margin="0,0,0,8" />
-                            <Grid Height="16">
-                                <TextBlock VerticalAlignment="Center" FontSize="13" FontWeight="Medium">
                                     <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Text" Value="Disabled" />
-                                            <Setter Property="Foreground" Value="{DynamicResource TextTertiaryBrush}" />
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Text" Value="Higher values preserve more detail. Applies to JPG, PNG, and WebP." />
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding StripMetadata}" Value="True">
-                                                    <Setter Property="Text" Value="Enabled" />
-                                                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                                                <DataTrigger Binding="{Binding SelectedFormatOption}" Value="PNG">
+                                                    <Setter Property="Text" Value="PNG is always lossless. A higher Quality value means less compression and larger files." />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SelectedFormatOption}" Value="GIF">
+                                                    <Setter Property="Text" Value="GIF does not support quality adjustment. This setting has no effect." />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SelectedFormatOption}" Value="BMP">
+                                                    <Setter Property="Text" Value="BMP is uncompressed. This setting has no effect." />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SelectedFormatOption}" Value="TIFF">
+                                                    <Setter Property="Text" Value="TIFF does not support quality adjustment. This setting has no effect." />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SelectedFormatOption}" Value="TGA">
+                                                    <Setter Property="Text" Value="TGA does not support quality adjustment. This setting has no effect." />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SelectedFormatOption}" Value="QOI">
+                                                    <Setter Property="Text" Value="QOI is always lossless. This setting has no effect." />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding SelectedFormatOption}" Value="PBM">
+                                                    <Setter Property="Text" Value="PBM is always uncompressed. This setting has no effect." />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                                <ToggleButton IsChecked="{Binding StripMetadata, Mode=TwoWay}"
-                                              HorizontalAlignment="Right"
-                                              VerticalAlignment="Center"
-                                              Cursor="Hand">
-                                    <ToggleButton.Style>
-                                        <Style TargetType="ToggleButton" BasedOn="{StaticResource ToggleThemeButton}">
-                                            <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background" Value="Transparent" />
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ToggleButton.Style>
-                                    <Border Width="30" Height="16" CornerRadius="8">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Background" Value="{DynamicResource BorderBrush}" />
+                                    </TextBlock.Style><Run FontWeight="Bold"/></TextBlock>
+                            </StackPanel>
+
+                            <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,9,0,9" />
+
+                            <StackPanel Margin="0,0,0,0">
+                                <TextBlock Text="STRIP METADATA"
+                                       FontSize="14" FontWeight="Bold"
+                                       Foreground="{DynamicResource TextTertiaryBrush}"
+                                       Margin="0,0,0,8" />
+                                <Grid Height="16">
+                                    <TextBlock VerticalAlignment="Center" FontSize="13" FontWeight="Medium">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="Disabled" />
+                                                <Setter Property="Foreground" Value="{DynamicResource TextTertiaryBrush}" />
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding StripMetadata}" Value="True">
-                                                        <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
+                                                        <Setter Property="Text" Value="Enabled" />
+                                                        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
-                                        </Border.Style>
-                                        <Ellipse Width="10" Height="10"
-                                                 Fill="{DynamicResource BackgroundBrush}"
-                                                 VerticalAlignment="Center">
-                                            <Ellipse.Style>
-                                                <Style TargetType="Ellipse">
-                                                    <Setter Property="HorizontalAlignment" Value="Left" />
-                                                    <Setter Property="Margin" Value="3,0,0,0" />
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <ToggleButton IsChecked="{Binding StripMetadata, Mode=TwoWay}"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              Cursor="Hand">
+                                        <ToggleButton.Style>
+                                            <Style TargetType="ToggleButton" BasedOn="{StaticResource ToggleThemeButton}">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="Transparent" />
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ToggleButton.Style>
+                                        <Border Width="30" Height="16" CornerRadius="8">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="{DynamicResource BorderBrush}" />
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding StripMetadata}" Value="True">
-                                                            <Setter Property="HorizontalAlignment" Value="Right" />
-                                                            <Setter Property="Margin" Value="0,0,3,0" />
+                                                            <Setter Property="Background" Value="{DynamicResource TextPrimaryBrush}" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
-                                            </Ellipse.Style>
-                                        </Ellipse>
-                                    </Border>
-                                </ToggleButton>
-                            </Grid>
-                            <TextBlock Text="Removes EXIF, IPTC, XMP, and ICC data from the output file."
+                                            </Border.Style>
+                                            <Ellipse Width="10" Height="10"
+                                                 Fill="{DynamicResource BackgroundBrush}"
+                                                 VerticalAlignment="Center">
+                                                <Ellipse.Style>
+                                                    <Style TargetType="Ellipse">
+                                                        <Setter Property="HorizontalAlignment" Value="Left" />
+                                                        <Setter Property="Margin" Value="3,0,0,0" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding StripMetadata}" Value="True">
+                                                                <Setter Property="HorizontalAlignment" Value="Right" />
+                                                                <Setter Property="Margin" Value="0,0,3,0" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Ellipse.Style>
+                                            </Ellipse>
+                                        </Border>
+                                    </ToggleButton>
+                                </Grid>
+                                <TextBlock Text="Removes EXIF, IPTC, XMP, and ICC data from the output file."
                                        FontSize="13"
                                        FontWeight="Medium"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,4,0,0"
                                        TextWrapping="Wrap" />
-                        </StackPanel>
+                            </StackPanel>
 
-                        <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,9,0,9" />
+                            <Border Height="1" Background="{DynamicResource BorderSubtleBrush}" Margin="0,9,0,9" />
 
-                        <!-- Output Folder -->
-                        <StackPanel>
-                            <TextBlock Text="OUTPUT FOLDER"
+                            <!-- Output Folder -->
+                            <StackPanel>
+                                <TextBlock Text="OUTPUT FOLDER"
                                        FontSize="14" FontWeight="Bold"
                                        Foreground="{DynamicResource TextTertiaryBrush}"
                                        Margin="0,0,0,8" />
-                            <Border CornerRadius="8" Padding="12,9" MinHeight="38"
+                                <Border CornerRadius="8" Padding="12,9" MinHeight="38"
                                     Background="{DynamicResource SurfaceElevatedBrush}">
-                                <TextBlock Text="{Binding OutputFolderDisplay}"
+                                    <TextBlock Text="{Binding OutputFolderDisplay}"
                                            FontSize="13"
                                            FontWeight="Medium"
                                            TextTrimming="CharacterEllipsis"
                                            ToolTip="{Binding OutputFolderDisplay}"
                                            Foreground="{DynamicResource TextPrimaryBrush}"
                                            VerticalAlignment="Center" />
-                            </Border>
-                            <Grid Margin="0,8,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="8" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0"
+                                </Border>
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="8" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0"
                                         Content="Choose Folder"
                                         Style="{StaticResource GhostButton}"
-                                        Command="{Binding SelectOutputFolderCommand}"
-                                        Height="34" FontSize="14" />
-                                <Button Grid.Column="2"
+                                        Command="{Binding SelectOutputFolderCommand}" FontSize="14" Grid.ColumnSpan="2" Margin="0,0,8,10" />
+                                    <Button Grid.Column="2"
                                         Content="Reset"
                                         Style="{StaticResource GhostButton}"
                                         Command="{Binding UseSourceFolderCommand}"
-                                        Visibility="{Binding HasCustomOutputFolder, Converter={StaticResource BoolToVis}}"
-                                        Height="34" FontSize="14" Padding="14,0" />
-                            </Grid>
-                        </StackPanel>
+                                        Visibility="{Binding HasCustomOutputFolder, Converter={StaticResource BoolToVis}}" FontSize="14" Padding="14,0" Margin="0,0,0,10" />
+                                </Grid>
+                            </StackPanel>
 
-                    </StackPanel>
+                        </StackPanel>
                     </ScrollViewer>
 
                     <!-- Spacer row -->
